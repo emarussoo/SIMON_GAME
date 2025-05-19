@@ -1,6 +1,5 @@
 package com.boxbox.simon
 
-import android.graphics.Color.red
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,9 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,10 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.boxbox.simon.model.GamePhase
+import com.boxbox.simon.model.SimonMove
+import com.boxbox.simon.model.SimonState
 import com.boxbox.simon.ui.theme.SIMONTheme
 import com.boxbox.simon.utils.SimonColor
 import com.boxbox.simon.viewmodel.SimonViewModel
-import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,39 +52,46 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CounterScreen(viewModel: SimonViewModel, modifier: Modifier){
-    val count by viewModel.counter.collectAsState()
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally){
-        Text("Contatore: $count")
-        /*Button(onClick = {viewModel.increment()}){
-            Text("Incrementa")
-        }*/
-    }
-
-}
-
-@Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier){
+    val state by viewModel.gameState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        GameHeader(viewModel)
+        GameHeader(state, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame()})
         Spacer(modifier = Modifier.height(30.dp))
-        ColorGrid(onColorClick = { viewModel.onColorClicked() })
+
+        /*when(state.state){
+            GamePhase.Idle -> {
+                GameHeader(state, onStart = {viewModel.StartGame()})
+
+            }
+
+            GamePhase.ShowingSequence -> {
+
+            }
+
+            GamePhase.WaitingInput -> {
+
+            }
+
+            GamePhase.GameOver ->{
+
+            }
+        }*/
+        ColorGrid(viewModel)
         Spacer(modifier = Modifier.height(35.dp))
         GameFooter(viewModel)
     }
 }
 
 @Composable
-fun GameHeader(viewModel: SimonViewModel){
-    val count by viewModel.counter.collectAsState()
+fun GameHeader(state: SimonState, onStartClick: ()-> Unit, onEndClick:() -> Unit){
     Column(horizontalAlignment = Alignment.CenterHorizontally){
-        Text("SCORE: $count", fontSize = 24.sp, modifier = Modifier.border(1.dp, Color.Red))
+        Text("SCORE: ${state.score}", fontSize = 24.sp, modifier = Modifier.border(1.dp, Color.Red))
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
@@ -93,28 +99,41 @@ fun GameHeader(viewModel: SimonViewModel){
                 .border(1.dp, Color.Red)
 
         ){
-            Text("Icona")
-            Text("|||||||||||||||||||||||||||||||", modifier = Modifier.border(1.dp, Color.Red))
+            val (buttonText, buttonColor, onClick) = when(state.state){
+                GamePhase.Idle -> Triple("Inizia partita", Color.Green, onStartClick)
+                GamePhase.GameOver -> Triple("Inizia partita", Color.Green, onStartClick)
+                GamePhase.ShowingSequence -> Triple("Termina partita", Color.Red, onEndClick)
+                GamePhase.WaitingInput -> Triple("Termina partita", Color.Red, onEndClick)
+            }
+            TextButton(onClick = onClick,
+                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)) {
+                Text(buttonText)
+            }
+            Text("|||||||||||||Tempo||||||||||||||||||", modifier = Modifier.border(1.dp, Color.Red))
         }
 
     }
 }
 
 @Composable
-fun ColorGrid(onColorClick: (SimonColor) -> Unit){
+fun ColorGrid(viewModel: SimonViewModel){
+    val highlighted by viewModel.highlightedMove.collectAsState()
+    val state by viewModel.gameState.collectAsState()
     Column(modifier = Modifier
         .border(1.dp, Color.Red)
         .background(Color.Gray)){
         Row{
-            SimonColorButton(SimonColor.Red, onColorClick)
-            SimonColorButton(SimonColor.Green, onColorClick)
+            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)})
+            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)})
 
         }
         Row{
-            SimonColorButton(SimonColor.Blue, onColorClick)
-            SimonColorButton(SimonColor.Yellow, onColorClick)
+            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)})
+            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)})
 
         }
+
+        Text(state.state.name)
     }
 }
 
@@ -139,13 +158,20 @@ fun GameFooter(viewModel: SimonViewModel){
 
 
 @Composable
-fun SimonColorButton(color: SimonColor, onClick: (SimonColor)-> Unit){
+fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit){
+    val color = when(move){
+        SimonMove.RED -> if(highlighted) Color.Red else Color(0xff990000)
+        SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff009900)
+        SimonMove.BLUE -> if(highlighted) Color(0xff3333ff) else Color(0xff000099)
+        SimonMove.YELLOW -> if(highlighted) Color(0xffffff99) else Color(0xffb3b300)
+
+    }
     Box(
         modifier = Modifier
             .size(180.dp)
             .padding(8.dp)
-            .background(color.toColor(), shape = RoundedCornerShape(16.dp))
-            .clickable{ onClick(color)}
+            .background(color, shape = RoundedCornerShape(16.dp))
+            .clickable{ onClick()}
     ){
     }
 }
