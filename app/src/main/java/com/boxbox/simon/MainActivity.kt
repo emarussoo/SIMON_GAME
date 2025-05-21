@@ -64,7 +64,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
 @Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
     val state by viewModel.gameState.collectAsState()
