@@ -1,9 +1,12 @@
 package com.boxbox.simon
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,11 +15,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,32 +33,40 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
+import com.boxbox.simon.navigator.Nav
 import com.boxbox.simon.ui.theme.SIMONTheme
-import com.boxbox.simon.utils.SimonColor
 import com.boxbox.simon.viewmodel.SimonViewModel
+import com.boxbox.simon.navigator.NavigatorScreen
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("ViewModelConstructorInComposable")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
             SIMONTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val viewModel = SimonViewModel()
-                    GameScreen(viewModel, modifier = Modifier.padding(innerPadding))
+                screen()
+
                 }
             }
         }
     }
-}
+
 
 @Composable
-fun GameScreen(viewModel: SimonViewModel, modifier: Modifier){
+fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
     val state by viewModel.gameState.collectAsState()
 
     Column(
@@ -64,27 +78,8 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier){
         GameHeader(state, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame()})
         Spacer(modifier = Modifier.height(30.dp))
 
-        /*when(state.state){
-            GamePhase.Idle -> {
-                GameHeader(state, onStart = {viewModel.StartGame()})
-
-            }
-
-            GamePhase.ShowingSequence -> {
-
-            }
-
-            GamePhase.WaitingInput -> {
-
-            }
-
-            GamePhase.GameOver ->{
-
-            }
-        }*/
         ColorGrid(viewModel)
         Spacer(modifier = Modifier.height(35.dp))
-        GameFooter(viewModel)
     }
 }
 
@@ -139,24 +134,92 @@ fun ColorGrid(viewModel: SimonViewModel){
 
 
 @Composable
-fun GameFooter(viewModel: SimonViewModel){
-    Row(){
-        Text("BEST", modifier = Modifier.size(120.dp, 120.dp).border(1.dp, Color.Green))
-        Text("DIFFICULTY", modifier = Modifier.size(120.dp, 120.dp).border(1.dp, Color.Green))
-        Column (modifier = Modifier.size(120.dp, 120.dp).border(1.dp, Color.Green), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp) ){
-            Text("Settings")
-            TextButton(
-                onClick = {},
-                modifier = Modifier.background(Color.Red)
-            ){
-                Text("QUIT")
-            }
-        }
+fun GameFooter(navController: NavController){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.16f)
+            .background(Color.LightGray),
+        horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
+        verticalAlignment = Alignment.CenterVertically
+    ){
 
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                modifier = Modifier.size(100.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(text = "leaderboard")
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                modifier = Modifier.size(100.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(text = "game")
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                modifier = Modifier.size(100.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(text = "Settings")
+            }
     }
 }
 
 
+
+@SuppressLint("ContextCastToActivity")
+@Composable
+fun GameTopper(navController: NavController){
+    val activity = (LocalContext.current as? Activity)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.20f)
+            .background(Color.LightGray),
+        horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.title),
+            contentDescription = "Descrizione immagine",
+            modifier = Modifier
+                .weight(23f)
+                .fillMaxHeight(),
+            contentScale = ContentScale.Fit
+        )
+
+        Column (
+
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) },
+                modifier = Modifier.size(37.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+            ) {
+                Text(text = "?")
+            }
+
+            Button(
+                onClick = { activity?.finish() },
+                modifier = Modifier.size(37.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+
+            }
+        }
+    }
+}
 @Composable
 fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit){
     val color = when(move){
@@ -176,6 +239,40 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit)
     }
 }
 
-fun dummy(){
+
+@Composable
+fun leaderboardInterface(){
+    Text("LEADERBOARD INTERFACE")
+
+}
+
+
+@Composable
+fun settingInterface(){
+    Text("SETTINGS INTERFACE")
+}
+
+@Composable
+fun howToPlayInterface(){
+    Text("HOW TO PLAY")
+}
+
+@Composable
+fun screen(){
+    val navController = rememberNavController()
+    val viewModel: SimonViewModel = viewModel()
+    Scaffold(
+
+        topBar = { GameTopper(navController)},
+
+        bottomBar = { GameFooter(navController) }
+
+    ){
+        Nav(
+            navController = navController,
+            modifier = Modifier.padding(it),
+            viewModel = viewModel
+        )
+    }
 
 }
