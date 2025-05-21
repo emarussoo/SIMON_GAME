@@ -2,6 +2,7 @@ package com.boxbox.simon.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
@@ -18,6 +19,14 @@ class SimonViewModel : ViewModel(){
     ////////////////////////////
     private val _gameState = MutableStateFlow(SimonState())
     val gameState: StateFlow<SimonState> = _gameState.asStateFlow()
+
+    ///////////////////////////////
+    private val _timerKey = MutableStateFlow(0)
+    val timerKey: StateFlow<Int> = _timerKey
+
+    fun resetTimer() {
+        _timerKey.value++ // Cambia chiave per resettare
+    }
 
     fun StartGame(){
         val firstMove = SimonMove.values().random()
@@ -57,6 +66,7 @@ class SimonViewModel : ViewModel(){
 
         val expctedMove = current.sequence[current.userIndex]
         if(move == expctedMove){
+            resetTimer()
             val nextIndex = current.userIndex + 1
             if(nextIndex == current.sequence.size){
                 val newMove = SimonMove.values().random()

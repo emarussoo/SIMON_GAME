@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,16 +26,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -67,6 +73,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
     val state by viewModel.gameState.collectAsState()
+    val timerKey by viewModel.timerKey.collectAsState()
 
     Column(
         modifier = Modifier
@@ -74,7 +81,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
             .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        GameHeader(state, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame()})
+        GameHeader(viewModel, state, timerKey, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame()})
         Spacer(modifier = Modifier.height(30.dp))
 
         ColorGrid(viewModel)
@@ -83,14 +90,15 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
 }
 
 @Composable
-fun GameHeader(state: SimonState, onStartClick: ()-> Unit, onEndClick:() -> Unit){
+fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
     Column(horizontalAlignment = Alignment.CenterHorizontally){
         Text("SCORE: ${state.score}", fontSize = 24.sp, modifier = Modifier.border(1.dp, Color.Red))
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(16.dp)
-                .border(1.dp, Color.Red)
+                .border(1.dp, Color.Red),
+            verticalAlignment = Alignment.CenterVertically
 
         ){
             val (buttonText, buttonColor, onClick) = when(state.state){
@@ -103,7 +111,10 @@ fun GameHeader(state: SimonState, onStartClick: ()-> Unit, onEndClick:() -> Unit
                 colors = ButtonDefaults.buttonColors(containerColor = buttonColor)) {
                 Text(buttonText)
             }
-            Text("|||||||||||||Tempo||||||||||||||||||", modifier = Modifier.border(1.dp, Color.Red))
+
+            if(state.state == GamePhase.WaitingInput) {
+                TimerProgressBar(timerKey, onTimeout = {viewModel.EndGame()})
+            }
         }
 
     }
@@ -274,4 +285,31 @@ fun screen(){
         )
     }
 
+}
+
+@Composable
+fun TimerProgressBar(
+    key: Int, //cambiala e resetta
+    durationMillis: Int = 2500,
+    onTimeout: () -> Unit
+) {
+    val progress = remember(key) { Animatable(1f) }
+
+    LaunchedEffect(key) {
+        progress.snapTo(1f)
+        progress.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(durationMillis)
+        )
+        onTimeout()
+    }
+
+    LinearProgressIndicator(
+        progress = progress.value,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp),
+        color = Color.Black,
+        trackColor = Color.Transparent,
+    )
 }
