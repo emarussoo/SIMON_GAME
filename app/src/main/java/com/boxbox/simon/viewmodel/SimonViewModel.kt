@@ -42,7 +42,7 @@ class SimonViewModel : ViewModel(){
             delay(900L)
             for((index, move) in _gameState.value.sequence.withIndex()){
                 _highlightedMove.value = move
-                delay(400L)
+                delay(90L) ////difficoltà
                 _highlightedMove.value = null
                 delay(200L)
             }
