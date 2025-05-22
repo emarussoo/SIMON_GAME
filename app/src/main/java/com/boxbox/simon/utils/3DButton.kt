@@ -1,5 +1,6 @@
 package com.boxbox.simon.utils
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -10,15 +11,12 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -31,6 +29,30 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import android.media.MediaPlayer
+import androidx.compose.ui.platform.LocalContext
+
+
+
+//usata per il suono
+private var currentMediaPlayer: MediaPlayer? = null
+fun playSound(soundResId: Int, context: Context) {
+    currentMediaPlayer?.let {
+        if (it.isPlaying) {
+            it.stop()
+        }
+        it.release()
+    }
+
+    // Crea e avvia il nuovo suono
+    currentMediaPlayer = MediaPlayer.create(context, soundResId).apply {
+        setOnCompletionListener {
+            release()
+            currentMediaPlayer = null
+        }
+        start()
+    }
+}
 
 //classe usata per il tipo di prospettiva
 sealed class Perspective {
@@ -55,7 +77,9 @@ sealed class Perspective {
 fun ThreeDimensionalLayout(onClick: () -> Unit,
                            perspective: Perspective = Perspective.Left(bottomEdgeColor = Color.Black, rightEdgeColor = Color.Black),
                            edgeOffset: Dp = 10.dp,
+                           sound: Int,
                            content: @Composable () -> Unit
+
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -76,6 +100,7 @@ fun ThreeDimensionalLayout(onClick: () -> Unit,
     }
 
     val hapticFeedBack = LocalHapticFeedback.current
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -85,6 +110,7 @@ fun ThreeDimensionalLayout(onClick: () -> Unit,
                 onClick = {
                     hapticFeedBack.performHapticFeedback(HapticFeedbackType.LongPress)
                     onClick()
+                    playSound(sound,context)
                 }
             )
             .graphicsLayer {
@@ -186,7 +212,7 @@ prospettivaScelta = può essere "left","right","top"
 height = altezza del tasto
 */
 @Composable
-fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int) {
+fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int) {
     //altezza del tasto
     val edgeOffset = height.dp
     // Colori per sfumatura parte sopra del tasto:
@@ -198,7 +224,8 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
     ThreeDimensionalLayout(
         onClick,
         prospettiva,
-        edgeOffset
+        edgeOffset,
+        sound
     ) {
         //questo è il box a cui viene applicato l'effetto 3D
         Box(
