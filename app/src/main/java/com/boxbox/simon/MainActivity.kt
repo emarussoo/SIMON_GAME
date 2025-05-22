@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             SIMONTheme {
-                ThemeManager.switchTo2()
+                ThemeManager.switchTo1()
                 screen()
                 }
             }
@@ -159,7 +159,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
             }
         }
             val context = LocalContext.current
-            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame() }
+            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
     }
     }
 
@@ -205,13 +205,13 @@ fun ColorGrid(viewModel: SimonViewModel){
     val state by viewModel.gameState.collectAsState()
     Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)}, "left",12,R.raw.f1)
-            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)},"left",12,R.raw.f2)
+            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1)
+            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2)
         }
 
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)},"left",12,R.raw.bho)
-            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)},"left",12,R.raw.miao)
+            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho)
+            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao)
 
         }
         Spacer(modifier = Modifier.height(25.dp))
@@ -323,7 +323,6 @@ fun GameTopper(navController: NavController) {
             ) {
                 Button(
                     onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) },
-                    modifier = Modifier.size(37.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
@@ -338,7 +337,6 @@ fun GameTopper(navController: NavController) {
 
                 Button(
                     onClick = { activity?.finish() },
-                    modifier = Modifier.size(37.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
