@@ -50,13 +50,18 @@ class SimonViewModel : ViewModel(){
             _gameState.value = _gameState.value.copy(state = GamePhase.ShowingSequence)
             delay(900L)
             for((index, move) in _gameState.value.sequence.withIndex()){
+                if(_gameState.value.state == GamePhase.GameOver){
+                    break
+                }
                 _highlightedMove.value = move
                 delay(400L)
                 _highlightedMove.value = null
                 delay(200L)
             }
 
-            onSequenceShown()
+            if(_gameState.value.state != GamePhase.GameOver){
+                onSequenceShown()
+            }
         }
     }
 

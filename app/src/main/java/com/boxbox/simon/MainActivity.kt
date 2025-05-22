@@ -127,28 +127,30 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Text(text = buttonText)
             }
         }
-        if (state.state == GamePhase.WaitingInput) {
-            TimerProgressBar(timerKey) { viewModel.EndGame() }
-        }
-            }
-
+            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame() }
+    }
     }
 
 @Composable
 fun TimerProgressBar(
     key: Int, //cambiala e resetta
     durationMillis: Int = 2500,
+    running: Boolean,
     onTimeout: () -> Unit
 ) {
     val progress = remember(key) { Animatable(1f) }
 
-    LaunchedEffect(key) {
-        progress.snapTo(1f)
-        progress.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis)
-        )
-        onTimeout()
+    if(running) {
+        LaunchedEffect(key) {
+
+            progress.snapTo(1f)
+            progress.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(durationMillis)
+            )
+            onTimeout()
+
+        }
     }
 
     LinearProgressIndicator(
