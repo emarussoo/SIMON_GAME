@@ -2,8 +2,10 @@ package com.boxbox.simon
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import kotlinx.coroutines.delay
 import android.os.Bundle
+import android.text.Layout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -35,6 +37,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,7 +52,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -76,6 +78,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.collectAsState
 import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
@@ -92,6 +95,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import com.boxbox.simon.utils.playSound
+import com.boxbox.simon.viewmodel.LeadBoardViewModel
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.Alignment
+import androidx.room.util.TableInfo
 import org.intellij.lang.annotations.JdkConstants
 
 
@@ -103,7 +110,7 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             SIMONTheme {
-                ThemeManager.switchTo2()
+                ThemeManager.switchTo1()
                 screen()
                 }
             }
@@ -432,8 +439,61 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
 
 @Composable
 fun leaderboardInterface(){
-    Text("LEADERBOARD INTERFACE")
+    val context = LocalContext.current
+    val viewModel: LeadBoardViewModel = viewModel()
+    val leaderboard by viewModel.leaderboard.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadLeaderboard(context)
+    }
+
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)){
+        //Intestazione tabella
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.LightGray)
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Text("Score", fontWeight = FontWeight.Bold)
+            }
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Text("Data", fontWeight = FontWeight.Bold)
+            }
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Text("Ora", fontWeight = FontWeight.Bold)
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn {
+            items(leaderboard){score ->
+                val date = score.gameDate.split(" ")
+                val day = date.getOrNull(0) ?: ""
+                val time = date.getOrNull(1) ?: ""
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        Text(score.score.toString())
+                    }
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        Text(day)
+                    }
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        Text(time)
+                    }
+                }
+                Divider()
+            }
+        }
+    }
 }
 
 
