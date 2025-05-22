@@ -5,7 +5,6 @@ data class SimonState (
     val userIndex: Int = 0,
     val score: Int = 0,
     val state: GamePhase = GamePhase.Idle
-
 )
 
 enum class GamePhase{

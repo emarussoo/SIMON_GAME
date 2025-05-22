@@ -98,6 +98,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
+    val context = LocalContext.current
     val state by viewModel.gameState.collectAsState()
     val timerKey by viewModel.timerKey.collectAsState()
 
@@ -107,7 +108,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
             .padding(top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        GameHeader(viewModel, state, timerKey, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame()})
+        GameHeader(viewModel, state, timerKey, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame(context)})
         Spacer(modifier = Modifier.height(25.dp))
 
         ColorGrid(viewModel)
@@ -117,6 +118,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
 
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
+    val context = LocalContext.current
     Column(modifier = Modifier.padding(start = 20.dp).fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically,
             )
@@ -146,7 +148,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Text(text = buttonText)
             }
         }
-            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame() }
+            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
     }
     }
 
@@ -187,17 +189,18 @@ fun TimerProgressBar(
 
 @Composable
 fun ColorGrid(viewModel: SimonViewModel){
+    val context = LocalContext.current
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
     Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)}, "left",12)
-            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)},"left",12)
+            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "left",12)
+            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"left",12)
         }
 
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)},"left",12)
-            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)},"left",12)
+            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"left",12)
+            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"left",12)
 
         }
         Spacer(modifier = Modifier.height(25.dp))
