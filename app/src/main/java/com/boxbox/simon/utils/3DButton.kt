@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import android.media.MediaPlayer
+import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.platform.LocalContext
 
 
@@ -231,12 +232,13 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
         Box(
             modifier = Modifier
                 .size(150.dp)
-                .border(BorderStroke(1.dp, baseColor))
+                .border(BorderStroke(1.dp, Color.DarkGray))
                 .background(
                     //qui ci va il colore della parte sopra del tasto
-                    brush = Brush.verticalGradient(colors = listOf(topColor, bottomColor)
+                    //brush = linearGradient(colors = listOf(topColor,bottomColor ))
+                    color = baseColor
                     )
-                ),
+                ,
             contentAlignment = Alignment.Center
         ) {
 
@@ -244,21 +246,40 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
     }
 }
 
-// Funzioni di utilità per schiarire/scurire colore
-fun Color.lighter(factor: Float = 0.2f): Color {
-    return Color(
-        red = (red + factor).coerceIn(0f, 1f),
-        green = (green + factor).coerceIn(0f, 1f),
-        blue = (blue + factor).coerceIn(0f, 1f),
-        alpha = alpha
-    )
+fun Color.lighter(factor: Float = 0.3f): Color {
+    // Schiarisce portando il colore verso il bianco
+    val r = (this.red + (1 - this.red) * factor).coerceIn(0f, 1f)
+    val g = (this.green + (1 - this.green) * factor).coerceIn(0f, 1f)
+    val b = (this.blue + (1 - this.blue) * factor).coerceIn(0f, 1f)
+
+    // Aumenta leggermente la saturazione agendo sulla differenza tra canali
+    val max = maxOf(r, g, b)
+    val min = minOf(r, g, b)
+    val diff = max - min
+    val saturationBoost = 0.1f
+
+    val newR = (r + (r - min) / diff * saturationBoost).coerceIn(0f, 1f)
+    val newG = (g + (g - min) / diff * saturationBoost).coerceIn(0f, 1f)
+    val newB = (b + (b - min) / diff * saturationBoost).coerceIn(0f, 1f)
+
+    return Color(newR, newG, newB, this.alpha)
 }
 
-fun Color.darker(factor: Float = 0.2f): Color {
-    return Color(
-        red = (red - factor).coerceIn(0f, 1f),
-        green = (green - factor).coerceIn(0f, 1f),
-        blue = (blue - factor).coerceIn(0f, 1f),
-        alpha = alpha
-    )
+fun Color.darker(factor: Float = 0.5f): Color {
+    // Oscura i colori verso nero, mantenendo saturazione alta
+    val r = (this.red * (1 - factor)).coerceIn(0f, 1f)
+    val g = (this.green * (1 - factor)).coerceIn(0f, 1f)
+    val b = (this.blue * (1 - factor)).coerceIn(0f, 1f)
+
+    // Piccolo boost di contrasto per mantenere accesi i colori scuri
+    val max = maxOf(r, g, b)
+    val min = minOf(r, g, b)
+    val diff = max - min
+    val saturationBoost = 0.05f
+
+    val newR = (r + (r - min) / diff * saturationBoost).coerceIn(0f, 1f)
+    val newG = (g + (g - min) / diff * saturationBoost).coerceIn(0f, 1f)
+    val newB = (b + (b - min) / diff * saturationBoost).coerceIn(0f, 1f)
+
+    return Color(newR, newG, newB, this.alpha)
 }

@@ -180,13 +180,13 @@ fun ColorGrid(viewModel: SimonViewModel){
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)}, "left",12,R.raw.f1)
-            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)},"left",12,R.raw.f2)
+            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)}, "left",14,R.raw.f1)
+            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)},"left",14,R.raw.f2)
         }
 
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)},"left",12,R.raw.bho)
-            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)},"left",12,R.raw.miao)
+            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)},"left",14,R.raw.bho)
+            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)},"left",14,R.raw.miao)
 
         }
         Spacer(modifier = Modifier.height(25.dp))
@@ -199,7 +199,7 @@ fun ColorGrid(viewModel: SimonViewModel){
             when {
                 state.state.name == "GameOver" -> playSound(R.raw.lose, context)
                 state.state.name == "ShowingSequence" && state.score != 0 ->{
-                    delay(500L)  // ritardo di 1 secondo (1000 ms)
+                    delay(350L)  // ritardo di 1 secondo (1000 ms)
                     playSound(R.raw.win, context)
                 }
             }
@@ -300,10 +300,16 @@ fun GameTopper(navController: NavController) {
 @Composable
 fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int){
     val color = when(move){
+        /*
         SimonMove.RED -> if(highlighted) Color.Red else Color(0xff990000)
         SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff009900)
-        SimonMove.BLUE -> if(highlighted) Color(0xff3333ff) else Color(0xff000099)
-        SimonMove.YELLOW -> if(highlighted) Color(0xffffff99) else Color(0xffb3b300)
+        SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff000099)
+        SimonMove.YELLOW -> if(highlighted) Color(0xffb3b300) else Color(0xffFFBF00)
+         */
+        SimonMove.RED -> if(highlighted) Color.Red else Color(0xffE52521)
+        SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff43B047)
+        SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff049CD8)
+        SimonMove.YELLOW -> if(highlighted) Color.Yellow else Color(0xffFBD000)
     }
 
     if(height == 0) {
