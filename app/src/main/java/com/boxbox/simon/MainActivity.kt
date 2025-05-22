@@ -346,7 +346,7 @@ fun GameTopper(navController: NavController) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxHeight(0.20f).padding(top = 24.dp)
+            modifier = Modifier.fillMaxHeight(0.20f).padding(start= 35.dp)
         ){
 
             Image(
@@ -407,10 +407,10 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
         SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff000099)
         SimonMove.YELLOW -> if(highlighted) Color(0xffb3b300) else Color(0xffFFBF00)
          */
-        SimonMove.RED -> if(highlighted) Color.Red else Color(0xffE52521)
-        SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff43B047)
-        SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff049CD8)
-        SimonMove.YELLOW -> if(highlighted) Color.Yellow else Color(0xffFBD000)
+        SimonMove.RED -> if(highlighted) Color.Red else Color(0xffe71e07)
+        SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff42b033)
+        SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff019dda)
+        SimonMove.YELLOW -> if(highlighted) Color.Yellow else Color(0xfffcd000)
     }
 
     if(height == 0) {
