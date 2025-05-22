@@ -2,7 +2,7 @@ package com.boxbox.simon
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
+import kotlinx.coroutines.delay
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -198,7 +198,10 @@ fun ColorGrid(viewModel: SimonViewModel){
         LaunchedEffect(state) {
             when {
                 state.state.name == "GameOver" -> playSound(R.raw.lose, context)
-                state.state.name == "ShowingSequence" && state.score != 0 -> playSound(R.raw.win, context)
+                state.state.name == "ShowingSequence" && state.score != 0 ->{
+                    delay(500L)  // ritardo di 1 secondo (1000 ms)
+                    playSound(R.raw.win, context)
+                }
             }
         }
     }
