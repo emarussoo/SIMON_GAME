@@ -2,6 +2,7 @@ package com.boxbox.simon
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import kotlinx.coroutines.delay
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,6 +36,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -79,7 +81,15 @@ import com.boxbox.simon.navigator.Nav
 import com.boxbox.simon.ui.theme.SIMONTheme
 import com.boxbox.simon.viewmodel.SimonViewModel
 import com.boxbox.simon.navigator.NavigatorScreen
+import com.boxbox.simon.ui.theme.ThemeManager
+import com.boxbox.simon.ui.theme.theme
+import com.boxbox.simon.ui.theme.theme2
 import com.boxbox.simon.utils.ThreeDButton
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import com.boxbox.simon.utils.playSound
+
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("ViewModelConstructorInComposable")
@@ -89,8 +99,8 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             SIMONTheme {
+                ThemeManager.switchTo2()
                 screen()
-
                 }
             }
         }
@@ -148,7 +158,8 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Text(text = buttonText)
             }
         }
-            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+            val context = LocalContext.current
+            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame() }
     }
     }
 
@@ -194,13 +205,13 @@ fun ColorGrid(viewModel: SimonViewModel){
     val state by viewModel.gameState.collectAsState()
     Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "left",12)
-            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"left",12)
+            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)}, "left",12,R.raw.f1)
+            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)},"left",12,R.raw.f2)
         }
 
         Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"left",12)
-            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"left",12)
+            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)},"left",12,R.raw.bho)
+            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)},"left",12,R.raw.miao)
 
         }
         Spacer(modifier = Modifier.height(25.dp))
@@ -208,6 +219,16 @@ fun ColorGrid(viewModel: SimonViewModel){
             fontSize = 30.sp, // Cambia la dimensione del testo
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center)
+
+        LaunchedEffect(state) {
+            when {
+                state.state.name == "GameOver" -> playSound(R.raw.lose, context)
+                state.state.name == "ShowingSequence" && state.score != 0 ->{
+                    delay(500L)  // ritardo di 1 secondo (1000 ms)
+                    playSound(R.raw.win, context)
+                }
+            }
+        }
     }
 }
 
@@ -218,6 +239,7 @@ fun GameFooter(navController: NavController){
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.16f)
+            .border(1.dp, Color.Red)
            ,
         horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
         verticalAlignment = Alignment.CenterVertically
@@ -225,26 +247,47 @@ fun GameFooter(navController: NavController){
 
             Button(
                 onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
-                modifier = Modifier.size(100.dp),
-                shape = RoundedCornerShape(8.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.border(1.dp, Color.Blue)
             ) {
-                Text(text = "leaderboard")
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(80.dp),
+                    contentScale = ContentScale.FillWidth
+                    )
             }
 
             Button(
                 onClick = { navController.navigate(NavigatorScreen.Game.route) },
-                modifier = Modifier.size(100.dp),
-                shape = RoundedCornerShape(8.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.border(1.dp, Color.Blue)
             ) {
-                Text(text = "game")
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(80.dp),
+                    contentScale = ContentScale.FillWidth
+                )
             }
 
             Button(
                 onClick = { navController.navigate(NavigatorScreen.Settings.route) },
-                modifier = Modifier.size(100.dp),
-                shape = RoundedCornerShape(8.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.border(1.dp, Color.Blue)
             ) {
-                Text(text = "Settings")
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(80.dp),
+                    contentScale = ContentScale.FillWidth
+                )
             }
     }
 }
@@ -263,7 +306,7 @@ fun GameTopper(navController: NavController) {
         ){
 
             Image(
-                painter = painterResource(id = R.drawable.title),
+                painter = painterResource(id = ThemeManager.currentTheme.title),
                 contentDescription = "",
                 modifier = Modifier
                     .weight(0.25f)
@@ -272,7 +315,7 @@ fun GameTopper(navController: NavController) {
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(18.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier // qui mettiamo la modifica per il padding o larghezza
                     .wrapContentWidth() // la Column prende solo lo spazio necessario
@@ -282,18 +325,30 @@ fun GameTopper(navController: NavController) {
                     onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) },
                     modifier = Modifier.size(37.dp),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
-                    Text(text = "?")
+                    Image(
+                        painter = painterResource(id = ThemeManager.currentTheme.help),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(40.dp),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
 
                 Button(
                     onClick = { activity?.finish() },
                     modifier = Modifier.size(37.dp),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
-                    Text(text = "X")
+                    Image(
+                        painter = painterResource(id = ThemeManager.currentTheme.quit),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(40.dp),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
             }
         }
@@ -302,7 +357,7 @@ fun GameTopper(navController: NavController) {
 
 //se metti height=0 metti i bottoni di base di emanuele
 @Composable
-fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int){
+fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int){
     val color = when(move){
         SimonMove.RED -> if(highlighted) Color.Red else Color(0xff990000)
         SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff009900)
@@ -311,18 +366,19 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
 
     }
 
-    if(height == 0)
+    if(height == 0) {
         Box(
             modifier = Modifier
                 .size(175.dp)
                 .padding(8.dp)
                 .background(color, shape = RoundedCornerShape(16.dp))
-                .clickable{ onClick()}
-        ){
+                .clickable { onClick()}
+        ) {
         }
-
-    else
-    ThreeDButton(color,onClick,perspective,height)
+    }
+    else{
+    ThreeDButton(color,onClick,perspective,height,sound)
+    }
 
 }
 
