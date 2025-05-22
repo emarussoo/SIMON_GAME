@@ -9,9 +9,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,12 +28,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,17 +46,31 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,8 +89,10 @@ import com.boxbox.simon.ui.theme.theme2
 import com.boxbox.simon.utils.ThreeDButton
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import com.boxbox.simon.utils.playSound
+import org.intellij.lang.annotations.JdkConstants
 
 
 class MainActivity : ComponentActivity() {
@@ -84,6 +112,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
+    val context = LocalContext.current
     val state by viewModel.gameState.collectAsState()
     val timerKey by viewModel.timerKey.collectAsState()
 
@@ -93,8 +122,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
             .padding(top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-
-        GameHeader(viewModel, state, timerKey, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame()})
+        GameHeader(viewModel, state, timerKey, onStartClick = {viewModel.StartGame()}, onEndClick = {viewModel.EndGame(context)})
         Spacer(modifier = Modifier.height(25.dp))
 
         ColorGrid(viewModel)
@@ -104,9 +132,9 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
 
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
-    Column(modifier = Modifier.padding(start = 20.dp).fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            )
+    val context = LocalContext.current
+    Column(modifier = Modifier.padding(start = 35.dp, end = 35.dp).fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically)
         {
             Text(
                 text = "SCORE: ",
@@ -133,8 +161,11 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Text(text = buttonText)
             }
         }
+
+        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
             val context = LocalContext.current
-            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame() }
+            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+        }
     }
     }
 
@@ -143,53 +174,91 @@ fun TimerProgressBar(
     key: Int, //cambiala e resetta
     durationMillis: Int = 2500,
     running: Boolean,
-    onTimeout: () -> Unit) {
+    onTimeout: () -> Unit
+) {
     val progress = remember(key) { Animatable(1f) }
+    val animatedProgress = progress.value
+    val segments = 80
 
-    if(running) {
-        LaunchedEffect(key) {
-
+    LaunchedEffect(key, running) {
+        if (running) {
             progress.snapTo(1f)
             progress.animateTo(
                 targetValue = 0f,
                 animationSpec = tween(durationMillis)
             )
             onTimeout()
-
+        } else {
+            // Quando non è in esecuzione, tieni la barra piena
+            progress.snapTo(1f)
         }
     }
 
-    LinearProgressIndicator(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Transparent)
+    ) {
+        Box(
+            modifier = Modifier
+                .height(20.dp)
+                .fillMaxWidth(animatedProgress)
+                .align(Alignment.CenterStart)
+                .background(Color.Black)
+        )
+
+        /*Canvas(
+            modifier = Modifier
+                .matchParentSize()
+        ) {
+            val width = size.width
+            val height = size.height
+
+            val spacing = width / (segments + 1)
+
+            for (i in 1..segments) {
+                val x = spacing * i
+                drawLine(
+                    color = Color.White,
+                    start = Offset(x, 0f),
+                    end = Offset(x, height),
+                    strokeWidth = 2.dp.toPx()
+                )
+            }
+        }*/
+    }
+}
+
+    /*LinearProgressIndicator(
         progress = progress.value,
         modifier = Modifier
             .fillMaxWidth()
             .height(25.dp)
-            .padding(start=10.dp,end=10.dp).clip(RoundedCornerShape(0.dp)),
-
+            ,
         color = Color.Black,
         trackColor = Color.Transparent,
-    )
-}
 
+    )*/
 
 
 @Composable
 fun ColorGrid(viewModel: SimonViewModel){
+    val context = LocalContext.current
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
-    val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
-        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED)}, "left",14,R.raw.f1)
-            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN)},"left",14,R.raw.f2)
+    val offsetInPx = with(LocalDensity.current) { 10.dp.toPx() }
+
+    Column(modifier = Modifier.fillMaxHeight().padding((offsetInPx.dp)/2, 0.dp, 0.dp, 0.dp), verticalArrangement = Arrangement.SpaceEvenly,horizontalAlignment = Alignment.CenterHorizontally, ){
+        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)){
+            SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1)
+            SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2)
         }
 
-        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
-            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE)},"left",14,R.raw.bho)
-            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW)},"left",14,R.raw.miao)
+        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)){
+            SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho)
+            SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao)
 
         }
-        Spacer(modifier = Modifier.height(25.dp))
         Text(text = state.state.name,
             fontSize = 30.sp, // Cambia la dimensione del testo
             modifier = Modifier.fillMaxWidth(),
@@ -199,7 +268,7 @@ fun ColorGrid(viewModel: SimonViewModel){
             when {
                 state.state.name == "GameOver" -> playSound(R.raw.lose, context)
                 state.state.name == "ShowingSequence" && state.score != 0 ->{
-                    delay(350L)  // ritardo di 1 secondo (1000 ms)
+                    delay(500L)  // ritardo di 1 secondo (1000 ms)
                     playSound(R.raw.win, context)
                 }
             }
@@ -214,6 +283,7 @@ fun GameFooter(navController: NavController){
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.16f)
+            .border(1.dp, Color.Red)
            ,
         horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
         verticalAlignment = Alignment.CenterVertically
@@ -221,26 +291,47 @@ fun GameFooter(navController: NavController){
 
             Button(
                 onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
-                modifier = Modifier.size(100.dp),
-                shape = RoundedCornerShape(8.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.border(1.dp, Color.Blue)
             ) {
-                Text(text = "leaderboard")
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(80.dp),
+                    contentScale = ContentScale.FillWidth
+                    )
             }
 
             Button(
                 onClick = { navController.navigate(NavigatorScreen.Game.route) },
-                modifier = Modifier.size(100.dp),
-                shape = RoundedCornerShape(8.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.border(1.dp, Color.Blue)
             ) {
-                Text(text = "game")
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(80.dp),
+                    contentScale = ContentScale.FillWidth
+                )
             }
 
             Button(
                 onClick = { navController.navigate(NavigatorScreen.Settings.route) },
-                modifier = Modifier.size(100.dp),
-                shape = RoundedCornerShape(8.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.border(1.dp, Color.Blue)
             ) {
-                Text(text = "Settings")
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(80.dp),
+                    contentScale = ContentScale.FillWidth
+                )
             }
     }
 }
@@ -259,7 +350,7 @@ fun GameTopper(navController: NavController) {
         ){
 
             Image(
-                painter = painterResource(id = ThemeManager.currentTheme.title ),
+                painter = painterResource(id = ThemeManager.currentTheme.title),
                 contentDescription = "",
                 modifier = Modifier
                     .weight(0.25f)
@@ -268,7 +359,7 @@ fun GameTopper(navController: NavController) {
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(18.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier // qui mettiamo la modifica per il padding o larghezza
                     .wrapContentWidth() // la Column prende solo lo spazio necessario
@@ -276,20 +367,30 @@ fun GameTopper(navController: NavController) {
             ) {
                 Button(
                     onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) },
-                    modifier = Modifier.size(37.dp),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
-                    Text(text = "?")
+                    Image(
+                        painter = painterResource(id = ThemeManager.currentTheme.help),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(40.dp),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
 
                 Button(
                     onClick = { activity?.finish() },
-                    modifier = Modifier.size(37.dp),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
-                    Text(text = "X")
+                    Image(
+                        painter = painterResource(id = ThemeManager.currentTheme.quit),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(40.dp),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
             }
         }

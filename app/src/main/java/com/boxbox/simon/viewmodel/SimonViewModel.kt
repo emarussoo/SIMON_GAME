@@ -1,8 +1,13 @@
 package com.boxbox.simon.viewmodel
 
+import android.content.Context
+import android.icu.text.SimpleDateFormat
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boxbox.simon.model.DB.DBAccess
 import com.boxbox.simon.model.GamePhase
+import com.boxbox.simon.model.DB.ScoreEntity
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
-
+import java.util.Date
+import java.util.Locale
 
 class SimonViewModel : ViewModel(){
     private val _highlightedMove = MutableStateFlow<SimonMove?>(null)
@@ -39,7 +45,21 @@ class SimonViewModel : ViewModel(){
         showSequence()
     }
 
-    fun EndGame(){
+    fun EndGame(context: Context){
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentDateTime = formatter.format(Date())
+        val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime)
+
+        viewModelScope.launch {
+            val db = DBAccess.getDB(context)
+            db.scoreDAO().insertScore(newScore)
+
+            val savedScores = db.scoreDAO().getTop10Scores()
+            savedScores.forEach{
+                Log.d("ScoreCheck", "Punteggio: ${it.score} | Data: ${it.gameDate}")
+            }
+        }
+
         _gameState.value = SimonState(
             state = GamePhase.GameOver
         )
@@ -65,7 +85,7 @@ class SimonViewModel : ViewModel(){
         }
     }
 
-    fun onUserInput(move: SimonMove){
+    fun onUserInput(move: SimonMove, context: Context){
         val current = _gameState.value
         if(current.state != GamePhase.WaitingInput) return
 
@@ -86,7 +106,7 @@ class SimonViewModel : ViewModel(){
                 _gameState.value = current.copy(userIndex = nextIndex)
             }
         }else{
-            _gameState.value = current.copy(state = GamePhase.GameOver)
+            EndGame(context)
         }
     }
 
