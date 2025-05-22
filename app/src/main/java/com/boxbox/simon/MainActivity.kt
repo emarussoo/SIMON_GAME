@@ -304,7 +304,6 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
         SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff009900)
         SimonMove.BLUE -> if(highlighted) Color(0xff3333ff) else Color(0xff000099)
         SimonMove.YELLOW -> if(highlighted) Color(0xffffff99) else Color(0xffb3b300)
-
     }
 
     if(height == 0) {
