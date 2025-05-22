@@ -43,6 +43,9 @@ class SimonViewModel : ViewModel(){
         _gameState.value = SimonState(
             state = GamePhase.GameOver
         )
+
+        //val score = gameState.value.score
+
     }
 
     fun showSequence(){
@@ -86,7 +89,7 @@ class SimonViewModel : ViewModel(){
                 _gameState.value = current.copy(userIndex = nextIndex)
             }
         }else{
-            _gameState.value = current.copy(state = GamePhase.GameOver)
+            EndGame()
         }
     }
 
