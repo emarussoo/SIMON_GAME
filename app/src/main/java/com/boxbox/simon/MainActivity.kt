@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -90,12 +92,14 @@ import com.boxbox.simon.ui.theme.theme2
 import com.boxbox.simon.utils.ThreeDButton
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Alignment
 import androidx.room.util.TableInfo
+import org.intellij.lang.annotations.JdkConstants
 
 
 class MainActivity : ComponentActivity() {
@@ -136,9 +140,8 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
     val context = LocalContext.current
-    Column(modifier = Modifier.padding(start = 20.dp).fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            )
+    Column(modifier = Modifier.padding(start = 35.dp, end = 35.dp).fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically)
         {
             Text(
                 text = "SCORE: ",
@@ -165,8 +168,11 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Text(text = buttonText)
             }
         }
+
+        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
             val context = LocalContext.current
             TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+        }
     }
     }
 
@@ -178,31 +184,68 @@ fun TimerProgressBar(
     onTimeout: () -> Unit
 ) {
     val progress = remember(key) { Animatable(1f) }
+    val animatedProgress = progress.value
+    val segments = 80
 
-    if(running) {
-        LaunchedEffect(key) {
-
+    LaunchedEffect(key, running) {
+        if (running) {
             progress.snapTo(1f)
             progress.animateTo(
                 targetValue = 0f,
                 animationSpec = tween(durationMillis)
             )
             onTimeout()
-
+        } else {
+            // Quando non è in esecuzione, tieni la barra piena
+            progress.snapTo(1f)
         }
     }
 
-    LinearProgressIndicator(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Transparent)
+    ) {
+        Box(
+            modifier = Modifier
+                .height(20.dp)
+                .fillMaxWidth(animatedProgress)
+                .align(Alignment.CenterStart)
+                .background(Color.Black)
+        )
+
+        /*Canvas(
+            modifier = Modifier
+                .matchParentSize()
+        ) {
+            val width = size.width
+            val height = size.height
+
+            val spacing = width / (segments + 1)
+
+            for (i in 1..segments) {
+                val x = spacing * i
+                drawLine(
+                    color = Color.White,
+                    start = Offset(x, 0f),
+                    end = Offset(x, height),
+                    strokeWidth = 2.dp.toPx()
+                )
+            }
+        }*/
+    }
+}
+
+    /*LinearProgressIndicator(
         progress = progress.value,
         modifier = Modifier
             .fillMaxWidth()
             .height(25.dp)
-            .padding(start=10.dp,end=10.dp).clip(RoundedCornerShape(0.dp)),
-
+            ,
         color = Color.Black,
         trackColor = Color.Transparent,
-    )
-}
+
+    )*/
 
 
 @Composable
@@ -210,18 +253,19 @@ fun ColorGrid(viewModel: SimonViewModel){
     val context = LocalContext.current
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
-    Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
-        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
+    val offsetInPx = with(LocalDensity.current) { 10.dp.toPx() }
+
+    Column(modifier = Modifier.fillMaxHeight().padding((offsetInPx.dp)/2, 0.dp, 0.dp, 0.dp), verticalArrangement = Arrangement.SpaceEvenly,horizontalAlignment = Alignment.CenterHorizontally, ){
+        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)){
             SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1)
             SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2)
         }
 
-        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)){
+        Row(modifier = Modifier.fillMaxWidth(),Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)){
             SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho)
             SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao)
 
         }
-        Spacer(modifier = Modifier.height(25.dp))
         Text(text = state.state.name,
             fontSize = 30.sp, // Cambia la dimensione del testo
             modifier = Modifier.fillMaxWidth(),
@@ -364,11 +408,16 @@ fun GameTopper(navController: NavController) {
 @Composable
 fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int){
     val color = when(move){
+        /*
         SimonMove.RED -> if(highlighted) Color.Red else Color(0xff990000)
         SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff009900)
-        SimonMove.BLUE -> if(highlighted) Color(0xff3333ff) else Color(0xff000099)
-        SimonMove.YELLOW -> if(highlighted) Color(0xffffff99) else Color(0xffb3b300)
-
+        SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff000099)
+        SimonMove.YELLOW -> if(highlighted) Color(0xffb3b300) else Color(0xffFFBF00)
+         */
+        SimonMove.RED -> if(highlighted) Color.Red else Color(0xffE52521)
+        SimonMove.GREEN -> if(highlighted) Color.Green else Color(0xff43B047)
+        SimonMove.BLUE -> if(highlighted) Color.Blue else Color(0xff049CD8)
+        SimonMove.YELLOW -> if(highlighted) Color.Yellow else Color(0xffFBD000)
     }
 
     if(height == 0) {
