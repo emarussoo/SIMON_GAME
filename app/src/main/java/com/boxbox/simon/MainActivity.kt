@@ -9,8 +9,11 @@ import android.text.Layout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -135,6 +138,11 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
         ColorGrid(viewModel)
         Spacer(modifier = Modifier.height(35.dp))
     }
+}
+
+@Composable
+fun GameStart(viewModel: SimonViewModel){
+
 }
 
 @Composable
@@ -436,62 +444,118 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
 
 }
 
-
 @Composable
-fun leaderboardInterface(){
+fun leaderboardInterface() {
     val context = LocalContext.current
     val viewModel: LeadBoardViewModel = viewModel()
     val leaderboard by viewModel.leaderboard.collectAsState()
+
+    var isVisible by remember { mutableStateOf(false) }
+    var showEmptyMessage by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadLeaderboard(context)
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)){
-        //Intestazione tabella
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Text("Score", fontWeight = FontWeight.Bold)
-            }
-            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Text("Data", fontWeight = FontWeight.Bold)
-            }
-            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Text("Ora", fontWeight = FontWeight.Bold)
+    LaunchedEffect(leaderboard) {
+        isVisible = leaderboard.isNotEmpty()
+        showEmptyMessage = leaderboard.isEmpty()
+    }
+
+    Column( //Contenitore per non far sminchiare tutto
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
+        AnimatedVisibility(
+            visible = showEmptyMessage,
+            enter = fadeIn(tween(500)) + slideInVertically(
+                animationSpec = tween(500),
+                initialOffsetY = { fullHeight -> fullHeight / 4 }
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "Nessun punteggio disponibile",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
 
-        LazyColumn {
-            items(leaderboard){score ->
-                val date = score.gameDate.split(" ")
-                val day = date.getOrNull(0) ?: ""
-                val time = date.getOrNull(1) ?: ""
-
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(tween(500)) + slideInVertically(
+                animationSpec = tween(500),
+                initialOffsetY = { fullHeight -> fullHeight / 4 }
+            )
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                ){
+                        .padding(horizontal = 8.dp)
+                        .background(Color.White)
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+                        .padding(vertical = 12.dp, horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text(score.score.toString())
+                        Text("Score", fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text(day)
+                        Text("Data", fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text(time)
+                        Text("Ora", fontWeight = FontWeight.Bold)
                     }
                 }
-                Divider()
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                LazyColumn {
+                    items(leaderboard) { score ->
+                        val date = score.gameDate.split(" ")
+                        val day = date.getOrNull(0) ?: ""
+                        val time = date.getOrNull(1) ?: ""
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Text(score.score.toString())
+                            }
+                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Text(day)
+                            }
+                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Text(time)
+                            }
+                        }
+                        Divider()
+                    }
+                }
             }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = { viewModel.resetLeaderboard(context) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Text("Clear Leaderboard")
         }
     }
 }
