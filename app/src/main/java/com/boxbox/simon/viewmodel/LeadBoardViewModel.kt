@@ -21,4 +21,12 @@ class LeadBoardViewModel: ViewModel(){
             _leaderboard.value = dao.getTop10Scores()
         }
     }
+
+    fun resetLeaderboard(context: Context){
+        viewModelScope.launch {
+            val dao = DBAccess.getDB(context).scoreDAO()
+            dao.deleteAllScores()
+            _leaderboard.value = emptyList()
+        }
+    }
 }
