@@ -32,6 +32,15 @@ import androidx.compose.ui.unit.dp
 import android.media.MediaPlayer
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.platform.LocalContext
+import android.graphics.Paint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material3.Text
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 
 
 
@@ -198,8 +207,8 @@ fun getPerspective(type: String, baseColor: Color): Perspective {
             bottomEdgeColor = baseColor.darker()
         )
         else -> Perspective.Left( // fallback di default
-            bottomEdgeColor = Color.Black,
-            rightEdgeColor = Color.Black
+            bottomEdgeColor = baseColor.lighter(),
+            rightEdgeColor = baseColor.darker()
         )
     }
 }
@@ -213,14 +222,15 @@ prospettivaScelta = può essere "left","right","top"
 height = altezza del tasto
 */
 @Composable
-fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int) {
+fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int,highlighted: Boolean) {
     //altezza del tasto
     val edgeOffset = height.dp
     // Colori per sfumatura parte sopra del tasto:
     val topColor = baseColor.copy(alpha = 0.8f).lighter()
     val bottomColor = baseColor.copy(alpha = 0.8f).darker()
-    //prospettiva scelta dall'utente
-    val prospettiva = getPerspective(prospettivaScelta,baseColor)
+    val prospettiva = getPerspective(prospettivaScelta, baseColor.darker())
+
+
 
     ThreeDimensionalLayout(
         onClick,
@@ -232,7 +242,7 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
         Box(
             modifier = Modifier
                 .size(150.dp)
-                .border(BorderStroke(1.dp, Color.DarkGray))
+                .border(BorderStroke(1.dp, Color.Black))
                 .background(
                     //qui ci va il colore della parte sopra del tasto
                     //brush = linearGradient(colors = listOf(topColor,bottomColor ))
@@ -241,10 +251,54 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
                 ,
             contentAlignment = Alignment.Center
         ) {
+            if(highlighted) GlowingCard(modifier = Modifier.size(150.dp), glowingColor = baseColor, containerColor = Color.White, glowingRadius = 140.dp){}
 
+
+            }
         }
     }
+
+
+@Composable
+fun GlowingCard(
+    glowingColor: Color,
+    modifier: Modifier = Modifier,
+    containerColor: Color = Color.White,
+    cornersRadius: Dp = 0.dp,
+    glowingRadius: Dp = 20.dp,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = modifier
+            .drawBehind {
+                val canvasSize = size
+                // Gradient radiale centrato con raggio uguale a glowingRadius per simulare luce interna
+                val gradient = Brush.radialGradient(
+                    colors = listOf(
+                        glowingColor.copy(alpha = 0.6f),
+                        containerColor.copy(alpha = 0f)
+                    ),
+                    center = Offset(canvasSize.width / 2, canvasSize.height / 2),
+                    radius = glowingRadius.toPx()
+                )
+                // Disegna prima il rettangolo di sfondo normale
+                drawRoundRect(
+                    color = containerColor,
+                    size = canvasSize,
+                    cornerRadius = CornerRadius(cornersRadius.toPx())
+                )
+                // Poi disegna sopra il gradiente radiale (bagliore interno)
+                drawRoundRect(
+                    brush = gradient,
+                    size = canvasSize,
+                    cornerRadius = CornerRadius(cornersRadius.toPx())
+                )
+            }
+    ) {
+        content()
+    }
 }
+
 
 fun Color.lighter(factor: Float = 0.3f): Color {
     // Schiarisce portando il colore verso il bianco

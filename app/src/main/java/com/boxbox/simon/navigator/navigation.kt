@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.boxbox.simon.GameScreen
 import com.boxbox.simon.howToPlayInterface
 import com.boxbox.simon.leaderboardInterface
+import com.boxbox.simon.preGameInterface
 import com.boxbox.simon.settingInterface
 import com.boxbox.simon.viewmodel.SimonViewModel
 
@@ -20,7 +21,7 @@ fun Nav(
 ){
     NavHost(
         navController = navController,
-        startDestination = NavigatorScreen.Game.route,
+        startDestination = NavigatorScreen.PreGame.route,
         modifier = modifier
     ){
         composable(NavigatorScreen.Game.route){
@@ -38,6 +39,12 @@ fun Nav(
         composable(NavigatorScreen.HowToPlay.route){
             howToPlayInterface()
         }
+
+        composable(NavigatorScreen.PreGame.route){
+            preGameInterface(navController)
+        }
+
+
 
     }
 
