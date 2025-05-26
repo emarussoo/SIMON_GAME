@@ -15,9 +15,9 @@ enum class SimonMove{
     RED, GREEN, BLUE, YELLOW
 }
 
-enum class Difficulty (val diffName: String, val sequenceSpeed: Int, val timeDuration: Int){
-    EASY("easy", 600, 3000),
-    MEDIUM("medium", 400, 2000),
-    HARD("hard", 200, 1500),
-    EXTREME("extreme", 100, 1000)
+enum class Difficulty (val index: Int, val diffName: String, val sequenceSpeed: Int, val timeDuration: Int){
+    EASY(0, "easy", 600, 3000),
+    MEDIUM(1, "medium", 400, 2000),
+    HARD(2, "hard", 200, 1500),
+    EXTREME(3, "extreme", 100, 1000)
 }

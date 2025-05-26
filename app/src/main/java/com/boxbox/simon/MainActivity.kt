@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
 
             SIMONTheme {
                 screen()
-                ThemeManager.switchTo1()
+                ThemeManager.switchTo2()
                 }
 
             }
@@ -270,10 +270,22 @@ fun ColorGrid(viewModel: SimonViewModel){
             SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao)
 
         }
-        Text(text = state.state.name,
-            fontSize = 30.sp, // Cambia la dimensione del testo
+
+        /*Text(text = state.state.name,
+            fontSize = 10.sp, // Cambia la dimensione del testo
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center)
+            textAlign = TextAlign.Center)*/
+
+        TextButton(
+            onClick = ({
+                if(state.state == GamePhase.Idle || state.state == GamePhase.GameOver){
+                    viewModel.setDifficulty(Difficulty.values().get(((state.difficulty.index)+1)%4))
+                }else{
+                }
+            })
+        ){
+            Text(text = state.difficulty.diffName, fontSize = 30.sp)
+        }
 
         LaunchedEffect(state) {
             when {
@@ -500,7 +512,7 @@ fun leaderboardInterface() {
                                 Text(day)
                             }
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                Text(time)
+                                Text(time.subSequence(0,5).toString())
                             }
 
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
