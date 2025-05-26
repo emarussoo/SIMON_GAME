@@ -6,9 +6,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.room.util.copy
 import com.boxbox.simon.GameScreen
 import com.boxbox.simon.howToPlayInterface
 import com.boxbox.simon.leaderboardInterface
+import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.preGameInterface
 import com.boxbox.simon.settingInterface
 import com.boxbox.simon.viewmodel.SimonViewModel
@@ -29,14 +31,17 @@ fun Nav(
         }
 
         composable(NavigatorScreen.Leaderboard.route){
+            viewModel.setIdle()
             leaderboardInterface()
         }
 
         composable(NavigatorScreen.Settings.route){
+            viewModel.setIdle()
             settingInterface()
         }
 
         composable(NavigatorScreen.HowToPlay.route){
+            viewModel.setIdle()
             howToPlayInterface()
         }
 

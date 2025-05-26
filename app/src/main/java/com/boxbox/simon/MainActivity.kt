@@ -79,7 +79,10 @@ import androidx.compose.material3.*
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.graphics.Color as AndroidColor
 

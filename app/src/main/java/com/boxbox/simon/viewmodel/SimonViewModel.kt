@@ -114,4 +114,8 @@ class SimonViewModel : ViewModel(){
     fun onSequenceShown(){
         _gameState.value = _gameState.value.copy(state = GamePhase.WaitingInput)
     }
+
+    fun setIdle(){
+        _gameState.value = _gameState.value.copy(state = GamePhase.Idle)
+    }
 }
