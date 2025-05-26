@@ -51,6 +51,8 @@ class SimonViewModel() : ViewModel(){
     fun EndGame(context: Context){
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
+
+
         val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = gameState.value.difficulty.diffName.toString())
 
         viewModelScope.launch {
@@ -59,14 +61,16 @@ class SimonViewModel() : ViewModel(){
 
             val savedScores = db.scoreDAO().getTop10Scores()
             savedScores.forEach{
-                Log.d("ScoreCheck", "Punteggio: ${it.score} | Data: ${it.gameDate} | Diff: $")
+                Log.d("ScoreCheck", "Punteggio: ${it.score} | Data: ${it.gameDate} | Diff: ")
             }
         }
+
 
         _gameState.value = SimonState(
             state = GamePhase.GameOver,
             difficulty = this.gameState.value.difficulty
         )
+
     }
 
     fun showSequence(){

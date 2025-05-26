@@ -12,7 +12,9 @@ object DBAccess {
                 context.applicationContext,
                 SimonDB::class.java,
                 "Simon_DB"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
         return instance!!
     }

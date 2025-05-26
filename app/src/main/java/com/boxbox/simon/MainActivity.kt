@@ -502,6 +502,7 @@ fun leaderboardInterface() {
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                 Text(time)
                             }
+
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                 Text(diff)
                             }
