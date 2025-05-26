@@ -79,10 +79,13 @@ import androidx.compose.material3.*
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.boxbox.simon.model.Difficulty
 import android.graphics.Color as AndroidColor
@@ -528,9 +531,68 @@ fun settingInterface(){
     Text("SETTINGS INTERFACE")
 }
 
+
 @Composable
 fun howToPlayInterface(){
-    Text("HOW TO PLAY")
+
+    val primaryColor = Color(0xFF000000)
+    val textColor = Color(0xFF212121)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp, vertical = 15.dp)
+            .background(Color.White),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "How to Play?",
+            fontSize = 60.sp,
+            fontWeight = FontWeight.ExtraBold,
+            textAlign = TextAlign.Center,
+            color = primaryColor,
+            lineHeight = 68.sp
+        )
+
+        val steps = listOf(
+            "The game will show a sequence of colors and play sounds.",
+            "Tap the buttons in the same order as shown.",
+            "A new color is added to the sequence each turn.",
+            "Game over! Try again and beat your high score."
+        )
+
+        val stepsTitle = listOf(
+            "1. Watch and Listen:",
+            "2. Repeat the Sequence:",
+            "3. Each Round Gets Harder:",
+            "4. Make a Mistake?"
+        )
+
+        stepsTitle.zip(steps).forEach { (title, desc) ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = primaryColor
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = desc,
+                    fontSize = 20.sp,
+                    lineHeight = 26.sp,
+                    textAlign = TextAlign.Center,
+                    color = textColor
+                )
+            }
+        }
+    }
+
 }
 
 @SuppressLint("SuspiciousIndentation")
