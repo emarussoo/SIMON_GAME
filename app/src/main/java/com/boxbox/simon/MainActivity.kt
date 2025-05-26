@@ -84,6 +84,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.boxbox.simon.model.Difficulty
 import android.graphics.Color as AndroidColor
 
 
@@ -97,7 +98,7 @@ class MainActivity : ComponentActivity() {
 
             SIMONTheme {
                 screen()
-                ThemeManager.switchTo2()
+                ThemeManager.switchTo1()
                 }
 
             }
@@ -170,7 +171,8 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 
         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
             val context = LocalContext.current
-            TimerProgressBar(timerKey, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+            val timerDuration = state.difficulty.timeDuration
+            TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
         }
     }
     }
@@ -178,7 +180,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 @Composable
 fun TimerProgressBar(
     key: Int, //cambiala e resetta
-    durationMillis: Int = 2500,
+    durationMillis: Int, // velocità
     running: Boolean,
     onTimeout: () -> Unit
 ) {
@@ -468,6 +470,9 @@ fun leaderboardInterface() {
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         Text("Ora", fontWeight = FontWeight.Bold)
                     }
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        Text("Diff", fontWeight = FontWeight.Bold)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -477,6 +482,7 @@ fun leaderboardInterface() {
                         val date = score.gameDate.split(" ")
                         val day = date.getOrNull(0) ?: ""
                         val time = date.getOrNull(1) ?: ""
+                        val diff = score.difficulty
 
                         Row(
                             modifier = Modifier
@@ -492,6 +498,9 @@ fun leaderboardInterface() {
                             }
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                 Text(time)
+                            }
+                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Text(diff)
                             }
                         }
                         Divider()
@@ -530,6 +539,7 @@ fun screen() {
 
     val navController = rememberNavController()
     val viewModel: SimonViewModel = viewModel()
+    viewModel.setDifficulty(Difficulty.EXTREME)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 

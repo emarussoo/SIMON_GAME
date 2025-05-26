@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.boxbox.simon.model.DB.DBAccess
 import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.model.DB.ScoreEntity
+import com.boxbox.simon.model.Difficulty
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import kotlinx.coroutines.delay
 import java.util.Date
 import java.util.Locale
 
-class SimonViewModel : ViewModel(){
+class SimonViewModel() : ViewModel(){
+
     private val _highlightedMove = MutableStateFlow<SimonMove?>(null)
     val highlightedMove: StateFlow<SimonMove?> = _highlightedMove.asStateFlow()
 
@@ -39,7 +41,8 @@ class SimonViewModel : ViewModel(){
         _gameState.value = SimonState(
             sequence = listOf(firstMove),
             score = 0,
-            state = GamePhase.ShowingSequence
+            state = GamePhase.ShowingSequence,
+            difficulty = this.gameState.value.difficulty
         )
 
         showSequence()
@@ -48,7 +51,7 @@ class SimonViewModel : ViewModel(){
     fun EndGame(context: Context){
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
-        val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime)
+        val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = gameState.value.difficulty.diffName.toString())
 
         viewModelScope.launch {
             val db = DBAccess.getDB(context)
@@ -56,12 +59,13 @@ class SimonViewModel : ViewModel(){
 
             val savedScores = db.scoreDAO().getTop10Scores()
             savedScores.forEach{
-                Log.d("ScoreCheck", "Punteggio: ${it.score} | Data: ${it.gameDate}")
+                Log.d("ScoreCheck", "Punteggio: ${it.score} | Data: ${it.gameDate} | Diff: $")
             }
         }
 
         _gameState.value = SimonState(
-            state = GamePhase.GameOver
+            state = GamePhase.GameOver,
+            difficulty = this.gameState.value.difficulty
         )
     }
 
@@ -74,7 +78,11 @@ class SimonViewModel : ViewModel(){
                     break
                 }
                 _highlightedMove.value = move
-                delay(400L)
+
+                ////////////////
+                delay(gameState.value.difficulty.sequenceSpeed.toLong())  //difficoltà
+                ////////////////
+
                 _highlightedMove.value = null
                 delay(200L)
             }
@@ -117,5 +125,10 @@ class SimonViewModel : ViewModel(){
 
     fun setIdle(){
         _gameState.value = _gameState.value.copy(state = GamePhase.Idle)
+    }
+
+    fun setDifficulty(diff: Difficulty){
+        _gameState.value = _gameState.value.copy(difficulty = diff)
+
     }
 }
