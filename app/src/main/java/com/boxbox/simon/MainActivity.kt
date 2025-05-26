@@ -2,10 +2,8 @@ package com.boxbox.simon
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import kotlinx.coroutines.delay
 import android.os.Bundle
-import android.text.Layout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,33 +12,22 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -79,17 +66,14 @@ import androidx.compose.material3.*
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.min
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.boxbox.simon.model.Difficulty
-import android.graphics.Color as AndroidColor
-
 
 
 class MainActivity : ComponentActivity() {
@@ -130,7 +114,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                 onEndClick = { viewModel.EndGame(context) })
             Spacer(modifier = Modifier.height(25.dp))
 
-            ColorGrid(viewModel)
+            ResponsiveColorGrid(viewModel)
             Spacer(modifier = Modifier.height(35.dp))
         }
     }
@@ -252,7 +236,7 @@ fun TimerProgressBar(
     )*/
 
 
-@Composable
+/*@Composable
 fun ColorGrid(viewModel: SimonViewModel){
     val context = LocalContext.current
     val highlighted by viewModel.highlightedMove.collectAsState()
@@ -293,6 +277,64 @@ fun ColorGrid(viewModel: SimonViewModel){
                 state.state.name == "ShowingSequence" && state.score != 0 ->{
                     delay(250L)
                     playSound(R.raw.win, context)
+                }
+            }
+        }
+    }
+}*/
+
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun ResponsiveColorGrid(viewModel: SimonViewModel){
+
+    val context = LocalContext.current
+    val highlighted by viewModel.highlightedMove.collectAsState()
+    val state by viewModel.gameState.collectAsState()
+    val offsetInPx = with(LocalDensity.current) { 10.dp.toPx() }
+
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp) // margine esterno del layout
+    ) {
+        val spacing = 30.dp
+        val totalSpacing = spacing * 3 // 3 spazi in una griglia 2x2
+        val buttonSize = (min(maxWidth, maxHeight) - totalSpacing) / 2
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(spacing),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.align(Alignment.Center).padding((offsetInPx.dp)/3, 0.dp, 0.dp, 0.dp)
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1, buttonSize)
+                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2, buttonSize)
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho, buttonSize)
+                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao, buttonSize)
+            }
+
+            TextButton(
+                onClick = ({
+                    if(state.state == GamePhase.Idle || state.state == GamePhase.GameOver){
+                        viewModel.setDifficulty(Difficulty.values().get(((state.difficulty.index)+1)%4))
+                    }else{
+                    }
+                })
+            ){
+                Text(text = state.difficulty.diffName, fontSize = 30.sp)
+            }
+
+            LaunchedEffect(state) {
+                when {
+                    state.state.name == "GameOver" -> playSound(R.raw.lose, context)
+                    state.state.name == "ShowingSequence" && state.score != 0 ->{
+                        delay(250L)
+                        playSound(R.raw.win, context)
+                    }
                 }
             }
         }
@@ -402,7 +444,7 @@ fun GameTopper(navController: NavController) {
 
 
 @Composable
-fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int){
+fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int, buttonSize: Dp){
     val color = when(move){
         SimonMove.RED -> Color(0xffe71e07)
         SimonMove.GREEN -> Color(0xff42b033)
@@ -410,7 +452,7 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
         SimonMove.YELLOW -> Color(0xfffcd000)
     }
 
-    ThreeDButton(color,onClick,perspective,height,sound,highlighted)
+    ThreeDButton(color,onClick,perspective,height,sound,highlighted, buttonSize)
 
 }
 

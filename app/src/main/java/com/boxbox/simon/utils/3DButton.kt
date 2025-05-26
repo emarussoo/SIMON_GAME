@@ -222,7 +222,7 @@ prospettivaScelta = può essere "left","right","top"
 height = altezza del tasto
 */
 @Composable
-fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int,highlighted: Boolean) {
+fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int,highlighted: Boolean, buttonSize: Dp) {
     //altezza del tasto
     val edgeOffset = height.dp
     // Colori per sfumatura parte sopra del tasto:
@@ -241,7 +241,7 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
         //questo è il box a cui viene applicato l'effetto 3D
         Box(
             modifier = Modifier
-                .size(150.dp)
+                .size(buttonSize)
                 .border(BorderStroke(1.dp, Color.Black))
                 .background(
                     //qui ci va il colore della parte sopra del tasto
@@ -251,7 +251,7 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
                 ,
             contentAlignment = Alignment.Center
         ) {
-            if(highlighted) GlowingCard(modifier = Modifier.size(150.dp), glowingColor = baseColor, containerColor = Color.White, glowingRadius = 140.dp){}
+            if(highlighted) GlowingCard(modifier = Modifier.size(buttonSize), glowingColor = baseColor, containerColor = Color.White, glowingRadius = (buttonSize-10.dp)){}
 
 
             }
