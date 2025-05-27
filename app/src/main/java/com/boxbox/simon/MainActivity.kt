@@ -114,7 +114,10 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                 onEndClick = { viewModel.EndGame(context) })
             Spacer(modifier = Modifier.height(25.dp))
 
-            ResponsiveColorGrid(viewModel)
+            ResponsiveColorGrid(viewModel,
+                onStartClick = { viewModel.StartGame() },
+                onEndClick = { viewModel.EndGame(context) }
+                )
             Spacer(modifier = Modifier.height(35.dp))
         }
     }
@@ -127,7 +130,10 @@ fun GameStart(viewModel: SimonViewModel){
 
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
-    Column(modifier = Modifier.fillMaxWidth().padding(start = 35.dp, end = 35.dp).background(color = Color.Transparent)) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(start = 35.dp, end = 35.dp)
+        .background(color = Color.Transparent)) {
         Row(verticalAlignment = Alignment.CenterVertically)
         {
             Text(
@@ -141,7 +147,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 fontWeight = FontWeight.Bold
             )
 
-            val (buttonText, buttonColor, onClick) = when (state.state) {
+            /*val (buttonText, buttonColor, onClick) = when (state.state) {
                 GamePhase.Idle -> Triple("start", Color.Green, onStartClick)
                 GamePhase.GameOver -> Triple("start", Color.Green, onStartClick)
                 GamePhase.ShowingSequence -> Triple("end", Color.Red, onEndClick)
@@ -153,7 +159,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 modifier = Modifier.padding(start = 15.dp),
             ) {
                 Text(text = buttonText)
-            }
+            }*/
         }
 
         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
@@ -286,7 +292,7 @@ fun ColorGrid(viewModel: SimonViewModel){
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun ResponsiveColorGrid(viewModel: SimonViewModel){
+fun ResponsiveColorGrid(viewModel: SimonViewModel, onStartClick: () -> Unit, onEndClick: () -> Unit){
 
     val context = LocalContext.current
     val highlighted by viewModel.highlightedMove.collectAsState()
@@ -306,7 +312,9 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
         Column(
             verticalArrangement = Arrangement.spacedBy(spacing),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.align(Alignment.Center).padding((offsetInPx.dp)/3, 0.dp, 0.dp, 0.dp)
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding((offsetInPx.dp) / 3, 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1, buttonSize)
@@ -317,15 +325,39 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
                 SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao, buttonSize)
             }
 
-            TextButton(
-                onClick = ({
-                    if(state.state == GamePhase.Idle || state.state == GamePhase.GameOver){
-                        viewModel.setDifficulty(Difficulty.values().get(((state.difficulty.index)+1)%4))
-                    }else{
-                    }
-                })
-            ){
-                Text(text = state.difficulty.diffName, fontSize = 30.sp)
+            ////////sezione scelta difficoltà + pulsante start/end game //////////////////////
+
+            Row {
+                TextButton(
+                    onClick = ({
+                        if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
+                            viewModel.setDifficulty(
+                                Difficulty.values().get(((state.difficulty.index) + 1) % 4)
+                            )
+                        } else {
+                        }
+                    })
+                ) {
+                    Text(text = state.difficulty.diffName, fontSize = 30.sp)
+                }
+
+                //codice che precedentemente era vicino allo score//
+
+                val (buttonText, buttonColor, onClick) = when (state.state) {
+                    GamePhase.Idle -> Triple("start", Color.Green, onStartClick)
+                    GamePhase.GameOver -> Triple("start", Color.Green, onStartClick)
+                    GamePhase.ShowingSequence -> Triple("end", Color.Red, onEndClick)
+                    GamePhase.WaitingInput -> Triple("end", Color.Red, onEndClick)
+                }
+                TextButton(
+                    onClick = onClick,
+                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+                    modifier = Modifier.padding(start = 15.dp),
+                ) {
+                    Text(text = buttonText)
+                }
+
+                /////////////////////////////////////////////////////////
             }
 
             LaunchedEffect(state) {
@@ -347,7 +379,8 @@ fun GameFooter(navController: NavController){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.16f).background(Color.Transparent)
+            .fillMaxHeight(0.16f)
+            .background(Color.Transparent)
            ,
         horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
         verticalAlignment = Alignment.CenterVertically
@@ -404,7 +437,11 @@ fun GameFooter(navController: NavController){
 fun GameTopper(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
 
-        Row(modifier = Modifier.padding(top = 45.dp).fillMaxHeight(0.15f).background(color = Color.Transparent).padding(top=15.dp,start = 15.dp,end=15.dp, bottom = 15.dp),
+        Row(modifier = Modifier
+            .padding(top = 45.dp)
+            .fillMaxHeight(0.15f)
+            .background(color = Color.Transparent)
+            .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(15.dp))
         {
@@ -426,14 +463,20 @@ fun GameTopper(navController: NavController) {
                 Image(
                     painter = painterResource(id = ThemeManager.currentTheme.help),
                     contentDescription = "",
-                    modifier = Modifier.weight(0.5f).fillMaxWidth().clickable(onClick = {navController.navigate(NavigatorScreen.HowToPlay.route)})
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .fillMaxWidth()
+                        .clickable(onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) })
 
                 )
 
                 Image(
                     painter = painterResource(id = ThemeManager.currentTheme.quit),
                     contentDescription = "",
-                    modifier = Modifier.weight(0.5f).fillMaxWidth().clickable(onClick = {activity?.finish()})
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .fillMaxWidth()
+                        .clickable(onClick = { activity?.finish() })
                 )
 
 
@@ -682,7 +725,9 @@ fun screen() {
 @Composable
 fun preGameInterface(navController : NavController){
     val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxSize().padding(start = 15.dp, end = 15.dp),
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(start = 15.dp, end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center){
         Image(
