@@ -569,7 +569,6 @@ fun GameTopper(navController: NavController) {
                         .clickable(onClick = { activity?.finish() })
                 )
 
-
             }
         }
     }
