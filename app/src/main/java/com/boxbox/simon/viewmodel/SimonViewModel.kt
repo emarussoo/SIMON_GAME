@@ -132,6 +132,7 @@ class SimonViewModel() : ViewModel(){
     }
 
     fun setDifficulty(diff: Difficulty){
+        setIdle()
         _gameState.value = _gameState.value.copy(difficulty = diff)
 
     }

@@ -114,11 +114,9 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                 onEndClick = { viewModel.EndGame(context) })
             Spacer(modifier = Modifier.height(25.dp))
 
-            ResponsiveColorGrid(viewModel,
-                onStartClick = { viewModel.StartGame() },
-                onEndClick = { viewModel.EndGame(context) }
-                )
-            Spacer(modifier = Modifier.height(35.dp))
+            ResponsiveColorGrid(viewModel)
+            //Spacer(modifier = Modifier.height(35.dp))
+            DifficultyAndStart(viewModel, state, onStartClick = { viewModel.StartGame() }, onEndClick = { viewModel.EndGame(context) })
         }
     }
 }
@@ -292,7 +290,7 @@ fun ColorGrid(viewModel: SimonViewModel){
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun ResponsiveColorGrid(viewModel: SimonViewModel, onStartClick: () -> Unit, onEndClick: () -> Unit){
+fun ResponsiveColorGrid(viewModel: SimonViewModel){
 
     val context = LocalContext.current
     val highlighted by viewModel.highlightedMove.collectAsState()
@@ -302,7 +300,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel, onStartClick: () -> Unit, onE
 
     BoxWithConstraints(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(16.dp) // margine esterno del layout
     ) {
         val spacing = 30.dp
@@ -325,41 +323,6 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel, onStartClick: () -> Unit, onE
                 SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao, buttonSize)
             }
 
-            ////////sezione scelta difficoltà + pulsante start/end game //////////////////////
-
-            Row {
-                TextButton(
-                    onClick = ({
-                        if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
-                            viewModel.setDifficulty(
-                                Difficulty.values().get(((state.difficulty.index) + 1) % 4)
-                            )
-                        } else {
-                        }
-                    })
-                ) {
-                    Text(text = state.difficulty.diffName, fontSize = 30.sp)
-                }
-
-                //codice che precedentemente era vicino allo score//
-
-                val (buttonText, buttonColor, onClick) = when (state.state) {
-                    GamePhase.Idle -> Triple("start", Color.Green, onStartClick)
-                    GamePhase.GameOver -> Triple("start", Color.Green, onStartClick)
-                    GamePhase.ShowingSequence -> Triple("end", Color.Red, onEndClick)
-                    GamePhase.WaitingInput -> Triple("end", Color.Red, onEndClick)
-                }
-                TextButton(
-                    onClick = onClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
-                    modifier = Modifier.padding(start = 15.dp),
-                ) {
-                    Text(text = buttonText)
-                }
-
-                /////////////////////////////////////////////////////////
-            }
-
             LaunchedEffect(state) {
                 when {
                     state.state.name == "GameOver" -> playSound(R.raw.lose, context)
@@ -373,6 +336,44 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel, onStartClick: () -> Unit, onE
     }
 }
 
+
+@Composable
+fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClick: () -> Unit, onEndClick: () -> Unit){
+    ////////sezione scelta difficoltà + pulsante start/end game //////////////////////
+
+    Row {
+        TextButton(
+            onClick = ({
+                if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
+                    viewModel.setDifficulty(
+                        Difficulty.values().get(((state.difficulty.index) + 1) % 4)
+                    )
+                } else {
+                }
+            })
+        ) {
+            Text(text = state.difficulty.diffName, fontSize = 30.sp)
+        }
+
+        //codice che precedentemente era vicino allo score//
+
+        val (buttonText, buttonColor, onClick) = when (state.state) {
+            GamePhase.Idle -> Triple("start", Color.Green, onStartClick)
+            GamePhase.GameOver -> Triple("start", Color.Green, onStartClick)
+            GamePhase.ShowingSequence -> Triple("end", Color.Red, onEndClick)
+            GamePhase.WaitingInput -> Triple("end", Color.Red, onEndClick)
+        }
+        TextButton(
+            onClick = onClick,
+            colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+            modifier = Modifier.padding(start = 15.dp),
+        ) {
+            Text(text = buttonText)
+        }
+
+        /////////////////////////////////////////////////////////
+    }
+}
 
 @Composable
 fun GameFooter(navController: NavController){
