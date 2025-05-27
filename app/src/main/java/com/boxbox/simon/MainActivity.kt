@@ -375,6 +375,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
     }
 }
 
+/*
 @Composable
 fun GameFooter(navController: NavController){
     Row(
@@ -430,6 +431,78 @@ fun GameFooter(navController: NavController){
             }
     }
 }
+
+*/
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun ResponsiveGameFooter(navController: NavController){
+    BoxWithConstraints {
+        val width = maxWidth
+        val imageSize = when {
+            width < 360.dp -> 35.dp
+            width < 480.dp -> 55.dp
+            else -> 75.dp
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.16f)
+                .background(Color.Transparent)
+            ,
+            horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
+            verticalAlignment = Alignment.CenterVertically
+        ){
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+    }
+
+
+
+    }
 
 //onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) }
 
@@ -711,7 +784,7 @@ fun screen() {
                      },
             bottomBar = {
                 if(currentRoute != "preGame")
-                GameFooter(navController)
+                ResponsiveGameFooter(navController)
                 }
         ) { paddingValues ->
             Nav(
