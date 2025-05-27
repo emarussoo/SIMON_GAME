@@ -132,18 +132,23 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
         .fillMaxWidth()
         .padding(start = 35.dp, end = 35.dp)
         .background(color = Color.Transparent)) {
-        Row(verticalAlignment = Alignment.CenterVertically)
-        {
-            Text(
-                text = "SCORE: ",
-                fontSize = 60.sp,
-                color = Color.Black
-            )
-            Text(
-                text = "${state.score}",
-                fontSize = 60.sp,
-                fontWeight = FontWeight.Bold
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 35.dp),
+            contentAlignment = Alignment.Center){
+
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Text(
+                        text = "SCORE: ",
+                        fontSize = 40.sp,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "${state.score}",
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold
+                    )
 
             /*val (buttonText, buttonColor, onClick) = when (state.state) {
                 GamePhase.Idle -> Triple("start", Color.Green, onStartClick)
@@ -158,15 +163,16 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
             ) {
                 Text(text = buttonText)
             }*/
+                }
         }
 
-        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
-            val context = LocalContext.current
-            val timerDuration = state.difficulty.timeDuration
-            TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
-        }
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
+                    val context = LocalContext.current
+                    val timerDuration = state.difficulty.timeDuration
+                    TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+                }
     }
-    }
+}
 
 @Composable
 fun TimerProgressBar(
