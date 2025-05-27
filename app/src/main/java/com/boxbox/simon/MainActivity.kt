@@ -302,6 +302,13 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
     val offsetInPx = with(LocalDensity.current) { 10.dp.toPx() }
+    var buttonEnabled = false
+
+    if(state.state == GamePhase.WaitingInput){
+        buttonEnabled = true
+    }else{
+        buttonEnabled = false
+    }
 
 
     BoxWithConstraints(
@@ -321,12 +328,12 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
                 .padding((offsetInPx.dp) / 3, 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1, buttonSize)
-                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2, buttonSize)
+                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1, buttonSize, buttonEnabled)
+                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2, buttonSize, buttonEnabled)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho, buttonSize)
-                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao, buttonSize)
+                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho, buttonSize, buttonEnabled)
+                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao, buttonSize, buttonEnabled)
             }
 
             LaunchedEffect(state) {
@@ -570,7 +577,7 @@ fun GameTopper(navController: NavController) {
 
 
 @Composable
-fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int, buttonSize: Dp){
+fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int, buttonSize: Dp, enabled: Boolean){
     val color = when(move){
         SimonMove.RED -> Color(0xffe71e07)
         SimonMove.GREEN -> Color(0xff42b033)
@@ -578,7 +585,7 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
         SimonMove.YELLOW -> Color(0xfffcd000)
     }
 
-    ThreeDButton(color,onClick,perspective,height,sound,highlighted, buttonSize)
+    ThreeDButton(color,onClick,perspective,height,sound,highlighted, buttonSize, enabled)
 
 }
 
