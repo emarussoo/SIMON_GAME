@@ -88,6 +88,7 @@ fun ThreeDimensionalLayout(onClick: () -> Unit,
                            perspective: Perspective = Perspective.Left(bottomEdgeColor = Color.Black, rightEdgeColor = Color.Black),
                            edgeOffset: Dp = 10.dp,
                            sound: Int,
+                           isEnabled: Boolean,
                            content: @Composable () -> Unit
 
 ) {
@@ -121,7 +122,8 @@ fun ThreeDimensionalLayout(onClick: () -> Unit,
                     hapticFeedBack.performHapticFeedback(HapticFeedbackType.LongPress)
                     onClick()
                     playSound(sound,context)
-                }
+                },
+                enabled = isEnabled
             )
             .graphicsLayer {
                 rotationX = if (perspective is Perspective.Top) 16f else 0f
@@ -222,7 +224,7 @@ prospettivaScelta = può essere "left","right","top"
 height = altezza del tasto
 */
 @Composable
-fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int,highlighted: Boolean, buttonSize: Dp) {
+fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: String, height: Int, sound: Int,highlighted: Boolean, buttonSize: Dp, isEnabled: Boolean) {
     //altezza del tasto
     val edgeOffset = height.dp
     // Colori per sfumatura parte sopra del tasto:
@@ -236,7 +238,8 @@ fun ThreeDButton(baseColor: Color, onClick: () -> Unit, prospettivaScelta: Strin
         onClick,
         prospettiva,
         edgeOffset,
-        sound
+        sound,
+        isEnabled
     ) {
         //questo è il box a cui viene applicato l'effetto 3D
         Box(
