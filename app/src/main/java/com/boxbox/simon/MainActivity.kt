@@ -83,7 +83,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-
+import com.boxbox.simon.ui.theme.theme
 
 
 class MainActivity : ComponentActivity() {
@@ -337,12 +337,12 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
                 .padding((offsetInPx.dp) / 3, 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, "right",14,R.raw.f1, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},"right",14,R.raw.f2, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, 14,R.raw.f1, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},14,R.raw.f2, buttonSize, isEnabled)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},"right",14,R.raw.bho, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},"right",14,R.raw.miao, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},14,R.raw.bho, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},14,R.raw.miao, buttonSize, isEnabled)
             }
 
             LaunchedEffect(state) {
@@ -677,15 +677,15 @@ fun GameTopperLandscape(navController: NavController) {
 }
 
 @Composable
-fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, perspective: String, height: Int, sound: Int, buttonSize: Dp, isEnabled: Boolean){
+fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, height: Int, sound: Int, buttonSize: Dp, isEnabled: Boolean){
     val color = when(move){
-        SimonMove.RED -> Color(0xffe71e07)
-        SimonMove.GREEN -> Color(0xff42b033)
-        SimonMove.BLUE -> Color(0xff019dda)
-        SimonMove.YELLOW -> Color(0xfffcd000)
+        SimonMove.RED -> ThemeManager.currentTheme.Red
+        SimonMove.GREEN -> ThemeManager.currentTheme.Green
+        SimonMove.BLUE -> ThemeManager.currentTheme.Blue
+        SimonMove.YELLOW -> ThemeManager.currentTheme.Yellow
     }
 
-    ThreeDButton(color,onClick,perspective,height,sound,highlighted, buttonSize, isEnabled)
+    ThreeDButton(color,onClick,height,sound,highlighted, buttonSize, isEnabled)
 
 }
 

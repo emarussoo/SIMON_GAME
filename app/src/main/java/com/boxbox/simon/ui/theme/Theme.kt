@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.boxbox.simon.R
 
@@ -66,6 +67,10 @@ open class theme {
     open val settings: Int = 0
     open val help: Int = 0
     open val quit: Int = 0
+    open val Red: Color = Color(0xffe71e07)
+    open val Blue: Color = Color(0xff42b033)
+    open val Green: Color = Color(0xff019dda)
+    open val Yellow: Color = Color(0xfffcd000)
 }
 
 class theme1 : theme() {
@@ -75,7 +80,10 @@ class theme1 : theme() {
     override val settings: Int = R.drawable.arcade_settings
     override val help: Int = R.drawable.arcade_help
     override val quit: Int = R.drawable.arcade_poweron
-
+    override val Red: Color = Color(0xffe71e07)
+    override val Blue: Color = Color(0xff42b033)
+    override val Green: Color = Color(0xff019dda)
+    override val Yellow: Color = Color(0xfffcd000)
 
 }
 
@@ -86,6 +94,11 @@ class theme2 : theme() {
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.arcade_help
     override val quit: Int = R.drawable.mario_poweron
+
+    override val Red: Color = Color(0xffe71e07)
+    override val Blue: Color = Color(0xff42b033)
+    override val Green: Color = Color(0xff019dda)
+    override val Yellow: Color = Color(0xfffcd000)
 
 }
 
