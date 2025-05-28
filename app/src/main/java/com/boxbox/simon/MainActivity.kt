@@ -816,7 +816,96 @@ fun leaderboardInterface() {
 
 @Composable
 fun settingInterface(){
-    Text("SETTINGS INTERFACE")
+
+    var graphics by remember { mutableStateOf("Medium") }
+    var sounds by remember { mutableStateOf(false) }
+    var bttnSize by remember { mutableStateOf("Medium") }
+    var theme by remember { mutableStateOf("Theme") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+    ) {
+        Text("Settings", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
+        Spacer(Modifier.height(16.dp))
+
+        Text("Language")
+        Row {
+            listOf("Italiano", "English", "Napoli").forEach { level ->
+                Button(
+                    onClick = { graphics = level },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (graphics == level) Color(0xFF1E88E5) else Color.DarkGray
+                    ),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .weight(1f)
+                ) {
+                    Text(level)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // Music toggle
+        Text("Sounds")
+        Row {
+            listOf("On" to true, "Off" to false).forEach { (label, value) ->
+                Button(
+                    onClick = { sounds = value },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (sounds == value) Color(0xFF1E88E5) else Color.DarkGray
+                    ),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .weight(1f)
+                ) {
+                    Text(label)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        Text("Button size")
+        Row {
+            listOf("Thin", "Medium", "Thick").forEach { option ->
+                Button(
+                    onClick = { bttnSize = option },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (bttnSize == option) Color(0xFF1E88E5) else Color.DarkGray
+                    ),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .weight(1f)
+                ) {
+                    Text(option)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        Text("Themes")
+        Row {
+            listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
+                Button(
+                    onClick = { theme = option },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (theme == option) Color(0xFF1E88E5) else Color.DarkGray
+                    ),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .weight(1f)
+                ) {
+                    Text(option)
+                }
+            }
+        }
+    }
 }
 
 
