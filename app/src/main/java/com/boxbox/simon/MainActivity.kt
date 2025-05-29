@@ -87,21 +87,33 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 
 import android.content.SharedPreferences
 import androidx.compose.ui.res.stringResource
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("ViewModelConstructorInComposable")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
 
+        // Imposta la lingua salvata
+        val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val savedLang = sharedPref.getString("language", "it") ?: "it"
+        val locale = Locale(savedLang)
+        Locale.setDefault(locale)
+
+        val config = resources.configuration
+        config.setLocale(locale)
+
+        // Questo è ciò che effettivamente cambia la lingua visualizzata
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        setContent {
             SIMONTheme {
                 screen()
-                }
             }
         }
     }
+}
 
 @Composable
 fun EndPopUp(context: Context, viewModel: SimonViewModel, onDismiss: () -> Unit = {}) {
@@ -639,21 +651,21 @@ fun GameTopper(navController: NavController) {
     if (showPopUp){
         AlertDialog(
             onDismissRequest = { showPopUp = false },
-            title = { Text("Uscita")},
-            text = { Text("Vuoi uscire dal gioco?") },
+            title = { Text(stringResource(R.string.uscita))},
+            text = { Text(stringResource(R.string.vuoi_uscire_dal_gioco)) },
             confirmButton = {
                 TextButton(onClick = {
                     showPopUp = false
                     activity?.finishAffinity()
                 }){
-                    Text("Sì")
+                    Text(stringResource(R.string.s))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showPopUp = false
                 }) {
-                    Text("No")
+                    Text(stringResource(R.string.no))
                 }
             }
         )
@@ -805,7 +817,7 @@ fun leaderboardInterface() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Nessun punteggio disponibile",
+                    stringResource(R.string.nessun_punteggio_disponibile),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -830,16 +842,16 @@ fun leaderboardInterface() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Score", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.scoreDB), fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Data", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.dataDB), fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Ora", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.oraDB), fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Diff", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.diffDB), fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -886,7 +898,7 @@ fun leaderboardInterface() {
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            Text("Clear Leaderboard")
+            Text(stringResource(R.string.clear_leaderboard))
         }
     }
 }
@@ -898,7 +910,7 @@ fun settingInterface(){
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-    var graphics by remember { mutableStateOf("Medium") }
+    var language by remember { mutableStateOf(sharedPref.getString("language", "it") ?: "it")  }
     var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
     // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
     var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
@@ -911,23 +923,39 @@ fun settingInterface(){
             .fillMaxSize()
             .padding(20.dp)
     ) {
-        Text("Settings", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.settings), fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Language")
+        Text(stringResource(R.string.language))
         Row {
-            listOf("Italiano", "English", "Napoli").forEach { level ->
+            listOf(
+                "Italiano" to "it",
+                "English" to "en",
+                "Napoli" to "nap"
+            ).forEach { (label, langCode) ->
                 Button(
-                    onClick = { graphics = level },
+                    onClick = {
+                        language = langCode
+
+                        sharedPref.edit().putString("language", langCode).apply()
+
+                        val locale = Locale(langCode)
+                        Locale.setDefault(locale)
+                        val config = context.resources.configuration
+                        config.setLocale(locale)
+                        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+                        (context as? Activity)?.recreate()
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (graphics == level) Color(0xFF1E88E5) else Color.DarkGray
+                        containerColor = if (language == langCode) Color(0xFF1E88E5) else Color.DarkGray
                     ),
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)
                 ) {
-                    Text(level)
+                    Text(label)
                 }
             }
         }
@@ -935,7 +963,7 @@ fun settingInterface(){
         Spacer(Modifier.height(16.dp))
 
         // Music toggle
-        Text("Sounds")
+        Text(stringResource(R.string.sounds))
         Row {
             listOf("On" to true, "Off" to false).forEach { (label, value) ->
                 Button(
@@ -957,7 +985,7 @@ fun settingInterface(){
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Button style")
+        Text(stringResource(R.string.button_style))
         Row {
             listOf("3D", "Flat").forEach { option ->
                 Button(
@@ -983,7 +1011,7 @@ fun settingInterface(){
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Themes")
+        Text(stringResource(R.string.themes))
         Row {
             listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
                 Button(

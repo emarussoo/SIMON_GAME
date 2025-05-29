@@ -2,5 +2,22 @@
 <resources>
     <string name="app_name">SIMON</string>
     <string name="temperature">temperatura</string>
-    <string name="settings">impostazioni</string>
+    <string name="game">gioco</string>
+    <string name="leaderboard">classifica</string>
+    <string name="score">"PUNTI: "</string>
+    <string name="nessun_punteggio_disponibile">nessun punteggio disponibile</string>
+    <string name="scoreDB">Punti</string>
+    <string name="dataDB">Data</string>
+    <string name="oraDB">Ora</string>
+    <string name="diffDB">Diff</string>
+    <string name="clear_leaderboard">resetta classifica</string>
+    <string name="settings">Impostazioni</string>
+    <string name="language">Lingua</string>
+    <string name="sounds">Suoni</string>
+    <string name="button_style">Stile bottoni</string>
+    <string name="themes">Temi</string>
+    <string name="vuoi_uscire_dal_gioco">Vuoi uscire dal gioco?</string>
+    <string name="uscita">Uscita</string>
+    <string name="s">Si</string>
+    <string name="no">No</string>
 </resources>
