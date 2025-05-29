@@ -84,8 +84,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import android.content.Context
+
 import android.content.SharedPreferences
+import androidx.compose.ui.res.stringResource
 
 
 class MainActivity : ComponentActivity() {
@@ -97,7 +98,6 @@ class MainActivity : ComponentActivity() {
 
             SIMONTheme {
                 screen()
-                ThemeManager.switchTo2()
                 }
             }
         }
@@ -144,7 +144,10 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
 
     if (isLandscape) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(10.dp).background(color = Color.LightGray),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+                .background(color = Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
             Row(modifier = Modifier,
@@ -159,7 +162,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                         onStartClick = { viewModel.StartGame() },
                         onEndClick = { showEndPopUp = true })
 
-                    Spacer(modifier = Modifier.height(25.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
 
                     DifficultyAndStart(
                         viewModel,
@@ -230,7 +233,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
                     Text(
-                        text = "SCORE: ",
+                        text = stringResource(R.string.score),
                         fontSize = 45.sp,
                         color = Color.Black
                     )
@@ -384,7 +387,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding((if(height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp)
+                .padding((if (height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, height,R.raw.f1, buttonSize, isEnabled)
@@ -484,7 +487,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
             Text(
                 text = buttonText,
                 fontSize = 25.sp,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Bold
             )
         }
 
@@ -579,7 +582,8 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxHeight() // ora la colonna occupa il 16% della larghezza, adattalo se vuoi
-                .background(Color.LightGray).padding(start = 15.dp),
+                .background(Color.LightGray)
+                .padding(start = 15.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -708,7 +712,7 @@ fun GameTopperLandscape(navController: NavController) {
 
     Column(modifier = Modifier
         .background(color = Color.LightGray)
-        .padding(start = 40.dp, bottom = 15.dp,top = 30.dp),
+        .padding(start = 40.dp, bottom = 15.dp, top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp))
     {
@@ -898,7 +902,7 @@ fun settingInterface(){
     var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
     // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
     var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
-    var theme by remember { mutableStateOf("Theme") }
+    var theme by remember { mutableStateOf(sharedPref.getString("theme", "Standard") ?: "Standard") }
 
 
 
@@ -983,7 +987,14 @@ fun settingInterface(){
         Row {
             listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
                 Button(
-                    onClick = { theme = option },
+                    onClick = {
+                        theme = option
+                        sharedPref.edit().putString("theme", option).apply()
+                        //un pò puzzolente qui
+                        if(option.equals("IdraulicoIT")) ThemeManager.switchTo1()
+                        else if(option.equals("Standard")) ThemeManager.switchTo2()
+                        else ThemeManager.switchTo3()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (theme == option) Color(0xFF1E88E5) else Color.DarkGray
                     ),
@@ -1078,16 +1089,22 @@ fun screen() {
     if (isLandscape) {
 
         Row(Modifier.fillMaxSize()){
-            Box(Modifier.weight(0.15f).fillMaxHeight()) {
+            Box(Modifier
+                .weight(0.15f)
+                .fillMaxHeight()) {
                 if(currentRoute != "preGame") GameTopperLandscape(navController)
             }
 
-            Box(Modifier.weight(0.7f).fillMaxHeight()) {
+            Box(Modifier
+                .weight(0.7f)
+                .fillMaxHeight()) {
                 Nav(navController = navController,
                     modifier = Modifier.padding(0.dp),
                     viewModel = viewModel)
             }
-            Box(Modifier.weight(0.15f).fillMaxHeight()) {
+            Box(Modifier
+                .weight(0.15f)
+                .fillMaxHeight()) {
                 if(currentRoute != "preGame") ResponsiveGameFooterLandscape(navController)
             }
 

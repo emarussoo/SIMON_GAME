@@ -62,7 +62,7 @@ class SimonViewModel() : ViewModel(){
             val savedScores = db.scoreDAO().getTop10Scores()
             savedScores.forEach{
                 Log.d("ScoreCheck", "Punteggio: ${it.score} | Data: ${it.gameDate} | Diff: ")
-            }
+           }
         }
 
 

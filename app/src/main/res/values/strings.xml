@@ -4,4 +4,5 @@
     <string name="game">game</string>
     <string name="leaderboard">leaderboard</string>
     <string name="settings">settings</string>
+    <string name="score">"SCORE: "</string>
 </resources>
