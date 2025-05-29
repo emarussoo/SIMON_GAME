@@ -83,7 +83,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.boxbox.simon.ui.theme.theme
+import android.content.Context
+import android.content.SharedPreferences
 
 
 class MainActivity : ComponentActivity() {
@@ -309,10 +310,16 @@ fun TimerProgressBarCircle(
 fun ResponsiveColorGrid(viewModel: SimonViewModel){
 
     val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
     val offsetInPx = with(LocalDensity.current) { 10.dp.toPx() }
     var isEnabled = false
+    val height: Int
+
+    if(sharedPref.getBoolean("is3D",true) == true) height = 14 else height = 0
 
     if(state.state == GamePhase.WaitingInput){
         isEnabled = true
@@ -334,15 +341,15 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding((offsetInPx.dp) / 3, 0.dp, 0.dp, 0.dp)
+                .padding((if(height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, 14,R.raw.f1, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},14,R.raw.f2, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, height,R.raw.f1, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},height,R.raw.f2, buttonSize, isEnabled)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},14,R.raw.bho, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},14,R.raw.miao, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},height,R.raw.bho, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},height,R.raw.miao, buttonSize, isEnabled)
             }
 
             LaunchedEffect(state) {
@@ -817,10 +824,16 @@ fun leaderboardInterface() {
 @Composable
 fun settingInterface(){
 
+    val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
     var graphics by remember { mutableStateOf("Medium") }
-    var sounds by remember { mutableStateOf(false) }
-    var bttnSize by remember { mutableStateOf("Medium") }
+    var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
+    // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
+    var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
     var theme by remember { mutableStateOf("Theme") }
+
+
 
     Column(
         modifier = Modifier
@@ -855,7 +868,10 @@ fun settingInterface(){
         Row {
             listOf("On" to true, "Off" to false).forEach { (label, value) ->
                 Button(
-                    onClick = { sounds = value },
+                    onClick = {
+                        sounds = value
+                        sharedPref.edit().putBoolean("soundsOn", value).apply()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (sounds == value) Color(0xFF1E88E5) else Color.DarkGray
                     ),
@@ -870,13 +886,20 @@ fun settingInterface(){
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Button size")
+        Text("Button style")
         Row {
-            listOf("Thin", "Medium", "Thick").forEach { option ->
+            listOf("3D", "Flat").forEach { option ->
                 Button(
-                    onClick = { bttnSize = option },
+                    onClick = {
+                        bttnStyle = option
+                        if (option == "3D") {
+                            sharedPref.edit().putBoolean("is3D", true).apply()
+                        } else {
+                            sharedPref.edit().putBoolean("is3D", false).apply()
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (bttnSize == option) Color(0xFF1E88E5) else Color.DarkGray
+                        containerColor = if (bttnStyle == option) Color(0xFF1E88E5) else Color.DarkGray
                     ),
                     modifier = Modifier
                         .padding(4.dp)
