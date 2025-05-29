@@ -38,7 +38,10 @@ import com.boxbox.simon.ui.theme.ThemeManager
 
 //usata per il suono
 private var currentMediaPlayer: MediaPlayer? = null
+
 fun playSound(soundResId: Int, context: Context) {
+
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     currentMediaPlayer?.let {
         if (it.isPlaying) {
             it.stop()
@@ -52,7 +55,7 @@ fun playSound(soundResId: Int, context: Context) {
             release()
             currentMediaPlayer = null
         }
-        start()
+        if(sharedPref.getBoolean("soundsOn",true)) start()
     }
 }
 
@@ -69,6 +72,8 @@ fun ThreeDButton(
     isEnabled: Boolean
 ) {
     val edgeOffset = height.dp
+
+    val context = LocalContext.current
 
     //val highlightedColor = Brush.linearGradient(listOf(topColor, bottomColor))
     //val highlightedColor = Brush.linearGradient(listOf(ThemeManager.currentTheme.Red, ThemeManager.currentTheme.Blue,ThemeManager.currentTheme.Green))
@@ -90,7 +95,7 @@ fun ThreeDButton(
     }
 
     val hapticFeedBack = LocalHapticFeedback.current
-    val context = LocalContext.current
+
 
     Box(
         modifier = Modifier
