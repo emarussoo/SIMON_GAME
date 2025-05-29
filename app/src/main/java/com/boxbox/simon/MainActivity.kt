@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
 
             SIMONTheme {
                 screen()
-                ThemeManager.switchTo2()
+                ThemeManager.switchTo1()
                 }
 
             }
