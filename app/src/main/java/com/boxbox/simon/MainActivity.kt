@@ -2,6 +2,7 @@ package com.boxbox.simon
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.res.Configuration
 import kotlinx.coroutines.delay
 import android.os.Bundle
@@ -97,10 +98,31 @@ class MainActivity : ComponentActivity() {
                 screen()
                 ThemeManager.switchTo2()
                 }
-
             }
         }
     }
+
+@Composable
+fun EndPopUp(context: Context, viewModel: SimonViewModel, onDismiss: () -> Unit = {}) {
+    val state = viewModel.EndGame(context)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Game Over") },
+        text = {
+            Column {
+                Text("Score: ${state.score}")
+                Text("Difficulty: ${state.difficulty}")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("OK")
+            }
+        }
+    )
+}
+
 
 @Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
@@ -110,6 +132,14 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    var showEndPopUp by remember { mutableStateOf(false) }
+
+    if (showEndPopUp){
+        EndPopUp(context, viewModel){
+            showEndPopUp = false
+        }
+    }
 
     if (isLandscape) {
         Box(
@@ -126,7 +156,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                         state,
                         timerKey,
                         onStartClick = { viewModel.StartGame() },
-                        onEndClick = { viewModel.EndGame(context) })
+                        onEndClick = { showEndPopUp = true })
 
                     Spacer(modifier = Modifier.height(25.dp))
 
@@ -134,7 +164,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                         viewModel,
                         state,
                         onStartClick = { viewModel.StartGame() },
-                        onEndClick = { viewModel.EndGame(context) })
+                        onEndClick = { showEndPopUp = true })
 
                 }
             }
@@ -157,7 +187,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                     state,
                     timerKey,
                     onStartClick = { viewModel.StartGame() },
-                    onEndClick = { viewModel.EndGame(context) })
+                    onEndClick = { showEndPopUp = true })
                 Spacer(modifier = Modifier.height(25.dp))
 
                 ResponsiveColorGrid(viewModel)
@@ -166,7 +196,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                     viewModel,
                     state,
                     onStartClick = { viewModel.StartGame() },
-                    onEndClick = { viewModel.EndGame(context) })
+                    onEndClick = {showEndPopUp = true })
             }
         }
     }
@@ -179,6 +209,15 @@ fun GameStart(viewModel: SimonViewModel){
 
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
+    var showEndPopUp by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    if (showEndPopUp){
+        EndPopUp(context, viewModel){
+            showEndPopUp = false
+        }
+    }
+
     Column(modifier = Modifier
         //.fillMaxWidth()
         .padding(start = 35.dp, end = 35.dp)
@@ -206,7 +245,11 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
                     val context = LocalContext.current
                     val timerDuration = state.difficulty.timeDuration
-                    TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+                    TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){
+                        if (state.state != GamePhase.GameOver){
+                            showEndPopUp = true
+                        }
+                    }
                 }
     }
 }
@@ -580,6 +623,30 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
 @Composable
 fun GameTopper(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
+    var showPopUp by remember { mutableStateOf(false) }
+
+    if (showPopUp){
+        AlertDialog(
+            onDismissRequest = { showPopUp = false },
+            title = { Text("Uscita")},
+            text = { Text("Vuoi uscire dal gioco?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPopUp = false
+                    activity?.finishAffinity()
+                }){
+                    Text("Sì")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showPopUp = false
+                }) {
+                    Text("No")
+                }
+            }
+        )
+    }
 
         Row(modifier = Modifier
             .padding(top = 45.dp)
@@ -620,7 +687,7 @@ fun GameTopper(navController: NavController) {
                     modifier = Modifier
                         .weight(0.5f)
                         .fillMaxWidth()
-                        .clickable(onClick = { activity?.finish() })
+                        .clickable(onClick = { showPopUp = true })
                 )
 
             }
