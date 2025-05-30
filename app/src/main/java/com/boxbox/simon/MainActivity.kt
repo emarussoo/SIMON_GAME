@@ -427,7 +427,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
 @Composable
 fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClick: () -> Unit, onEndClick: () -> Unit){
     ////////sezione scelta difficoltà + pulsante start/end game //////////////////////
-
+    val context = LocalContext.current
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Row(
@@ -435,7 +435,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Level: ",
+                text = stringResource(R.string.level),
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black // opzionale, per armonizzare
@@ -467,7 +467,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
                     .widthIn(min = 180.dp)
             ) {
                 Text(
-                    text = state.difficulty.diffName,
+                    text = context.getString(state.difficulty.diffName),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -477,10 +477,10 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
         //codice che precedentemente era vicino allo score//
 
         val (buttonText, buttonColor, onClick) = when (state.state) {
-            GamePhase.Idle -> Triple("start", Color.Green.darker(), onStartClick)
-            GamePhase.GameOver -> Triple("start", Color.Green.darker(), onStartClick)
-            GamePhase.ShowingSequence -> Triple("end", Color.Red, onEndClick)
-            GamePhase.WaitingInput -> Triple("end", Color.Red, onEndClick)
+            GamePhase.Idle -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
+            GamePhase.GameOver -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
+            GamePhase.ShowingSequence -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
+            GamePhase.WaitingInput -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
         }
 
         Spacer(modifier = Modifier.size(15.dp))
@@ -932,7 +932,6 @@ fun settingInterface(){
             listOf(
                 "Italiano" to "it",
                 "English" to "en",
-                "Napoli" to "nap"
             ).forEach { (label, langCode) ->
                 Button(
                     onClick = {
@@ -1062,17 +1061,17 @@ fun howToPlayInterface(){
         )
 
         val steps = listOf(
-            "The game will show a sequence of colors and play sounds.",
-            "Tap the buttons in the same order as shown.",
-            "A new color is added to the sequence each turn.",
-            "Game over! Try again and beat your high score."
+            stringResource(R.string.the_game_will_show_a_sequence_of_colors_and_play_sounds),
+            stringResource(R.string.tap_the_buttons_in_the_same_order_as_shown),
+            stringResource(R.string.a_new_color_is_added_to_the_sequence_each_turn),
+            stringResource(R.string.game_over_try_again_and_beat_your_high_score)
         )
 
         val stepsTitle = listOf(
-            "1. Watch and Listen:",
-            "2. Repeat the Sequence:",
-            "3. Each Round Gets Harder:",
-            "4. Make a Mistake?"
+            stringResource(R.string._1_watch_and_listen),
+            stringResource(R.string._2_repeat_the_sequence),
+            stringResource(R.string._3_each_round_gets_harder),
+            stringResource(R.string._4_make_a_mistake)
         )
 
         stepsTitle.zip(steps).forEach { (title, desc) ->

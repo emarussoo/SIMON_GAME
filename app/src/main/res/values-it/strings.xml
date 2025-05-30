@@ -9,7 +9,7 @@
     <string name="scoreDB">Punti</string>
     <string name="dataDB">Data</string>
     <string name="oraDB">Ora</string>
-    <string name="diffDB">Diff</string>
+    <string name="diffDB">Difficoltà</string>
     <string name="clear_leaderboard">resetta classifica</string>
     <string name="settings">Impostazioni</string>
     <string name="language">Lingua</string>
@@ -20,4 +20,19 @@
     <string name="uscita">Uscita</string>
     <string name="s">Si</string>
     <string name="no">No</string>
+    <string name="level">"Livello: "</string>
+    <string name="start">inizio</string>
+    <string name="end">fine</string>
+    <string name="easy">facile</string>
+    <string name="medium">medio</string>
+    <string name="hard">difficile</string>
+    <string name="extreme">estremo</string>
+    <string name="tap_the_buttons_in_the_same_order_as_shown">Clicca i pulsanti nello stesso ordine mostrato.</string>
+    <string name="the_game_will_show_a_sequence_of_colors_and_play_sounds">Il gioco mostrerà una sequenza di pulsanti.</string>
+    <string name="a_new_color_is_added_to_the_sequence_each_turn">Un nuovo tasto sarà aggiunto alla sequenza alla fine di ogni turno.</string>
+    <string name="game_over_try_again_and_beat_your_high_score">Game over! Prova ancora e migliora il tuo risultato.</string>
+    <string name="_1_watch_and_listen">1. Guarda e Ascolta:</string>
+    <string name="_2_repeat_the_sequence">2. Ripeti la sequenza:</string>
+    <string name="_3_each_round_gets_harder">3. Ogni turno diventa sempre più difficile</string>
+    <string name="_4_make_a_mistake">4. Fai un errore?</string>
 </resources>

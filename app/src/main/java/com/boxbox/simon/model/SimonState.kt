@@ -1,5 +1,7 @@
 package com.boxbox.simon.model
 
+import com.boxbox.simon.R
+
 data class SimonState (
     val sequence: List<SimonMove> = emptyList(),
     val userIndex: Int = 0,
@@ -15,9 +17,9 @@ enum class SimonMove{
     RED, GREEN, BLUE, YELLOW
 }
 
-enum class Difficulty (val index: Int, val diffName: String, val sequenceSpeed: Int, val timeDuration: Int){
-    EASY(0, "easy", 600, 3000),
-    MEDIUM(1, "medium", 400, 2000),
-    HARD(2, "hard", 200, 1500),
-    EXTREME(3, "extreme", 100, 1000)
+enum class Difficulty (val index: Int, val diffName: Int, val sequenceSpeed: Int, val timeDuration: Int){
+    EASY(0, R.string.easy, 600, 3000),
+    MEDIUM(1, R.string.medium, 400, 2000),
+    HARD(2, R.string.hard, 200, 1500),
+    EXTREME(3, R.string.extreme, 100, 1000)
 }
