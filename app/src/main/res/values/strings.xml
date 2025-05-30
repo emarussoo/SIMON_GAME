@@ -1,3 +1,37 @@
 <resources>
     <string name="app_name">SIMON</string>
+    <string name="temperature">temperature</string>
+    <string name="game">game</string>
+    <string name="leaderboard">leaderboard</string>
+    <string name="score">"SCORE: "</string>
+    <string name="nessun_punteggio_disponibile">No scores available</string>
+    <string name="scoreDB">Score</string>
+    <string name="dataDB">Date</string>
+    <string name="oraDB">Time</string>
+    <string name="diffDB">Difficulty</string>
+    <string name="clear_leaderboard">Clear Leaderboard</string>
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="sounds">Sounds</string>
+    <string name="button_style">Button style</string>
+    <string name="themes">Themes</string>
+    <string name="vuoi_uscire_dal_gioco">Do you want to exit the game?</string>
+    <string name="uscita">Exit</string>
+    <string name="s">Yes</string>
+    <string name="no">No</string>
+    <string name="level">"Level: "</string>
+    <string name="start">start</string>
+    <string name="end">end</string>
+    <string name="easy">easy</string>
+    <string name="medium">medium</string>
+    <string name="hard">hard</string>
+    <string name="extreme">extreme</string>
+    <string name="tap_the_buttons_in_the_same_order_as_shown">Tap the buttons in the same order as shown.</string>
+    <string name="the_game_will_show_a_sequence_of_colors_and_play_sounds">The game will show a sequence of colors and play sounds.</string>
+    <string name="a_new_color_is_added_to_the_sequence_each_turn">A new color is added to the sequence each turn.</string>
+    <string name="game_over_try_again_and_beat_your_high_score">Game over! Try again and beat your high score.</string>
+    <string name="_1_watch_and_listen">1. Watch and Listen:</string>
+    <string name="_2_repeat_the_sequence">2. Repeat the Sequence:</string>
+    <string name="_3_each_round_gets_harder">3. Each Round Gets Harder:</string>
+    <string name="_4_make_a_mistake">4. Make a Mistake?</string>
 </resources>
