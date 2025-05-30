@@ -2,6 +2,7 @@ package com.boxbox.simon
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.res.Configuration
 import kotlinx.coroutines.delay
 import android.os.Bundle
@@ -83,24 +84,58 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.boxbox.simon.ui.theme.theme
+
+import android.content.SharedPreferences
+import androidx.compose.ui.res.stringResource
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("ViewModelConstructorInComposable")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
 
+        // Imposta la lingua salvata
+        val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val savedLang = sharedPref.getString("language", "it") ?: "it"
+        val locale = Locale(savedLang)
+        Locale.setDefault(locale)
+
+        val config = resources.configuration
+        config.setLocale(locale)
+
+        // Questo è ciò che effettivamente cambia la lingua visualizzata
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        setContent {
             SIMONTheme {
                 screen()
-                ThemeManager.switchTo2()
-                }
-
             }
         }
     }
+}
+
+@Composable
+fun EndPopUp(context: Context, viewModel: SimonViewModel, onDismiss: () -> Unit = {}) {
+    val state = viewModel.EndGame(context)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Game Over") },
+        text = {
+            Column {
+                Text("Score: ${state.score}")
+                Text("Difficulty: ${state.difficulty}")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("OK")
+            }
+        }
+    )
+}
+
 
 @Composable
 fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: NavController){
@@ -111,9 +146,20 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    var showEndPopUp by remember { mutableStateOf(false) }
+
+    if (showEndPopUp){
+        EndPopUp(context, viewModel){
+            showEndPopUp = false
+        }
+    }
+
     if (isLandscape) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(10.dp).background(color = Color.LightGray),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+                .background(color = Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
             Row(modifier = Modifier,
@@ -126,15 +172,15 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                         state,
                         timerKey,
                         onStartClick = { viewModel.StartGame() },
-                        onEndClick = { viewModel.EndGame(context) })
+                        onEndClick = { showEndPopUp = true })
 
-                    Spacer(modifier = Modifier.height(25.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
 
                     DifficultyAndStart(
                         viewModel,
                         state,
                         onStartClick = { viewModel.StartGame() },
-                        onEndClick = { viewModel.EndGame(context) })
+                        onEndClick = { showEndPopUp = true })
 
                 }
             }
@@ -157,7 +203,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                     state,
                     timerKey,
                     onStartClick = { viewModel.StartGame() },
-                    onEndClick = { viewModel.EndGame(context) })
+                    onEndClick = { showEndPopUp = true })
                 Spacer(modifier = Modifier.height(25.dp))
 
                 ResponsiveColorGrid(viewModel)
@@ -166,7 +212,7 @@ fun GameScreen(viewModel: SimonViewModel, modifier: Modifier, navController: Nav
                     viewModel,
                     state,
                     onStartClick = { viewModel.StartGame() },
-                    onEndClick = { viewModel.EndGame(context) })
+                    onEndClick = {showEndPopUp = true })
             }
         }
     }
@@ -179,6 +225,15 @@ fun GameStart(viewModel: SimonViewModel){
 
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
+    var showEndPopUp by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    if (showEndPopUp){
+        EndPopUp(context, viewModel){
+            showEndPopUp = false
+        }
+    }
+
     Column(modifier = Modifier
         //.fillMaxWidth()
         .padding(start = 35.dp, end = 35.dp)
@@ -190,7 +245,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
                     Text(
-                        text = "SCORE: ",
+                        text = stringResource(R.string.score),
                         fontSize = 45.sp,
                         color = Color.Black
                     )
@@ -206,7 +261,11 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
                     val context = LocalContext.current
                     val timerDuration = state.difficulty.timeDuration
-                    TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){ viewModel.EndGame(context) }
+                    TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){
+                        if (state.state != GamePhase.GameOver){
+                            showEndPopUp = true
+                        }
+                    }
                 }
     }
 }
@@ -309,10 +368,16 @@ fun TimerProgressBarCircle(
 fun ResponsiveColorGrid(viewModel: SimonViewModel){
 
     val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
     val offsetInPx = with(LocalDensity.current) { 10.dp.toPx() }
     var isEnabled = false
+    val height: Int
+
+    if(sharedPref.getBoolean("is3D",true) == true) height = 14 else height = 0
 
     if(state.state == GamePhase.WaitingInput){
         isEnabled = true
@@ -334,15 +399,15 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding((offsetInPx.dp) / 3, 0.dp, 0.dp, 0.dp)
+                .padding((if (height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, 14,R.raw.f1, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},14,R.raw.f2, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, height,R.raw.f1, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},height,R.raw.f2, buttonSize, isEnabled)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},14,R.raw.bho, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},14,R.raw.miao, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},height,R.raw.bho, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},height,R.raw.miao, buttonSize, isEnabled)
             }
 
             LaunchedEffect(state) {
@@ -362,7 +427,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
 @Composable
 fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClick: () -> Unit, onEndClick: () -> Unit){
     ////////sezione scelta difficoltà + pulsante start/end game //////////////////////
-
+    val context = LocalContext.current
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Row(
@@ -370,7 +435,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Level: ",
+                text = stringResource(R.string.level),
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black // opzionale, per armonizzare
@@ -402,7 +467,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
                     .widthIn(min = 180.dp)
             ) {
                 Text(
-                    text = state.difficulty.diffName,
+                    text = context.getString(state.difficulty.diffName),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -412,10 +477,10 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
         //codice che precedentemente era vicino allo score//
 
         val (buttonText, buttonColor, onClick) = when (state.state) {
-            GamePhase.Idle -> Triple("start", Color.Green.darker(), onStartClick)
-            GamePhase.GameOver -> Triple("start", Color.Green.darker(), onStartClick)
-            GamePhase.ShowingSequence -> Triple("end", Color.Red, onEndClick)
-            GamePhase.WaitingInput -> Triple("end", Color.Red, onEndClick)
+            GamePhase.Idle -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
+            GamePhase.GameOver -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
+            GamePhase.ShowingSequence -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
+            GamePhase.WaitingInput -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
         }
 
         Spacer(modifier = Modifier.size(15.dp))
@@ -434,7 +499,7 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
             Text(
                 text = buttonText,
                 fontSize = 25.sp,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Bold
             )
         }
 
@@ -529,7 +594,8 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxHeight() // ora la colonna occupa il 16% della larghezza, adattalo se vuoi
-                .background(Color.LightGray).padding(start = 15.dp),
+                .background(Color.LightGray)
+                .padding(start = 15.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -580,6 +646,30 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
 @Composable
 fun GameTopper(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
+    var showPopUp by remember { mutableStateOf(false) }
+
+    if (showPopUp){
+        AlertDialog(
+            onDismissRequest = { showPopUp = false },
+            title = { Text(stringResource(R.string.uscita))},
+            text = { Text(stringResource(R.string.vuoi_uscire_dal_gioco)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPopUp = false
+                    activity?.finishAffinity()
+                }){
+                    Text(stringResource(R.string.s))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showPopUp = false
+                }) {
+                    Text(stringResource(R.string.no))
+                }
+            }
+        )
+    }
 
         Row(modifier = Modifier
             .padding(top = 45.dp)
@@ -620,7 +710,7 @@ fun GameTopper(navController: NavController) {
                     modifier = Modifier
                         .weight(0.5f)
                         .fillMaxWidth()
-                        .clickable(onClick = { activity?.finish() })
+                        .clickable(onClick = { showPopUp = true })
                 )
 
             }
@@ -634,7 +724,7 @@ fun GameTopperLandscape(navController: NavController) {
 
     Column(modifier = Modifier
         .background(color = Color.LightGray)
-        .padding(start = 40.dp, bottom = 15.dp,top = 30.dp),
+        .padding(start = 40.dp, bottom = 15.dp, top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp))
     {
@@ -727,7 +817,7 @@ fun leaderboardInterface() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Nessun punteggio disponibile",
+                    stringResource(R.string.nessun_punteggio_disponibile),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -752,16 +842,16 @@ fun leaderboardInterface() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Score", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.scoreDB), fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Data", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.dataDB), fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Ora", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.oraDB), fontWeight = FontWeight.Bold)
                     }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text("Diff", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.diffDB), fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -808,7 +898,7 @@ fun leaderboardInterface() {
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            Text("Clear Leaderboard")
+            Text(stringResource(R.string.clear_leaderboard))
         }
     }
 }
@@ -817,33 +907,54 @@ fun leaderboardInterface() {
 @Composable
 fun settingInterface(){
 
-    var graphics by remember { mutableStateOf("Medium") }
-    var sounds by remember { mutableStateOf(false) }
-    var bttnSize by remember { mutableStateOf("Medium") }
-    var theme by remember { mutableStateOf("Theme") }
+    val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    var language by remember { mutableStateOf(sharedPref.getString("language", "it") ?: "it")  }
+    var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
+    // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
+    var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
+    var theme by remember { mutableStateOf(sharedPref.getString("theme", "Standard") ?: "Standard") }
+
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
     ) {
-        Text("Settings", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.settings), fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Language")
+        Text(stringResource(R.string.language))
         Row {
-            listOf("Italiano", "English", "Napoli").forEach { level ->
+            listOf(
+                "Italiano" to "it",
+                "English" to "en",
+            ).forEach { (label, langCode) ->
                 Button(
-                    onClick = { graphics = level },
+                    onClick = {
+                        language = langCode
+
+                        sharedPref.edit().putString("language", langCode).apply()
+
+                        val locale = Locale(langCode)
+                        Locale.setDefault(locale)
+                        val config = context.resources.configuration
+                        config.setLocale(locale)
+                        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+                        (context as? Activity)?.recreate()
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (graphics == level) Color(0xFF1E88E5) else Color.DarkGray
+                        containerColor = if (language == langCode) Color(0xFF1E88E5) else Color.DarkGray
                     ),
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)
                 ) {
-                    Text(level)
+                    Text(label)
                 }
             }
         }
@@ -851,11 +962,14 @@ fun settingInterface(){
         Spacer(Modifier.height(16.dp))
 
         // Music toggle
-        Text("Sounds")
+        Text(stringResource(R.string.sounds))
         Row {
             listOf("On" to true, "Off" to false).forEach { (label, value) ->
                 Button(
-                    onClick = { sounds = value },
+                    onClick = {
+                        sounds = value
+                        sharedPref.edit().putBoolean("soundsOn", value).apply()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (sounds == value) Color(0xFF1E88E5) else Color.DarkGray
                     ),
@@ -870,13 +984,20 @@ fun settingInterface(){
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Button size")
+        Text(stringResource(R.string.button_style))
         Row {
-            listOf("Thin", "Medium", "Thick").forEach { option ->
+            listOf("3D", "Flat").forEach { option ->
                 Button(
-                    onClick = { bttnSize = option },
+                    onClick = {
+                        bttnStyle = option
+                        if (option == "3D") {
+                            sharedPref.edit().putBoolean("is3D", true).apply()
+                        } else {
+                            sharedPref.edit().putBoolean("is3D", false).apply()
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (bttnSize == option) Color(0xFF1E88E5) else Color.DarkGray
+                        containerColor = if (bttnStyle == option) Color(0xFF1E88E5) else Color.DarkGray
                     ),
                     modifier = Modifier
                         .padding(4.dp)
@@ -889,11 +1010,18 @@ fun settingInterface(){
 
         Spacer(Modifier.height(16.dp))
 
-        Text("Themes")
+        Text(stringResource(R.string.themes))
         Row {
             listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
                 Button(
-                    onClick = { theme = option },
+                    onClick = {
+                        theme = option
+                        sharedPref.edit().putString("theme", option).apply()
+                        //un pò puzzolente qui
+                        if(option.equals("IdraulicoIT")) ThemeManager.switchTo1()
+                        else if(option.equals("Standard")) ThemeManager.switchTo2()
+                        else ThemeManager.switchTo3()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (theme == option) Color(0xFF1E88E5) else Color.DarkGray
                     ),
@@ -933,17 +1061,17 @@ fun howToPlayInterface(){
         )
 
         val steps = listOf(
-            "The game will show a sequence of colors and play sounds.",
-            "Tap the buttons in the same order as shown.",
-            "A new color is added to the sequence each turn.",
-            "Game over! Try again and beat your high score."
+            stringResource(R.string.the_game_will_show_a_sequence_of_colors_and_play_sounds),
+            stringResource(R.string.tap_the_buttons_in_the_same_order_as_shown),
+            stringResource(R.string.a_new_color_is_added_to_the_sequence_each_turn),
+            stringResource(R.string.game_over_try_again_and_beat_your_high_score)
         )
 
         val stepsTitle = listOf(
-            "1. Watch and Listen:",
-            "2. Repeat the Sequence:",
-            "3. Each Round Gets Harder:",
-            "4. Make a Mistake?"
+            stringResource(R.string._1_watch_and_listen),
+            stringResource(R.string._2_repeat_the_sequence),
+            stringResource(R.string._3_each_round_gets_harder),
+            stringResource(R.string._4_make_a_mistake)
         )
 
         stepsTitle.zip(steps).forEach { (title, desc) ->
@@ -988,16 +1116,22 @@ fun screen() {
     if (isLandscape) {
 
         Row(Modifier.fillMaxSize()){
-            Box(Modifier.weight(0.15f).fillMaxHeight()) {
+            Box(Modifier
+                .weight(0.15f)
+                .fillMaxHeight()) {
                 if(currentRoute != "preGame") GameTopperLandscape(navController)
             }
 
-            Box(Modifier.weight(0.7f).fillMaxHeight()) {
+            Box(Modifier
+                .weight(0.7f)
+                .fillMaxHeight()) {
                 Nav(navController = navController,
                     modifier = Modifier.padding(0.dp),
                     viewModel = viewModel)
             }
-            Box(Modifier.weight(0.15f).fillMaxHeight()) {
+            Box(Modifier
+                .weight(0.15f)
+                .fillMaxHeight()) {
                 if(currentRoute != "preGame") ResponsiveGameFooterLandscape(navController)
             }
 
