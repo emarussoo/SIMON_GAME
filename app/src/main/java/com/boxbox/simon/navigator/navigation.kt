@@ -2,18 +2,23 @@ package com.boxbox.simon.navigator
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.room.util.copy
-import com.boxbox.simon.GameScreen
-import com.boxbox.simon.howToPlayInterface
-import com.boxbox.simon.leaderboardInterface
-import com.boxbox.simon.model.GamePhase
-import com.boxbox.simon.preGameInterface
-import com.boxbox.simon.settingInterface
 import com.boxbox.simon.viewmodel.SimonViewModel
+import com.boxbox.simon.views.GameScreen
+import com.boxbox.simon.views.howToPlayInterface
+import com.boxbox.simon.views.leaderboardInterface
+import com.boxbox.simon.views.preGameInterface
+import com.boxbox.simon.views.settingInterface
+
+enum class NavigatorScreen(val route: String) {
+    Game("game"),
+    Settings("settings"),
+    Leaderboard("leaderboard"),
+    HowToPlay("howToPlay"),
+    PreGame("preGame")
+}
 
 @Composable
 fun Nav(
@@ -27,7 +32,7 @@ fun Nav(
         modifier = modifier
     ){
         composable(NavigatorScreen.Game.route){
-            GameScreen(viewModel, modifier,navController)
+            GameScreen(viewModel)
         }
 
         composable(NavigatorScreen.Leaderboard.route){
@@ -53,13 +58,4 @@ fun Nav(
 
     }
 
-}
-
-enum class NavigatorScreen(val route: String) {
-    Game("game"),
-    Settings("settings"),
-    Leaderboard("leaderboard"),
-    HowToPlay("howToPlay"),
-    PreGame("preGame"),
-    PostGame("postGame")
 }

@@ -1,0 +1,297 @@
+package com.boxbox.simon.views
+
+import android.annotation.SuppressLint
+import android.app.Activity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.boxbox.simon.R
+import com.boxbox.simon.navigator.NavigatorScreen
+import com.boxbox.simon.ui.theme.ThemeManager
+
+@SuppressLint("ContextCastToActivity", "SuspiciousIndentation")
+@Composable
+fun GameTopper(navController: NavController) {
+    val activity = (LocalContext.current as? Activity)
+    var showPopUp by remember { mutableStateOf(false) }
+
+    if (showPopUp){
+        AlertDialog(
+            onDismissRequest = { showPopUp = false },
+            title = { Text(stringResource(R.string.uscita))},
+            text = { Text(stringResource(R.string.vuoi_uscire_dal_gioco)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPopUp = false
+                    activity?.finishAffinity()
+                }){
+                    Text(stringResource(R.string.s))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showPopUp = false
+                }) {
+                    Text(stringResource(R.string.no))
+                }
+            }
+        )
+    }
+
+    Row(modifier = Modifier
+        .padding(top = 45.dp)
+        .fillMaxHeight(0.15f)
+        .background(color = Color.Transparent)
+        .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(15.dp))
+    {
+
+        Image(
+            painter = painterResource(id = ThemeManager.currentTheme.title),
+            contentDescription = "",
+            modifier = Modifier
+                .weight(0.9f)
+                .fillMaxHeight()
+        )
+
+        Column(modifier = Modifier
+            .weight(0.1f)
+            .fillMaxHeight(),
+            //verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Image(
+                painter = painterResource(id = ThemeManager.currentTheme.help),
+                contentDescription = "",
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
+                    .clickable(onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) })
+
+            )
+
+            Image(
+                painter = painterResource(id = ThemeManager.currentTheme.quit),
+                contentDescription = "",
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
+                    .clickable(onClick = { showPopUp = true })
+            )
+
+        }
+    }
+}
+
+@SuppressLint("ContextCastToActivity", "SuspiciousIndentation")
+@Composable
+fun GameTopperLandscape(navController: NavController) {
+    val activity = (LocalContext.current as? Activity)
+
+    Column(modifier = Modifier
+        .background(color = Color.LightGray)
+        .padding(start = 40.dp, bottom = 15.dp, top = 30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp))
+    {
+
+        Image(
+            painter = painterResource(id = R.drawable.title_land),
+            contentDescription = "",
+            modifier = Modifier
+                .weight(0.9f)
+                .fillMaxHeight()
+        )
+
+        Row(modifier = Modifier
+            .weight(0.1f)
+            .fillMaxHeight(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Image(
+                painter = painterResource(id = ThemeManager.currentTheme.help),
+                contentDescription = "",
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
+                    .clickable(onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) })
+
+            )
+
+            Image(
+                painter = painterResource(id = ThemeManager.currentTheme.quit),
+                contentDescription = "",
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
+                    .clickable(onClick = { activity?.finish() })
+            )
+
+        }
+    }
+}
+
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun ResponsiveGameFooter(navController: NavController){
+    BoxWithConstraints {
+        val width = maxWidth
+        val imageSize = when {
+            width < 360.dp -> 35.dp
+            width < 480.dp -> 55.dp
+            else -> 75.dp
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.16f)
+                .background(Color.Transparent)
+            ,
+            horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
+            verticalAlignment = Alignment.CenterVertically
+        ){
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+    }
+
+
+
+}
+
+//onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) }
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun ResponsiveGameFooterLandscape(navController: NavController) {
+    BoxWithConstraints {
+        val height = maxHeight
+        val imageSize = when {
+            height < 360.dp -> 35.dp
+            height < 480.dp -> 55.dp
+            else -> 75.dp
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight() // ora la colonna occupa il 16% della larghezza, adattalo se vuoi
+                .background(Color.LightGray)
+                .padding(start = 15.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier.size(imageSize),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier.size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier.size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+    }
+}
