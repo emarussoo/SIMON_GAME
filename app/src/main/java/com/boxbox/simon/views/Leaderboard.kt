@@ -136,7 +136,7 @@ fun leaderboardInterface() {
                                 Text(time.take(5)) // primi 5 caratteri (hh:mm)
                             }
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                Text("extreme")
+                                Text(diff)
                             }
                         }
                         Divider()
