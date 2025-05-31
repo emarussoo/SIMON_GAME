@@ -370,9 +370,29 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
 
 
 @Composable
-fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClick: () -> Unit, onEndClick: () -> Unit){
-    ////////sezione scelta difficoltà + pulsante start/end game //////////////////////
+fun DifficultyAndStart(
+    viewModel: SimonViewModel,
+    state: SimonState,
+    onStartClick: () -> Unit,
+    onEndClick: () -> Unit
+) {
     val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    // Recupera la difficoltà salvata una volta
+    var difficulty by remember {
+        mutableStateOf(
+            Difficulty.valueOf(
+                sharedPref.getString("difficulty", Difficulty.EASY.name) ?: Difficulty.EASY.name
+            )
+        )
+    }
+
+    // Applica al ViewModel solo se non è già quella giusta
+    if (state.difficulty != difficulty && (state.state == GamePhase.Idle || state.state == GamePhase.GameOver)) {
+        viewModel.setDifficulty(difficulty)
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Row(
@@ -383,15 +403,17 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
                 text = stringResource(R.string.level),
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black // opzionale, per armonizzare
+                color = Color.Black
             )
 
             Button(
                 onClick = {
                     if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
-                        viewModel.setDifficulty(
-                            Difficulty.values().get((state.difficulty.index + 1) % 4)
-                        )
+
+                        val newDifficulty = Difficulty.values()[(difficulty.index + 1) % 4]
+                        difficulty = newDifficulty
+                        sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
+                        viewModel.setDifficulty(newDifficulty)
                     }
                 },
                 shape = RoundedCornerShape(30.dp),
@@ -399,27 +421,25 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
                     containerColor = Color.DarkGray,
                     contentColor = Color.White,
                 ),
-                elevation = ButtonDefaults.run {
-                    buttonElevation(
-                        defaultElevation = 4.dp,
-                        pressedElevation = 2.dp,
-                        focusedElevation = 6.dp
-                    )
-                },
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 4.dp,
+                    pressedElevation = 2.dp,
+                    focusedElevation = 6.dp
+                ),
                 modifier = Modifier
                     .padding(3.dp)
                     .height(60.dp)
                     .widthIn(min = 180.dp)
             ) {
                 Text(
-                    text = context.getString(state.difficulty.diffName),
+                    text = context.getString(difficulty.diffName),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
 
-        //codice che precedentemente era vicino allo score//
+        Spacer(modifier = Modifier.size(15.dp))
 
         val (buttonText, buttonColor, onClick) = when (state.state) {
             GamePhase.Idle -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
@@ -428,7 +448,6 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
             GamePhase.WaitingInput -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
         }
 
-        Spacer(modifier = Modifier.size(15.dp))
         Button(
             onClick = onClick,
             colors = ButtonDefaults.buttonColors(
@@ -436,7 +455,6 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
                 contentColor = Color.White
             ),
             shape = RoundedCornerShape(15.dp),
-
             modifier = Modifier
                 .padding(start = 15.dp)
                 .height(50.dp)
@@ -447,7 +465,6 @@ fun DifficultyAndStart(viewModel: SimonViewModel, state: SimonState, onStartClic
                 fontWeight = FontWeight.Bold
             )
         }
-
-        /////////////////////////////////////////////////////////
     }
 }
+

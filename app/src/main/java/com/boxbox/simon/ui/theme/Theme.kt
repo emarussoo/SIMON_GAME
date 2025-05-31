@@ -86,7 +86,7 @@ open class theme {
     open val Yellow: Color = Color(0xfffcd000)
 }
 
-class theme1 : theme() {
+class theme2 : theme() {
     override val title: Int = R.drawable.title1
     override val cup: Int = R.drawable.arcade_cup
     override val joystick: Int = R.drawable.arcade_joystick
@@ -100,7 +100,7 @@ class theme1 : theme() {
 
 }
 
-class theme2 : theme() {
+class theme1 : theme() {
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario

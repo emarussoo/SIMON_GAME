@@ -14,22 +14,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Imposta la lingua salvata
-        val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val savedLang = sharedPref.getString("language", "it") ?: "it"
-        val locale = Locale(savedLang)
-        Locale.setDefault(locale)
-
-        val config = resources.configuration
-        config.setLocale(locale)
-
-        // Questo è ciò che effettivamente cambia la lingua visualizzata
-        resources.updateConfiguration(config, resources.displayMetrics)
+        setLanguage(this)
 
         setContent {
             SIMONTheme {
                 screen()
             }
+
         }
     }
+}
+
+fun setLanguage(context: Context) {
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    //imposto lingua
+    val savedLang = sharedPref.getString("language", "it") ?: "it"
+    val locale = Locale(savedLang)
+    Locale.setDefault(locale)
+    val resources = context.resources
+    val config = resources.configuration
+    config.setLocale(locale)
+    resources.updateConfiguration(config, resources.displayMetrics)
+
+
 }

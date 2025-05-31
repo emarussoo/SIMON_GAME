@@ -54,8 +54,6 @@ fun Nav(
             preGameInterface(navController)
         }
 
-
-
     }
 
 }
