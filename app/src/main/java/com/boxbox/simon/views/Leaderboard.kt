@@ -59,23 +59,16 @@ fun leaderboardInterface() {
         showEmptyMessage = leaderboard.isEmpty()
     }
 
-    Column( //Contenitore per non far sminchiare tutto
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(14.dp)
     ) {
 
-        AnimatedVisibility(
-            visible = showEmptyMessage,
-            enter = fadeIn(tween(500)) + slideInVertically(
-                animationSpec = tween(500),
-                initialOffsetY = { fullHeight -> fullHeight / 4 }
-            )
-        ) {
+        if (showEmptyMessage) {
+            // Messaggio "nessun punteggio disponibile" occupa tutto lo spazio tranne il bottone
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -85,14 +78,12 @@ fun leaderboardInterface() {
             }
         }
 
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = fadeIn(tween(500)) + slideInVertically(
-                animationSpec = tween(500),
-                initialOffsetY = { fullHeight -> fullHeight / 4 }
-            )
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+        if (isVisible) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)  // prende tutto lo spazio disponibile sopra il bottone
+            ) {
+                // Header tabella
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -119,7 +110,10 @@ fun leaderboardInterface() {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                LazyColumn {
+                // Lista scrollabile
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     items(leaderboard) { score ->
                         val date = score.gameDate.split(" ")
                         val day = date.getOrNull(0) ?: ""
@@ -135,15 +129,14 @@ fun leaderboardInterface() {
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                 Text(score.score.toString())
                             }
-                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            Box(Modifier.weight(1.1f), contentAlignment = Alignment.Center) {
                                 Text(day)
                             }
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                Text(time.subSequence(0,5).toString())
+                                Text(time.take(5)) // primi 5 caratteri (hh:mm)
                             }
-
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                Text(diff)
+                                Text("extreme")
                             }
                         }
                         Divider()
@@ -152,7 +145,7 @@ fun leaderboardInterface() {
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(
             onClick = { viewModel.resetLeaderboard(context) },
