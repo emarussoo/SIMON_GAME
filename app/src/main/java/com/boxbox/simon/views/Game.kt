@@ -454,7 +454,7 @@ fun DifficultyAndStart(
                 containerColor = buttonColor,
                 contentColor = Color.White
             ),
-            shape = RoundedCornerShape(15.dp),
+            shape = RoundedCornerShape(0.dp),
             modifier = Modifier
                 .padding(start = 15.dp)
                 .height(50.dp)

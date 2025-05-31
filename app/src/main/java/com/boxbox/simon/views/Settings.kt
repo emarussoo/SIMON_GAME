@@ -2,12 +2,16 @@ package com.boxbox.simon.views
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -39,120 +43,127 @@ fun settingInterface(){
     var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
     var theme by remember { mutableStateOf(sharedPref.getString("theme", "Standard") ?: "Standard") }
 
+    val scrollState = rememberScrollState()
 
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(20.dp).background(Color.Transparent)
     ) {
+
         Text(stringResource(R.string.settings), fontSize = 24.sp, fontWeight = FontWeight.Bold)
-
         Spacer(Modifier.height(16.dp))
 
-        Text(stringResource(R.string.language))
-        Row {
-            listOf(
-                "Italiano" to "it",
-                "English" to "en",
-            ).forEach { (label, langCode) ->
-                Button(
-                    onClick = {
-                        language = langCode
+        Column(
+            modifier = Modifier.verticalScroll(scrollState)
+        ) {
+            Text(stringResource(R.string.language))
+            Row {
+                listOf(
+                    "Italiano" to "it",
+                    "English" to "en",
+                ).forEach { (label, langCode) ->
+                    Button(
+                        onClick = {
+                            language = langCode
 
-                        sharedPref.edit().putString("language", langCode).apply()
+                            sharedPref.edit().putString("language", langCode).apply()
 
-                        val locale = Locale(langCode)
-                        Locale.setDefault(locale)
-                        val config = context.resources.configuration
-                        config.setLocale(locale)
-                        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+                            val locale = Locale(langCode)
+                            Locale.setDefault(locale)
+                            val config = context.resources.configuration
+                            config.setLocale(locale)
+                            context.resources.updateConfiguration(
+                                config,
+                                context.resources.displayMetrics
+                            )
 
-                        (context as? Activity)?.recreate()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (language == langCode) Color(0xFF1E88E5) else Color.DarkGray
-                    ),
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .weight(1f)
-                ) {
-                    Text(label)
+                            (context as? Activity)?.recreate()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (language == langCode) Color(0xFF1E88E5) else Color.DarkGray
+                        ),
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .weight(1f)
+                    ) {
+                        Text(label)
+                    }
                 }
             }
-        }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        // Music toggle
-        Text(stringResource(R.string.sounds))
-        Row {
-            listOf("On" to true, "Off" to false).forEach { (label, value) ->
-                Button(
-                    onClick = {
-                        sounds = value
-                        sharedPref.edit().putBoolean("soundsOn", value).apply()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (sounds == value) Color(0xFF1E88E5) else Color.DarkGray
-                    ),
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .weight(1f)
-                ) {
-                    Text(label)
+            // Music toggle
+            Text(stringResource(R.string.sounds))
+            Row {
+                listOf("On" to true, "Off" to false).forEach { (label, value) ->
+                    Button(
+                        onClick = {
+                            sounds = value
+                            sharedPref.edit().putBoolean("soundsOn", value).apply()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (sounds == value) Color(0xFF1E88E5) else Color.DarkGray
+                        ),
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .weight(1f)
+                    ) {
+                        Text(label)
+                    }
                 }
             }
-        }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        Text(stringResource(R.string.button_style))
-        Row {
-            listOf("3D", "Flat").forEach { option ->
-                Button(
-                    onClick = {
-                        bttnStyle = option
-                        if (option == "3D") {
-                            sharedPref.edit().putBoolean("is3D", true).apply()
-                        } else {
-                            sharedPref.edit().putBoolean("is3D", false).apply()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (bttnStyle == option) Color(0xFF1E88E5) else Color.DarkGray
-                    ),
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .weight(1f)
-                ) {
-                    Text(option)
+            Text(stringResource(R.string.button_style))
+            Row {
+                listOf("3D", "Flat").forEach { option ->
+                    Button(
+                        onClick = {
+                            bttnStyle = option
+                            if (option == "3D") {
+                                sharedPref.edit().putBoolean("is3D", true).apply()
+                            } else {
+                                sharedPref.edit().putBoolean("is3D", false).apply()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (bttnStyle == option) Color(0xFF1E88E5) else Color.DarkGray
+                        ),
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .weight(1f)
+                    ) {
+                        Text(option)
+                    }
                 }
             }
-        }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        Text(stringResource(R.string.themes))
-        Row {
-            listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
-                Button(
-                    onClick = {
-                        theme = option
-                        sharedPref.edit().putString("theme", option).apply()
-                        //un pò puzzolente qui
-                        if(option.equals("IdraulicoIT")) ThemeManager.switchTo1()
-                        else if(option.equals("Standard")) ThemeManager.switchTo2()
-                        else ThemeManager.switchTo3()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (theme == option) Color(0xFF1E88E5) else Color.DarkGray
-                    ),
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .weight(1f)
-                ) {
-                    Text(option)
+            Text(stringResource(R.string.themes))
+            Row {
+                listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
+                    Button(
+                        onClick = {
+                            theme = option
+                            sharedPref.edit().putString("theme", option).apply()
+                            if (option.equals("IdraulicoIT")) ThemeManager.switchTo1()
+                            else if (option.equals("Standard")) ThemeManager.switchTo2()
+                            else ThemeManager.switchTo3()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (theme == option) Color(0xFF1E88E5) else Color.DarkGray
+                        ),
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .weight(1f)
+                    ) {
+                        Text(option)
+                    }
                 }
             }
         }

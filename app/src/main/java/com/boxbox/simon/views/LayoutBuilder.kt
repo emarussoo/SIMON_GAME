@@ -2,6 +2,7 @@ package com.boxbox.simon.views
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,7 +53,7 @@ fun LandscapeLayout(currentRoute: String?, navController: NavHostController, vie
 
         Box(Modifier
             .weight(0.7f)
-            .fillMaxHeight()) {
+            .fillMaxSize()) {
             Nav(navController = navController,
                 modifier = Modifier.padding(0.dp),
                 viewModel = viewModel)
