@@ -51,7 +51,7 @@ class SimonViewModel() : ViewModel(){
     fun EndGame(context: Context): SimonState {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
-
+        val oldGameState = _gameState.value
 
         val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = gameState.value.difficulty.diffName.toString())
 
@@ -70,7 +70,7 @@ class SimonViewModel() : ViewModel(){
             state = GamePhase.GameOver,
             difficulty = this.gameState.value.difficulty
         )
-        return gameState.value
+        return oldGameState
     }
 
     fun showSequence(){

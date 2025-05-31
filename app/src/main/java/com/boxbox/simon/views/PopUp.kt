@@ -10,6 +10,7 @@ import com.boxbox.simon.viewmodel.SimonViewModel
 
 @Composable
 fun EndPopUp(context: Context, viewModel: SimonViewModel, onDismiss: () -> Unit = {}) {
+
     val state = viewModel.EndGame(context)
 
     AlertDialog(
