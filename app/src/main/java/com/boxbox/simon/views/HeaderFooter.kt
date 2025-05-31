@@ -67,10 +67,10 @@ fun GameTopper(navController: NavController) {
     }
 
     Row(modifier = Modifier
-        .padding(top = 45.dp)
+        .padding(top = 20.dp)
         .fillMaxHeight(0.15f)
         .background(color = Color.Transparent)
-        .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 15.dp),
+        .padding( start = 15.dp, end = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(15.dp))
     {
@@ -83,31 +83,29 @@ fun GameTopper(navController: NavController) {
                 .fillMaxHeight()
         )
 
-        Column(modifier = Modifier
-            .weight(0.1f)
-            .fillMaxHeight(),
-            //verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        Column(
+            modifier = Modifier
+                .weight(0.1f)
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Image(
                 painter = painterResource(id = ThemeManager.currentTheme.help),
                 contentDescription = "",
                 modifier = Modifier
-                    .weight(0.5f)
                     .fillMaxWidth()
-                    .clickable(onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) })
-
+                    .padding(bottom = 10.dp)
+                    .clickable { navController.navigate(NavigatorScreen.HowToPlay.route) }
             )
 
             Image(
                 painter = painterResource(id = ThemeManager.currentTheme.quit),
                 contentDescription = "",
                 modifier = Modifier
-                    .weight(0.5f)
                     .fillMaxWidth()
-                    .clickable(onClick = { showPopUp = true })
+                    .clickable { showPopUp = true }
             )
-
         }
     }
 }
@@ -118,8 +116,8 @@ fun GameTopperLandscape(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
 
     Column(modifier = Modifier
-        .background(color = Color.LightGray)
-        .padding(start = 40.dp, bottom = 15.dp, top = 30.dp),
+        .background(color = Color.Transparent)
+        .padding(start = 5.dp, bottom = 15.dp, top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp))
     {
