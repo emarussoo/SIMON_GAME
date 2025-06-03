@@ -121,6 +121,7 @@ fun GameTopper(navController: NavController) {
     }
 }
 
+
 @SuppressLint("ContextCastToActivity", "SuspiciousIndentation")
 @Composable
 fun GameTopperLandscape(navController: NavController) {
@@ -173,12 +174,8 @@ fun GameTopperLandscape(navController: NavController) {
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun ResponsiveGameFooter(navController: NavController) {
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.16f)
-    ) {
+fun ResponsiveGameFooter(navController: NavController){
+    BoxWithConstraints {
         val width = maxWidth
         val imageSize = when {
             width < 360.dp -> 35.dp
@@ -186,59 +183,66 @@ fun ResponsiveGameFooter(navController: NavController) {
             else -> 75.dp
         }
 
-        val centerX = width / 2
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.16f)
+                .background(Color.Transparent),
+            horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
+            verticalAlignment = Alignment.CenterVertically
+        ){
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Bottone centrale (esattamente al centro orizzontale)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                FooterButton(
-                    imageRes = ThemeManager.currentTheme.joystick,
-                    label = "Play",
-                    imageSize = imageSize,
-                    onClick = { navController.navigate(NavigatorScreen.Game.route) }
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillBounds
                 )
             }
 
-            // Bottone sinistra
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 32.dp) // Distanza dal bordo sinistro
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                FooterButton(
-                    imageRes = ThemeManager.currentTheme.cup,
-                    label = "Best",
-                    imageSize = imageSize,
-                    onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) }
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
                 )
             }
 
-            // Bottone destra
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 32.dp) // Distanza dal bordo destro
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                FooterButton(
-                    imageRes = ThemeManager.currentTheme.settings,
-                    label = "Settings",
-                    imageSize = imageSize,
-                    onClick = { navController.navigate(NavigatorScreen.Settings.route) }
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
                 )
             }
         }
     }
 }
 
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveGameFooterLandscape(navController: NavController) {
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         val height = maxHeight
         val imageSize = when {
@@ -252,60 +256,48 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            FooterButton(
-                imageRes = ThemeManager.currentTheme.cup,
-                label = "Best",
-                imageSize = imageSize,
-                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) }
-            )
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
 
-            FooterButton(
-                imageRes = ThemeManager.currentTheme.joystick,
-                label = "Play",
-                imageSize = imageSize,
-                onClick = { navController.navigate(NavigatorScreen.Game.route) }
-            )
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
 
-            FooterButton(
-                imageRes = ThemeManager.currentTheme.settings,
-                label = "Settings",
-                imageSize = imageSize,
-                onClick = { navController.navigate(NavigatorScreen.Settings.route) }
-            )
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
         }
     }
 }
 
-@Composable
-fun FooterButton(
-    imageRes: Int,
-    label: String,
-    imageSize: Dp,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .clickable(onClick = onClick).background(color = Color.Transparent),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = label,
-            modifier = Modifier
-                .size(imageSize)
-                .align(Alignment.CenterHorizontally),
-            contentScale = ContentScale.Fit
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            color = Color.Black,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontWeight = FontWeight.Bold,
-        )
-    }
-}

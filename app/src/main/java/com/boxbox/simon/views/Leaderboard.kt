@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.boxbox.simon.R
@@ -72,8 +73,9 @@ fun leaderboardInterface() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    stringResource(R.string.nessun_punteggio_disponibile),
-                    style = MaterialTheme.typography.bodyLarge
+                    text = stringResource(R.string.nessun_punteggio_disponibile),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -81,7 +83,7 @@ fun leaderboardInterface() {
         if (isVisible) {
             Column(
                 modifier = Modifier
-                    .weight(1f)  // prende tutto lo spazio disponibile sopra il bottone
+                    .weight(1f)
             ) {
                 // Header tabella
                 Row(
@@ -112,7 +114,7 @@ fun leaderboardInterface() {
 
                 // Lista scrollabile
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     items(leaderboard) { score ->
                         val date = score.gameDate.split(" ")
@@ -142,18 +144,18 @@ fun leaderboardInterface() {
                         Divider()
                     }
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { viewModel.resetLeaderboard(context) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text(stringResource(R.string.clear_leaderboard))
+                }
             }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = { viewModel.resetLeaderboard(context) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        ) {
-            Text(stringResource(R.string.clear_leaderboard))
         }
     }
 }

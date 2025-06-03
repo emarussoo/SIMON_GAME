@@ -1,5 +1,6 @@
 package com.boxbox.simon.views
 
+import android.R.attr.maxWidth
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
@@ -90,7 +91,7 @@ fun LandScapeGameLayout(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
-            .background(color = Color.LightGray),
+            .background(color = Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
         Row(modifier = Modifier,
@@ -154,47 +155,69 @@ fun VerticalGameLayout(
 }
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
+fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit) {
     var showEndPopUp by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    if (showEndPopUp){
-        EndPopUp(context, viewModel){
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+
+    if (showEndPopUp) {
+        EndPopUp(context, viewModel) {
             showEndPopUp = false
         }
     }
 
-    Column(modifier = Modifier
-        //.fillMaxWidth()
-        .padding(start = 35.dp, end = 35.dp)
-        .background(color = Color.Transparent)) {
-        Box(
+    BoxWithConstraints(modifier = Modifier.background(Color.Transparent)) {
+        val width = maxWidth
+        val padd = if (isLandscape) 3.dp else 35.dp
+        val divider = if (isLandscape) 5f else 6.5f
+        val fontSize = (width.value / divider).sp
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center){
+                .padding(start = padd, end = padd)
+                .background(color = Color.Transparent)
 
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
-                Text(
-                    text = stringResource(R.string.score),
-                    fontSize = 45.sp,
-                    color = Color.Black
-                )
-                Text(
-                    text = "${state.score}",
-                    fontSize = 45.sp,
-                    fontWeight = FontWeight.Bold
-                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = stringResource(R.string.score),
+                        fontSize = fontSize,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "${state.score}",
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                }
             }
-        }
 
-        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
-            val context = LocalContext.current
-            val timerDuration = state.difficulty.timeDuration
-            TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){
-                if (state.state != GamePhase.GameOver){
-                    showEndPopUp = true
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                val context = LocalContext.current
+                val timerDuration = state.difficulty.timeDuration
+                TimerProgressBar(
+                    timerKey,
+                    timerDuration,
+                    running = state.state == GamePhase.WaitingInput
+                ) {
+                    if (state.state != GamePhase.GameOver) {
+                        showEndPopUp = true
+                    }
                 }
             }
         }
@@ -393,7 +416,8 @@ fun DifficultyAndStart(
         viewModel.setDifficulty(difficulty)
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.background(Color.Transparent)) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,

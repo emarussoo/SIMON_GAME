@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="SIMON.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-31T22:50:15.796871300Z">
+        <DropdownSelection timestamp="2025-06-03T17:33:56.653553500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\ricai\.android\avd\Pixel_6.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=37250DLJH000TR" />
             </handle>
           </Target>
         </DropdownSelection>
