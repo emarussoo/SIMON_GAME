@@ -34,6 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
 import com.boxbox.simon.ui.theme.ThemeManager
+import java.util.LinkedList
+import java.util.Queue
 
 
 //usata per il suono
@@ -58,6 +60,7 @@ fun playSound(soundResId: Int, context: Context) {
         if(sharedPref.getBoolean("soundsOn",true)) start()
     }
 }
+
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -96,6 +99,7 @@ fun ThreeDButton(
 
     val hapticFeedBack = LocalHapticFeedback.current
 
+    if(highlighted) playSound(sound, context)
 
     Box(
         modifier = Modifier
@@ -103,7 +107,7 @@ fun ThreeDButton(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = {
-                    hapticFeedBack.performHapticFeedback(HapticFeedbackType.LongPress)
+                    hapticFeedBack.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onClick()
                     playSound(sound, context)
                 },

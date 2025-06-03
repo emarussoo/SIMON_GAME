@@ -74,16 +74,27 @@ fun SIMONTheme(
 }
 
 open class theme {
+    //immagini
     open val title: Int = 0
     open val cup: Int = 0
     open val joystick: Int = 0
     open val settings: Int = 0
     open val help: Int = 0
     open val quit: Int = 0
+
+    //colori
     open val Red: Color = Color(0xffe71e07)
     open val Blue: Color = Color(0xff42b033)
     open val Green: Color = Color(0xff019dda)
     open val Yellow: Color = Color(0xfffcd000)
+
+    //suoni
+    open val click1Sound: Int = 0
+    open val click2Sound: Int = 0
+    open val click3Sound: Int = 0
+    open val click4Sound: Int = 0
+    open val loseSound: Int = 0
+    open val winSound: Int = 0
 }
 
 class theme2 : theme() {
@@ -93,10 +104,18 @@ class theme2 : theme() {
     override val settings: Int = R.drawable.arcade_settings
     override val help: Int = R.drawable.arcade_help
     override val quit: Int = R.drawable.arcade_poweron
+
     override val Red: Color = Color(0xffe71e07)
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
+
+    override val click1Sound: Int = R.raw.mario_click1
+    override val click2Sound: Int = R.raw.mario_click2
+    override val click3Sound: Int = R.raw.mario_click3
+    override val click4Sound: Int = R.raw.mario_click4
+    override val loseSound: Int = R.raw.mario_lose
+    override val winSound: Int = R.raw.mario_win
 
 }
 
@@ -113,6 +132,13 @@ class theme1 : theme() {
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
 
+    override val click1Sound: Int = R.raw.mario_click1
+    override val click2Sound: Int = R.raw.mario_click2
+    override val click3Sound: Int = R.raw.mario_click3
+    override val click4Sound: Int = R.raw.mario_click4
+    override val loseSound: Int = R.raw.mario_lose
+    override val winSound: Int = R.raw.mario_win
+
 }
 
 class theme3 : theme() {
@@ -128,6 +154,12 @@ class theme3 : theme() {
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
 
+    override val click1Sound: Int = R.raw.mario_click1
+    override val click2Sound: Int = R.raw.mario_click2
+    override val click3Sound: Int = R.raw.mario_click3
+    override val click4Sound: Int = R.raw.mario_click4
+    override val loseSound: Int = R.raw.mario_lose
+    override val winSound: Int = R.raw.mario_win
 }
 
 

@@ -266,58 +266,6 @@ fun TimerProgressBar(
 }
 
 
-@Composable
-fun TimerProgressBarCircle(
-    key: Int,
-    durationMillis: Int,
-    running: Boolean,
-    onTimeout: () -> Unit
-) {
-    val progress = remember(key) { Animatable(1f) }
-
-    LaunchedEffect(key, running) {
-        if (running) {
-            progress.snapTo(1f)
-            progress.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(durationMillis)
-            )
-            onTimeout()
-        } else {
-            progress.snapTo(1f)
-        }
-    }
-
-    val animatedProgress = progress.value
-
-    Box(
-        modifier = Modifier
-            .size(120.dp)
-            .padding(2.dp)
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            // Sfondo cerchio
-            drawArc(
-                color = Color.LightGray,
-                startAngle = -90f,
-                sweepAngle = 360f,
-                useCenter = false,
-                style = Stroke(width = 15f, cap = StrokeCap.Round)
-            )
-
-            // Progresso
-            drawArc(
-                color = Color.Black,
-                startAngle = -90f,
-                sweepAngle = 360f * animatedProgress,
-                useCenter = false,
-                style = Stroke(width = 15f, cap = StrokeCap.Round)
-            )
-        }
-    }
-}
-
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveColorGrid(viewModel: SimonViewModel){
@@ -334,7 +282,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
 
     if(sharedPref.getBoolean("is3D",true) == true) height = 14 else height = 0
 
-    if(state.state == GamePhase.WaitingInput){
+    if(state.state != GamePhase.ShowingSequence){
         isEnabled = true
     }else{
         isEnabled = false
@@ -357,20 +305,20 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
                 .padding((if (height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, height,R.raw.f1, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},height,R.raw.f2, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, height,ThemeManager.currentTheme.click1Sound, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.GREEN, highlighted == SimonMove.GREEN , {viewModel.onUserInput(SimonMove.GREEN, context)},height,ThemeManager.currentTheme.click2Sound, buttonSize, isEnabled)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},height,R.raw.bho, buttonSize, isEnabled)
-                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},height,R.raw.miao, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.BLUE, highlighted == SimonMove.BLUE , {viewModel.onUserInput(SimonMove.BLUE, context)},height,ThemeManager.currentTheme.click3Sound, buttonSize, isEnabled)
+                SimonColorButton(SimonMove.YELLOW, highlighted == SimonMove.YELLOW , {viewModel.onUserInput(SimonMove.YELLOW, context)},height,ThemeManager.currentTheme.click4Sound, buttonSize, isEnabled)
             }
 
             LaunchedEffect(state) {
                 when {
-                    state.state.name == "GameOver" -> playSound(R.raw.lose, context)
+                    state.state.name == "GameOver" -> playSound(ThemeManager.currentTheme.loseSound, context)
                     state.state.name == "ShowingSequence" && state.score != 0 ->{
                         delay(250L)
-                        playSound(R.raw.win, context)
+                        playSound(ThemeManager.currentTheme.winSound, context)
                     }
                 }
             }
