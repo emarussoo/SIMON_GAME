@@ -41,39 +41,44 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun SIMONTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val savedTheme = sharedPref.getString("theme", "Standard") ?: "Standard"
+
+    when (savedTheme) {
+        "IdraulicoIT" -> ThemeManager.switchTo1()
+        "Standard" -> ThemeManager.switchTo2()
+        else -> ThemeManager.switchTo3()
+    }
+
+    val darkTheme = if (ThemeManager.currentTheme.forceLightTheme) {
+        false // forza il tema chiaro
+    } else {
+        isSystemInDarkTheme() // lascia al sistema
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
-
-    val context = LocalContext.current
-    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    val savedTheme = sharedPref.getString("theme", "Standard") ?: "Standard"
-
-    if(savedTheme.equals("IdraulicoIT")) ThemeManager.switchTo1()
-    else if(savedTheme.equals("Standard")) ThemeManager.switchTo2()
-    else ThemeManager.switchTo3()
-
 }
 
 open class theme {
+    //tema chiaro/scuro true = tema chiaro, false = tema scuro
+    open val forceLightTheme: Boolean = false
+
     //immagini
     open val title: Int = 0
     open val cup: Int = 0
@@ -98,6 +103,8 @@ open class theme {
 }
 
 class theme2 : theme() {
+    override val forceLightTheme = true
+
     override val title: Int = R.drawable.title1
     override val cup: Int = R.drawable.arcade_cup
     override val joystick: Int = R.drawable.arcade_joystick
@@ -120,6 +127,8 @@ class theme2 : theme() {
 }
 
 class theme1 : theme() {
+    override val forceLightTheme = true
+
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
@@ -142,6 +151,8 @@ class theme1 : theme() {
 }
 
 class theme3 : theme() {
+    override val forceLightTheme = true
+
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
