@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -140,7 +141,7 @@ fun GameTopperLandscape(navController: NavController) {
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveGameFooter(navController: NavController){
-    BoxWithConstraints {
+    BoxWithConstraints (modifier = Modifier.border(1.dp, Color.Red)){
         val width = maxWidth
         val imageSize = when {
             width < 360.dp -> 35.dp
@@ -151,7 +152,7 @@ fun ResponsiveGameFooter(navController: NavController){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.16f)
+                .fillMaxHeight(0.12f)
                 .background(Color.Transparent),
             horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
             verticalAlignment = Alignment.CenterVertically

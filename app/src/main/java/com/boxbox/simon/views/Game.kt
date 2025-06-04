@@ -8,12 +8,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import androidx.core.widget.AutoSizeableTextView
 import com.boxbox.simon.R
 import com.boxbox.simon.model.Difficulty
 import com.boxbox.simon.model.GamePhase
@@ -55,6 +58,15 @@ import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
 
+@Composable
+fun GetDeviceWidth(): Int {
+    val configuration = LocalConfiguration.current
+    if(configuration.screenHeightDp < configuration.screenWidthDp){
+        return configuration.screenHeightDp
+    }else{
+        return configuration.screenWidthDp
+    }
+}
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun GameScreen(viewModel: SimonViewModel){
@@ -105,7 +117,8 @@ fun LandScapeGameLayout(
         contentAlignment = Alignment.Center
     ) {
         Row(modifier = Modifier,
-            horizontalArrangement = Arrangement.Center) {
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             ResponsiveColorGrid(viewModel)
             Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
@@ -182,10 +195,16 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
     }
 
     BoxWithConstraints(modifier = Modifier.background(Color.Transparent)) {
-        val width = maxWidth
+        val width = GetDeviceWidth()
         val padd = if (isLandscape) 3.dp else 35.dp
-        val divider = if (isLandscape) 5f else 6.5f
-        val fontSize = (width.value / divider).sp
+        val divider = if (isLandscape) 10f else 7.5f // precedentemente 5f e 7.5f
+        //val fontSize = (width.value / divider).sp
+
+        val fontSize = when {
+            width < 360 -> 20.sp
+            width < 400 -> 35.sp
+            else -> (width / divider).sp
+        }
 
         Column(
             modifier = Modifier
@@ -303,9 +322,16 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
             //.fillMaxWidth()
             .padding(16.dp) // margine esterno del layout
     ) {
+        val width= GetDeviceWidth()
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         val spacing = 30.dp
         val totalSpacing = spacing * 3 // 3 spazi in una griglia 2x2
-        val buttonSize = (min(maxWidth, maxHeight) - totalSpacing) / 2
+        val buttonSize = when {
+            width < 360 -> 60.dp
+            width < 380 -> 70.dp
+            else -> (min(maxWidth, maxHeight) - totalSpacing) / 2
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(spacing),
@@ -350,6 +376,7 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
 }
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun DifficultyAndStart(
     viewModel: SimonViewModel,
@@ -359,6 +386,8 @@ fun DifficultyAndStart(
 ) {
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     // Recupera la difficoltà salvata una volta
     var difficulty by remember {
@@ -374,78 +403,148 @@ fun DifficultyAndStart(
         viewModel.setDifficulty(difficulty)
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.background(Color.Transparent)) {
+    BoxWithConstraints(modifier = Modifier
+        .background(Color.LightGray)
+        .border(1.dp, Color.Red)) {
+        val width = GetDeviceWidth()
+        val padd = if (isLandscape) 3.dp else 0.dp
+        val divider = if (isLandscape) 17f else 15f
+        //val fontSize = (width.value / divider).sp
+        //val fontSize = 10.sp
+        val fontSize = when {
+            width < 360 -> 6.sp
+            width < 400 -> 15.sp
+            else -> (width / divider).sp
+        }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+
+
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.background(Color.Transparent).fillMaxHeight(if(isLandscape){0.5f}else{1f}).fillMaxWidth(if(isLandscape){1f}else{0.7f})
         ) {
-            Text(
-                text = stringResource(R.string.level),
-                fontSize = 35.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
+            //Spacer(modifier = Modifier.size(10.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxHeight(if(isLandscape){0.35f}else{0.35f}).border(1.dp, Color.Red)
+            ) {
+
+                Text(
+                    text = stringResource(R.string.level),
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Button(
+                    onClick = {
+                        if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
+
+                            val newDifficulty = Difficulty.values()[(difficulty.index + 1) % 4]
+                            difficulty = newDifficulty
+                            sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
+                            viewModel.setDifficulty(newDifficulty)
+                        }
+                    },
+                    shape = RoundedCornerShape(30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.White,
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 2.dp,
+                        focusedElevation = 6.dp
+                    ),
+                    modifier = Modifier
+                        .padding(padd)
+                        /*.height(
+                            when {
+                                width < 360 -> 35.dp
+                                width < 400 -> 40.dp
+                                else -> 50.dp
+                            }
+                        )*/
+                        .fillMaxHeight(1f)
+                        /*.widthIn(
+                            min = when {
+                                width < 360 -> 100.dp
+                                width < 400 -> 130.dp
+                                else -> 180.dp
+                            }
+                        )*/
+                        .fillMaxWidth(0.8f)
+                ) {
+                    Text(
+                        text = context.getString(difficulty.diffName),
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(
+                modifier = Modifier.size(
+                    when {
+                        width < 400 -> 10.dp
+                        else -> 25.dp
+                    }
+                )
             )
 
-            Button(
-                onClick = {
-                    if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
+            val (buttonText, buttonColor, onClick) = when (state.state) {
+                GamePhase.Idle -> Triple(
+                    stringResource(R.string.start),
+                    Color.Green.darker(),
+                    onStartClick
+                )
 
-                        val newDifficulty = Difficulty.values()[(difficulty.index + 1) % 4]
-                        difficulty = newDifficulty
-                        sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
-                        viewModel.setDifficulty(newDifficulty)
-                    }
-                },
-                shape = RoundedCornerShape(30.dp),
+                GamePhase.GameOver -> Triple(
+                    stringResource(R.string.start),
+                    Color.Green.darker(),
+                    onStartClick
+                )
+
+                GamePhase.ShowingSequence -> Triple(
+                    stringResource(R.string.end),
+                    Color.Red,
+                    onEndClick
+                )
+
+                GamePhase.WaitingInput -> Triple(
+                    stringResource(R.string.end),
+                    Color.Red,
+                    onEndClick
+                )
+            }
+
+            Button(
+                onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.DarkGray,
-                    contentColor = Color.White,
+                    containerColor = buttonColor,
+                    contentColor = Color.White
                 ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 2.dp,
-                    focusedElevation = 6.dp
-                ),
+                shape = RoundedCornerShape(0.dp),
                 modifier = Modifier
-                    .padding(3.dp)
-                    .height(60.dp)
-                    .widthIn(min = 180.dp)
+                    .padding(start = padd)
+                    /*.height(
+                        when {
+                            width < 360 -> 35.dp
+                            width < 400 -> 40.dp
+                            else -> 50.dp
+                        }
+                    )*/
+                    .fillMaxWidth(0.5f)
             ) {
                 Text(
-                    text = context.getString(difficulty.diffName),
-                    fontSize = 30.sp,
+                    text = buttonText,
+                    fontSize = fontSize,
                     fontWeight = FontWeight.Bold
                 )
             }
-        }
-
-        Spacer(modifier = Modifier.size(15.dp))
-
-        val (buttonText, buttonColor, onClick) = when (state.state) {
-            GamePhase.Idle -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
-            GamePhase.GameOver -> Triple(stringResource(R.string.start), Color.Green.darker(), onStartClick)
-            GamePhase.ShowingSequence -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
-            GamePhase.WaitingInput -> Triple(stringResource(R.string.end), Color.Red, onEndClick)
-        }
-
-        Button(
-            onClick = onClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = buttonColor,
-                contentColor = Color.White
-            ),
-            shape = RoundedCornerShape(0.dp),
-            modifier = Modifier
-                .padding(start = 15.dp)
-                .height(50.dp)
-        ) {
-            Text(
-                text = buttonText,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold
-            )
         }
     }
 }
