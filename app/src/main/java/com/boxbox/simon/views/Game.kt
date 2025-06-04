@@ -1,5 +1,6 @@
 package com.boxbox.simon.views
 
+import android.R.style
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,13 +37,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
@@ -57,6 +63,7 @@ import com.boxbox.simon.utils.darker
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
+import java.time.format.TextStyle
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -222,11 +229,16 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
+
+
                     Text(
                         text = stringResource(R.string.score),
                         fontSize = fontSize,
-                        color = Color.Black
+                        color = Color.Black,
+
                     )
+
+
                     Text(
                         text = "${state.score}",
                         fontSize = fontSize,
@@ -407,7 +419,7 @@ fun DifficultyAndStart(
         .background(Color.LightGray)
         .border(1.dp, Color.Red)) {
         val width = GetDeviceWidth()
-        val padd = if (isLandscape) 3.dp else 0.dp
+        val padd = if (isLandscape) 1.dp else 0.dp
         val divider = if (isLandscape) 17f else 15f
         //val fontSize = (width.value / divider).sp
         //val fontSize = 10.sp
@@ -429,20 +441,15 @@ fun DifficultyAndStart(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight(if(isLandscape){0.35f}else{0.35f}).border(1.dp, Color.Red)
+                modifier = Modifier.fillMaxHeight(if(isLandscape){0.35f}else{0.35f}).border(1.dp, Color.Transparent)
             ) {
 
-                Text(
-                    text = stringResource(R.string.level),
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+                AutoResizingText(text = stringResource(R.string.level), modifier = Modifier.weight(0.5f))
+
 
                 Button(
                     onClick = {
                         if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
-
                             val newDifficulty = Difficulty.values()[(difficulty.index + 1) % 4]
                             difficulty = newDifficulty
                             sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
@@ -460,30 +467,21 @@ fun DifficultyAndStart(
                         focusedElevation = 6.dp
                     ),
                     modifier = Modifier
-                        .padding(padd)
-                        /*.height(
-                            when {
-                                width < 360 -> 35.dp
-                                width < 400 -> 40.dp
-                                else -> 50.dp
-                            }
-                        )*/
+                        .padding(padd).weight(0.5f)
                         .fillMaxHeight(1f)
-                        /*.widthIn(
-                            min = when {
-                                width < 360 -> 100.dp
-                                width < 400 -> 130.dp
-                                else -> 180.dp
-                            }
-                        )*/
                         .fillMaxWidth(0.8f)
                 ) {
-                    Text(
-                        text = context.getString(difficulty.diffName),
-                        fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AutoResizingText(
+                            text = context.getString(difficulty.diffName),
+                        )
+                    }
                 }
+
+
             }
 
             Spacer(
@@ -530,22 +528,39 @@ fun DifficultyAndStart(
                 shape = RoundedCornerShape(0.dp),
                 modifier = Modifier
                     .padding(start = padd)
-                    /*.height(
-                        when {
-                            width < 360 -> 35.dp
-                            width < 400 -> 40.dp
-                            else -> 50.dp
-                        }
-                    )*/
                     .fillMaxWidth(0.5f)
             ) {
-                Text(
-                    text = buttonText,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Bold
-                )
+
+
+             AutoResizingText(text = buttonText)
             }
         }
     }
 }
 
+@Composable
+fun AutoResizingText(
+    text: String,
+    maxTextSize: TextUnit = 100.sp,
+    minTextSize: TextUnit = 1.sp,
+    modifier: Modifier = Modifier,
+    step: Float = 0.9f
+) {
+    var currentSize by remember { mutableStateOf(maxTextSize) }
+
+    Text(
+        text = text,
+        fontSize = currentSize,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth(),
+
+        onTextLayout = { layoutResult ->
+            if (layoutResult.hasVisualOverflow && currentSize > minTextSize) {
+                currentSize *= step
+            }
+        }
+    )
+}
