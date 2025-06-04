@@ -1,5 +1,6 @@
 package com.boxbox.simon.views
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -50,6 +51,7 @@ fun leaderboardInterface() {
 
     var isVisible by remember { mutableStateOf(false) }
     var showEmptyMessage by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
         viewModel.loadLeaderboard(context)
