@@ -65,16 +65,16 @@ fun GameScreen(viewModel: SimonViewModel){
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    var showEndPopUp by remember { mutableStateOf(false) }
+    //var showEndPopUp by remember { mutableStateOf(false) }
 
-    if (showEndPopUp){
+    if (state.state == GamePhase.GameOver){
         EndPopUp(context, viewModel){
-            showEndPopUp = false
+            viewModel.resetGamePhase()
         }
     }
 
-    if (isLandscape) LandScapeGameLayout(viewModel, state, timerKey, changeShowEndPopupValue = { showEndPopUp = it })
-        else VerticalGameLayout(viewModel, state, timerKey, changeShowEndPopupValue = { showEndPopUp = it })
+    if (isLandscape) LandScapeGameLayout(viewModel, state, timerKey, /*changeShowEndPopupValue = { viewModel.EndGame(context) }*/)
+        else VerticalGameLayout(viewModel, state, timerKey, /*changeShowEndPopupValue = { viewModel.EndGame(context) }*/)
 
 }
 
@@ -84,8 +84,9 @@ fun LandScapeGameLayout(
     viewModel: SimonViewModel,
     state: SimonState,
     timerKey: Int,
-    changeShowEndPopupValue: (Boolean) -> Unit
+    //changeShowEndPopupValue: (Boolean) -> Unit
 ){
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -103,7 +104,7 @@ fun LandScapeGameLayout(
                     state,
                     timerKey,
                     onStartClick = { viewModel.StartGame() },
-                    onEndClick = { changeShowEndPopupValue(true) })
+                    onEndClick = { /*changeShowEndPopupValue(true)*/ })
 
                 Spacer(modifier = Modifier.height(40.dp))
 
@@ -111,7 +112,7 @@ fun LandScapeGameLayout(
                     viewModel,
                     state,
                     onStartClick = { viewModel.StartGame() },
-                    onEndClick = { changeShowEndPopupValue(false) })
+                    onEndClick = { viewModel.EndGame(context) })
 
             }
         }
@@ -123,8 +124,9 @@ fun VerticalGameLayout(
     viewModel: SimonViewModel,
     state: SimonState,
     timerKey: Int,
-    changeShowEndPopupValue: (Boolean) -> Unit
-){
+    //changeShowEndPopupValue: (Boolean) -> Unit
+) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -139,7 +141,7 @@ fun VerticalGameLayout(
                 state,
                 timerKey,
                 onStartClick = { viewModel.StartGame() },
-                onEndClick = { changeShowEndPopupValue(true) })
+                onEndClick = { /*changeShowEndPopupValue(true)*/ })
             Spacer(modifier = Modifier.height(25.dp))
 
             ResponsiveColorGrid(viewModel)
@@ -148,7 +150,7 @@ fun VerticalGameLayout(
                 viewModel,
                 state,
                 onStartClick = { viewModel.StartGame() },
-                onEndClick = { changeShowEndPopupValue(true) })
+                onEndClick = { viewModel.EndGame(context)})
         }
     }
 }
@@ -156,12 +158,12 @@ fun VerticalGameLayout(
 
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
-    var showEndPopUp by remember { mutableStateOf(false) }
+    //var showEndPopUp by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    if (showEndPopUp){
+    if (state.state == GamePhase.GameOver){
         EndPopUp(context, viewModel){
-            showEndPopUp = false
+            viewModel.resetGamePhase()
         }
     }
 
@@ -193,9 +195,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
             val context = LocalContext.current
             val timerDuration = state.difficulty.timeDuration
             TimerProgressBar(timerKey, timerDuration, running = state.state == GamePhase.WaitingInput){
-                if (state.state != GamePhase.GameOver){
-                    showEndPopUp = true
-                }
+                viewModel.EndGame(context)
             }
         }
     }

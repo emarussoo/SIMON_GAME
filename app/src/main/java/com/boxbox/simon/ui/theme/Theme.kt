@@ -15,6 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import com.boxbox.simon.R
 
 private val DarkColorScheme = darkColorScheme(
@@ -84,6 +87,18 @@ open class theme {
     open val Blue: Color = Color(0xff42b033)
     open val Green: Color = Color(0xff019dda)
     open val Yellow: Color = Color(0xfffcd000)
+
+    open val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
+
+    //Decorazione PopUp
+    open val backgroundPopup: Color = Color.DarkGray
+    open val borderPopup: Color = Color.Yellow
+    open val titleColor: Color = Color.White
+    open val scoreColor: Color = Color.White
+    open val difficultyColor: Color = Color.White
+    open val buttonBackground: Color = Color.Yellow
+    open val buttonTextColor: Color = Color.Black
+    open val popupIcon: Int = R.drawable.mariostrar
 }
 
 class theme2 : theme() {
@@ -113,6 +128,16 @@ class theme1 : theme() {
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
 
+    override val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
+
+    override val backgroundPopup = Color(0xFFdb4b3f)
+    override val borderPopup = Color(0xFFffd966)
+    override val titleColor = Color.White
+    override val scoreColor = Color(0xFFffd966)
+    override val difficultyColor = Color.White
+    override val buttonBackground = Color(0xFFffd966)
+    override val buttonTextColor = Color.Black
+    //override val popupIcon = R.drawable.mario_star
 }
 
 class theme3 : theme() {
@@ -127,7 +152,6 @@ class theme3 : theme() {
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
-
 }
 
 

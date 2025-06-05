@@ -1,5 +1,6 @@
 package com.boxbox.simon.viewmodel
 
+import android.app.GameState
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.util.Log
@@ -48,13 +49,16 @@ class SimonViewModel() : ViewModel(){
         showSequence()
     }
 
+    fun resetGamePhase(){
+        _gameState.value = SimonState(state = GamePhase.Idle)
+    }
+
     fun EndGame(context: Context): SimonState {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
         val oldGameState = _gameState.value
 
         val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = context.getString(gameState.value.difficulty.diffName))
-
         viewModelScope.launch {
             val db = DBAccess.getDB(context)
             db.scoreDAO().insertScore(newScore)
@@ -68,7 +72,8 @@ class SimonViewModel() : ViewModel(){
 
         _gameState.value = SimonState(
             state = GamePhase.GameOver,
-            difficulty = this.gameState.value.difficulty
+            difficulty = this.gameState.value.difficulty,
+            score = this.gameState.value.score
         )
         return oldGameState
     }

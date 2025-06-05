@@ -6,7 +6,7 @@ data class SimonState (
     val sequence: List<SimonMove> = emptyList(),
     val userIndex: Int = 0,
     val score: Int = 0,
-    val state: GamePhase = GamePhase.Idle,
+    var state: GamePhase = GamePhase.Idle,
     val difficulty: Difficulty = Difficulty.EASY
 )
 
