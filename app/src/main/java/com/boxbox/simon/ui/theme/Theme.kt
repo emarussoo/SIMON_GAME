@@ -63,6 +63,13 @@ fun SIMONTheme(
         isSystemInDarkTheme() // lascia al sistema
     }
 
+
+    val typography = when (savedTheme){
+        "mario" -> MarioTypography
+        "neon" -> NeonTypography
+        else -> Typography
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -73,7 +80,7 @@ fun SIMONTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content
     )
 }

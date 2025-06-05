@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +45,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -64,6 +67,9 @@ import com.boxbox.simon.utils.darker
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
+
+import androidx.compose.ui.text.font.FontFamily
+import com.boxbox.simon.ui.theme.neon
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -534,7 +540,7 @@ fun AutoResizingText(
     maxTextSize: TextUnit = 100.sp,
     minTextSize: TextUnit = 1.sp,
     modifier: Modifier = Modifier,
-    step: Float = 0.9f
+    step: Float = 0.9f,
 ) {
     val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
@@ -562,13 +568,18 @@ fun AutoResizingText(
 
         if (measured) {
             Text(
-                text = text,
-                fontSize = currentSize,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+                /*fontFamily = when(ThemeManager.currentTheme) {
+                    is com.boxbox.simon.ui.theme.neon -> FontFamily(Font(R.font.neon))
+                    is com.boxbox.simon.ui.theme.mario -> FontFamily(Font(R.font.supermario))
+                    else -> FontFamily.Default
+                },*/
+                    text = text,
+                    fontSize = currentSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                        )
+                }
         }
     }
-}
