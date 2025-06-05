@@ -47,11 +47,11 @@ fun SIMONTheme(
 ) {
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    val savedTheme = sharedPref.getString("theme", "Standard") ?: "Standard"
+    val savedTheme = sharedPref.getString("theme", "mario") ?: "mario"
 
     when (savedTheme) {
-        "IdraulicoIT" -> ThemeManager.switchTo1()
-        "Standard" -> ThemeManager.switchTo2()
+        "mario" -> ThemeManager.switchTo1()
+        "neon" -> ThemeManager.switchTo2()
         else -> ThemeManager.switchTo3()
     }
 
@@ -82,17 +82,21 @@ open class theme {
 
     //immagini
     open val title: Int = 0
+    open val landTitle: Int = 0
     open val cup: Int = 0
     open val joystick: Int = 0
     open val settings: Int = 0
     open val help: Int = 0
     open val quit: Int = 0
+    open val play:Int = 0
 
     //colori
     open val Red: Color = Color(0xffe71e07)
     open val Blue: Color = Color(0xff42b033)
     open val Green: Color = Color(0xff019dda)
     open val Yellow: Color = Color(0xfffcd000)
+    open val settingsColor = Color(0xfffcd000)
+
 
     //suoni
     open val click1Sound: Int = 0
@@ -116,24 +120,27 @@ open class theme {
     open val popupExitIcon: Int = R.drawable.fungo
 }
 
-class theme2 : theme() {
+class neon : theme() {
     override val forceLightTheme = true
 
     override val title: Int = R.drawable.title1
-    override val cup: Int = R.drawable.arcade_cup
-    override val joystick: Int = R.drawable.arcade_joystick
-    override val settings: Int = R.drawable.arcade_settings
-    override val help: Int = R.drawable.arcade_help
-    override val quit: Int = R.drawable.arcade_poweron
+    override val landTitle: Int = R.drawable.title_land
+    override val cup: Int = R.drawable.neon_cup
+    override val joystick: Int = R.drawable.neon_joys
+    override val settings: Int = R.drawable.neon_settings
+    override val help: Int = R.drawable.question_neon
+    override val quit: Int = R.drawable.neon_poweron
+    override val play: Int = R.drawable.neon_play
 
     override val chosenFont: FontFamily = FontFamily(Font(R.font.neon))
 
     override val popupEndIcon: Int = R.drawable.neon_end_popup
 
-    override val Red: Color = Color(0xffe71e07)
-    override val Blue: Color = Color(0xff42b033)
-    override val Green: Color = Color(0xff019dda)
-    override val Yellow: Color = Color(0xfffcd000)
+    override val Red: Color = Color(0xFFFF5E78)
+    override val Blue: Color = Color(0xFF8FFFE0)
+    override val Green: Color = Color(0xFFC084FC)
+    override val Yellow: Color = Color(0xFF0A043C)
+    override val settingsColor: Color = Color(0xFFFF6EC7)
 
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2
@@ -144,20 +151,24 @@ class theme2 : theme() {
 
 }
 
-class theme1 : theme() {
+class mario : theme() {
     override val forceLightTheme = true
 
     override val title: Int = R.drawable.title2
+    override val landTitle: Int = R.drawable.title_land
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
+    override val play: Int = R.drawable.play_button
+
 
     override val Red: Color = Color(0xffe71e07)
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
+    override val settingsColor: Color = Color(0xFF1E88E5)
 
     override val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
@@ -188,14 +199,26 @@ class theme3 : theme() {
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
+    override val play: Int = R.drawable.play_button
+
 
     override val Red: Color = Color(0xffe71e07)
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
+    override val settingsColor: Color = Color(0xFF1E88E5)
 
-    override val chosenFont: FontFamily = FontFamily(Font(R.font.neon))
+    override val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
+    override val backgroundPopup = Color(0xFFdb4b3f)
+    override val borderPopup = Color(0xFFffd966)
+    override val titleColor = Color.White
+    override val scoreColor = Color(0xFFffd966)
+    override val difficultyColor = Color.White
+    override val buttonBackground = Color(0xFFffd966)
+    override val buttonTextColor = Color.Black
+    override val popupEndIcon: Int = R.drawable.mariostrar
+    override val popupExitIcon: Int = R.drawable.fungo
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2
     override val click3Sound: Int = R.raw.mario_click3
@@ -206,14 +229,14 @@ class theme3 : theme() {
 
 
 object ThemeManager {
-    var currentTheme: theme by mutableStateOf(theme2())
+    var currentTheme: theme by mutableStateOf(neon())
 
     fun switchTo1() {
-        currentTheme = theme1()
+        currentTheme = mario()
     }
 
     fun switchTo2() {
-        currentTheme = theme2()
+        currentTheme = neon()
     }
 
     fun switchTo3() {

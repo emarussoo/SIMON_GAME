@@ -46,7 +46,7 @@ fun preGameInterface(navController : NavController){
             shape = RoundedCornerShape(8.dp),
         ) {
             Image(
-                painter = painterResource(id = R.drawable.play_button),
+                painter = painterResource(ThemeManager.currentTheme.play),
                 contentDescription = "",
                 modifier = Modifier
                     .size(130.dp),
