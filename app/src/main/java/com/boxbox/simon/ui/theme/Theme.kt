@@ -1,6 +1,5 @@
 package com.boxbox.simon.ui.theme
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import com.boxbox.simon.R
 
 private val DarkColorScheme = darkColorScheme(
@@ -148,7 +146,7 @@ class theme1 : theme() {
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
-    override val help: Int = R.drawable.arcade_help
+    override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
 
     override val Red: Color = Color(0xffe71e07)
@@ -182,7 +180,7 @@ class theme3 : theme() {
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
-    override val help: Int = R.drawable.arcade_help
+    override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
 
     override val Red: Color = Color(0xffe71e07)
