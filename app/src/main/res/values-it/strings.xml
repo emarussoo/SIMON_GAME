@@ -9,7 +9,7 @@
     <string name="scoreDB">Punti</string>
     <string name="dataDB">Data</string>
     <string name="oraDB">Ora</string>
-    <string name="diffDB">Difficoltà</string>
+    <string name="diffDB">Difficolta\'</string>
     <string name="clear_leaderboard">Resetta classifica</string>
     <string name="settings">Impostazioni</string>
     <string name="language">Lingua</string>
@@ -35,4 +35,5 @@
     <string name="_2_repeat_the_sequence">2. Ripeti la sequenza:</string>
     <string name="_3_each_round_gets_harder">3. Ogni turno diventa sempre più difficile</string>
     <string name="_4_make_a_mistake">4. Fai un errore?</string>
+    <string name="difficulty">Difficolta\':</string>
 </resources>

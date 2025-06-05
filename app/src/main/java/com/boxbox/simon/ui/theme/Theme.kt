@@ -1,6 +1,5 @@
 package com.boxbox.simon.ui.theme
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import com.boxbox.simon.R
 
 private val DarkColorScheme = darkColorScheme(
@@ -114,7 +112,8 @@ open class theme {
     open val difficultyColor: Color = Color.White
     open val buttonBackground: Color = Color.Yellow
     open val buttonTextColor: Color = Color.Black
-    open val popupIcon: Int = R.drawable.mariostrar
+    open val popupEndIcon: Int = R.drawable.mariostrar
+    open val popupExitIcon: Int = R.drawable.fungo
 }
 
 class theme2 : theme() {
@@ -126,6 +125,10 @@ class theme2 : theme() {
     override val settings: Int = R.drawable.arcade_settings
     override val help: Int = R.drawable.arcade_help
     override val quit: Int = R.drawable.arcade_poweron
+
+    override val chosenFont: FontFamily = FontFamily(Font(R.font.neon))
+
+    override val popupEndIcon: Int = R.drawable.neon_end_popup
 
     override val Red: Color = Color(0xffe71e07)
     override val Blue: Color = Color(0xff42b033)
@@ -165,7 +168,8 @@ class theme1 : theme() {
     override val difficultyColor = Color.White
     override val buttonBackground = Color(0xFFffd966)
     override val buttonTextColor = Color.Black
-    //override val popupIcon = R.drawable.mario_star
+    override val popupEndIcon: Int = R.drawable.mariostrar
+    override val popupExitIcon: Int = R.drawable.fungo
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2
     override val click3Sound: Int = R.raw.mario_click3
@@ -189,6 +193,8 @@ class theme3 : theme() {
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
+
+    override val chosenFont: FontFamily = FontFamily(Font(R.font.neon))
 
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2

@@ -2,7 +2,6 @@ package com.boxbox.simon.views
 
 import android.app.Activity
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,20 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.viewmodel.SimonViewModel
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.material3.Text
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.boxbox.simon.ui.theme.ThemeManager
 
 @Composable
@@ -73,14 +64,14 @@ fun EndPopUp(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        painter = painterResource(id = theme.popupIcon),
+                        painter = painterResource(id = theme.popupEndIcon),
                         contentDescription = "Icona Mario",
                         modifier = Modifier.size(72.dp),
                         tint = Color.Unspecified
                     )
 
                     Text(
-                        text = "Score: ${state.score}",
+                        text = stringResource(R.string.score) + "${state.score}",
                         fontSize = 18.sp,
                         color = theme.scoreColor,
                         modifier = Modifier.padding(top = 4.dp, bottom = 3.dp),
@@ -88,7 +79,7 @@ fun EndPopUp(
                     )
 
                     Text(
-                        text = "Difficulty: ${state.difficulty}",
+                        text = stringResource(R.string.difficulty) + "${state.difficulty}",
                         fontSize = 18.sp,
                         color = theme.difficultyColor,
                         fontFamily = theme.chosenFont
@@ -112,7 +103,7 @@ fun EndPopUp(
     }
 }
 
-@Composable
+/*@Composable
 fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?){
     AlertDialog(
         onDismissRequest = { showPopUp.value = false },
@@ -134,4 +125,82 @@ fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?){
             }
         }
     )
+}*/
+@Composable
+fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?) {
+    val theme = ThemeManager.currentTheme
+
+    if (showPopUp.value) {
+        Dialog(onDismissRequest = { showPopUp.value = false }) {
+            Surface(
+                modifier = Modifier
+                    .width(350.dp)
+                    .wrapContentHeight(),
+                shape = RoundedCornerShape(20.dp),
+                color = theme.backgroundPopup,
+                border = BorderStroke(3.dp, theme.borderPopup)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.uscita),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = theme.titleColor,
+                        fontFamily = theme.chosenFont
+                    )
+                    Icon(
+                        painter = painterResource(id = theme.popupExitIcon),
+                        contentDescription = "Icona Mario",
+                        modifier = Modifier.size(72.dp),
+                        tint = Color.Unspecified
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = stringResource(R.string.vuoi_uscire_dal_gioco),
+                        fontSize = 18.sp,
+                        color = theme.scoreColor,
+                        fontFamily = theme.chosenFont
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = {
+                                showPopUp.value = false
+                                activity?.finishAffinity()
+                            },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = theme.buttonBackground,
+                                contentColor = theme.buttonTextColor
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.s), fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
+                            onClick = { showPopUp.value = false },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = theme.buttonBackground,
+                                contentColor = theme.buttonTextColor
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.no), fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+

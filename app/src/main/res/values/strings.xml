@@ -34,4 +34,5 @@
     <string name="_2_repeat_the_sequence">2. Repeat the Sequence:</string>
     <string name="_3_each_round_gets_harder">3. Each Round Gets Harder:</string>
     <string name="_4_make_a_mistake">4. Make a Mistake?</string>
+    <string name="difficulty">"Difficulty: "</string>
 </resources>
