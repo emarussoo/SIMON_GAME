@@ -101,7 +101,7 @@ fun GameTopperLandscape(navController: NavController) {
     {
 
         Image(
-            painter = painterResource(id = R.drawable.title_land),
+            painter = painterResource(ThemeManager.currentTheme.landTitle),
             contentDescription = "",
             modifier = Modifier
                 .weight(0.9f)

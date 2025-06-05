@@ -42,7 +42,7 @@ fun settingInterface(){
     var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
     // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
     var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
-    var theme by remember { mutableStateOf(sharedPref.getString("theme", "Standard") ?: "Standard") }
+    var theme by remember { mutableStateOf(sharedPref.getString("theme", "mario") ?: "mario") }
 
     val scrollState = rememberScrollState()
 
@@ -83,7 +83,7 @@ fun settingInterface(){
                             (context as? Activity)?.recreate()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (language == langCode) Color(0xFF1E88E5) else Color.DarkGray
+                            containerColor = if (language == langCode) ThemeManager.currentTheme.settingsColor else Color.DarkGray
                         ),
                         modifier = Modifier
                             .padding(4.dp)
@@ -106,7 +106,7 @@ fun settingInterface(){
                             sharedPref.edit().putBoolean("soundsOn", value).apply()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (sounds == value) Color(0xFF1E88E5) else Color.DarkGray
+                            containerColor = if (sounds == value) ThemeManager.currentTheme.settingsColor else Color.DarkGray
                         ),
                         modifier = Modifier
                             .padding(4.dp)
@@ -132,7 +132,7 @@ fun settingInterface(){
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (bttnStyle == option) Color(0xFF1E88E5) else Color.DarkGray
+                            containerColor = if (bttnStyle == option) ThemeManager.currentTheme.settingsColor else Color.DarkGray
                         ),
                         modifier = Modifier
                             .padding(4.dp)
@@ -147,17 +147,17 @@ fun settingInterface(){
 
             Text(stringResource(R.string.themes))
             Row {
-                listOf("IdraulicoIT", "Standard", "ScottMcTominay").forEach { option ->
+                listOf("mario", "neon", "ScottMcTominay").forEach { option ->
                     Button(
                         onClick = {
                             theme = option
                             sharedPref.edit().putString("theme", option).apply()
-                            if (option.equals("IdraulicoIT")) ThemeManager.switchTo1()
-                            else if (option.equals("Standard")) ThemeManager.switchTo2()
+                            if (option.equals("mario")) ThemeManager.switchTo1()
+                            else if (option.equals("neon")) ThemeManager.switchTo2()
                             else ThemeManager.switchTo3()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (theme == option) Color(0xFF1E88E5) else Color.DarkGray
+                            containerColor = if (theme == option) ThemeManager.currentTheme.settingsColor else Color.DarkGray
                         ),
                         modifier = Modifier
                             .padding(4.dp)

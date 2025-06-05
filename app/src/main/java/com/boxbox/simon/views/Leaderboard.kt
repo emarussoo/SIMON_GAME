@@ -47,8 +47,8 @@ import com.boxbox.simon.ui.theme.ThemeManager
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.draw.shadow
-import com.boxbox.simon.ui.theme.theme1
-import com.boxbox.simon.ui.theme.theme2
+import com.boxbox.simon.ui.theme.mario
+import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.theme3
 
 @Composable
@@ -95,8 +95,8 @@ fun leaderboardInterface() {
                 modifier = Modifier.weight(1f)
             ) {
                 when(ThemeManager.currentTheme){
-                    is theme1 -> MarioHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
-                    is theme2 -> NeonHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
+                    is mario -> MarioHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
+                    is neon -> NeonHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
                 }
 
                 LazyColumn(
