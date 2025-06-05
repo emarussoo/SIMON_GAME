@@ -2,6 +2,7 @@ package com.boxbox.simon.views
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ fun screen() {
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
 
     if (isLandscape) LandscapeLayout(currentRoute, navController, viewModel)
         else VerticalLayout(currentRoute, navController, viewModel)

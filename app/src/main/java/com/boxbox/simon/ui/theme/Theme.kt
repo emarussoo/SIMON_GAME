@@ -44,49 +44,65 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun SIMONTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val savedTheme = sharedPref.getString("theme", "Standard") ?: "Standard"
+
+    when (savedTheme) {
+        "IdraulicoIT" -> ThemeManager.switchTo1()
+        "Standard" -> ThemeManager.switchTo2()
+        else -> ThemeManager.switchTo3()
+    }
+
+    val darkTheme = if (ThemeManager.currentTheme.forceLightTheme) {
+        false // forza il tema chiaro
+    } else {
+        isSystemInDarkTheme() // lascia al sistema
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
-
-    val context = LocalContext.current
-    val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    val savedTheme = sharedPref.getString("theme", "Standard") ?: "Standard"
-
-    if(savedTheme.equals("IdraulicoIT")) ThemeManager.switchTo1()
-    else if(savedTheme.equals("Standard")) ThemeManager.switchTo2()
-    else ThemeManager.switchTo3()
-
 }
 
 open class theme {
+    //tema chiaro/scuro true = tema chiaro, false = tema scuro
+    open val forceLightTheme: Boolean = false
+
+    //immagini
     open val title: Int = 0
     open val cup: Int = 0
     open val joystick: Int = 0
     open val settings: Int = 0
     open val help: Int = 0
     open val quit: Int = 0
+
+    //colori
     open val Red: Color = Color(0xffe71e07)
     open val Blue: Color = Color(0xff42b033)
     open val Green: Color = Color(0xff019dda)
     open val Yellow: Color = Color(0xfffcd000)
+
+    //suoni
+    open val click1Sound: Int = 0
+    open val click2Sound: Int = 0
+    open val click3Sound: Int = 0
+    open val click4Sound: Int = 0
+    open val loseSound: Int = 0
+    open val winSound: Int = 0
 
     open val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
@@ -102,20 +118,32 @@ open class theme {
 }
 
 class theme2 : theme() {
+    override val forceLightTheme = true
+
     override val title: Int = R.drawable.title1
     override val cup: Int = R.drawable.arcade_cup
     override val joystick: Int = R.drawable.arcade_joystick
     override val settings: Int = R.drawable.arcade_settings
     override val help: Int = R.drawable.arcade_help
     override val quit: Int = R.drawable.arcade_poweron
+
     override val Red: Color = Color(0xffe71e07)
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
 
+    override val click1Sound: Int = R.raw.mario_click1
+    override val click2Sound: Int = R.raw.mario_click2
+    override val click3Sound: Int = R.raw.mario_click3
+    override val click4Sound: Int = R.raw.mario_click4
+    override val loseSound: Int = R.raw.mario_lose
+    override val winSound: Int = R.raw.mario_win
+
 }
 
 class theme1 : theme() {
+    override val forceLightTheme = true
+
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
@@ -138,9 +166,18 @@ class theme1 : theme() {
     override val buttonBackground = Color(0xFFffd966)
     override val buttonTextColor = Color.Black
     //override val popupIcon = R.drawable.mario_star
+    override val click1Sound: Int = R.raw.mario_click1
+    override val click2Sound: Int = R.raw.mario_click2
+    override val click3Sound: Int = R.raw.mario_click3
+    override val click4Sound: Int = R.raw.mario_click4
+    override val loseSound: Int = R.raw.mario_lose
+    override val winSound: Int = R.raw.mario_win
+
 }
 
 class theme3 : theme() {
+    override val forceLightTheme = true
+
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
@@ -152,6 +189,13 @@ class theme3 : theme() {
     override val Blue: Color = Color(0xff42b033)
     override val Green: Color = Color(0xff019dda)
     override val Yellow: Color = Color(0xfffcd000)
+
+    override val click1Sound: Int = R.raw.mario_click1
+    override val click2Sound: Int = R.raw.mario_click2
+    override val click3Sound: Int = R.raw.mario_click3
+    override val click4Sound: Int = R.raw.mario_click4
+    override val loseSound: Int = R.raw.mario_lose
+    override val winSound: Int = R.raw.mario_win
 }
 
 

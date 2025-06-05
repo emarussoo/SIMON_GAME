@@ -1,48 +1,33 @@
 package com.boxbox.simon.views
 
-import android.R.id.bold
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.boxbox.simon.R
 import com.boxbox.simon.navigator.NavigatorScreen
@@ -52,29 +37,10 @@ import com.boxbox.simon.ui.theme.ThemeManager
 @Composable
 fun GameTopper(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
-    var showPopUp by remember { mutableStateOf(false) }
+    var showExitPopUp = remember { mutableStateOf(false) }
 
-    if (showPopUp){
-        AlertDialog(
-            onDismissRequest = { showPopUp = false },
-            title = { Text(stringResource(R.string.uscita))},
-            text = { Text(stringResource(R.string.vuoi_uscire_dal_gioco)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    showPopUp = false
-                    activity?.finishAffinity()
-                }){
-                    Text(stringResource(R.string.s))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showPopUp = false
-                }) {
-                    Text(stringResource(R.string.no))
-                }
-            }
-        )
+    if (showExitPopUp.value){
+        ExitPopUp(showPopUp = showExitPopUp, activity)
     }
 
     Row(modifier = Modifier
@@ -115,11 +81,12 @@ fun GameTopper(navController: NavController) {
                 contentDescription = "",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { showPopUp = true }
+                    .clickable { showExitPopUp.value = true }
             )
         }
     }
 }
+
 
 @SuppressLint("ContextCastToActivity", "SuspiciousIndentation")
 @Composable
@@ -173,12 +140,8 @@ fun GameTopperLandscape(navController: NavController) {
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun ResponsiveGameFooter(navController: NavController) {
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.16f)
-    ) {
+fun ResponsiveGameFooter(navController: NavController){
+    BoxWithConstraints (modifier = Modifier.border(1.dp, Color.Red)){
         val width = maxWidth
         val imageSize = when {
             width < 360.dp -> 35.dp
@@ -186,59 +149,66 @@ fun ResponsiveGameFooter(navController: NavController) {
             else -> 75.dp
         }
 
-        val centerX = width / 2
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.12f)
+                .background(Color.Transparent),
+            horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
+            verticalAlignment = Alignment.CenterVertically
+        ){
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Bottone centrale (esattamente al centro orizzontale)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                FooterButton(
-                    imageRes = ThemeManager.currentTheme.joystick,
-                    label = "Play",
-                    imageSize = imageSize,
-                    onClick = { navController.navigate(NavigatorScreen.Game.route) }
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillBounds
                 )
             }
 
-            // Bottone sinistra
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 32.dp) // Distanza dal bordo sinistro
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                FooterButton(
-                    imageRes = ThemeManager.currentTheme.cup,
-                    label = "Best",
-                    imageSize = imageSize,
-                    onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) }
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
                 )
             }
 
-            // Bottone destra
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 32.dp) // Distanza dal bordo destro
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                FooterButton(
-                    imageRes = ThemeManager.currentTheme.settings,
-                    label = "Settings",
-                    imageSize = imageSize,
-                    onClick = { navController.navigate(NavigatorScreen.Settings.route) }
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
                 )
             }
         }
     }
 }
 
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveGameFooterLandscape(navController: NavController) {
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         val height = maxHeight
         val imageSize = when {
@@ -252,60 +222,48 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            FooterButton(
-                imageRes = ThemeManager.currentTheme.cup,
-                label = "Best",
-                imageSize = imageSize,
-                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) }
-            )
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.cup),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
 
-            FooterButton(
-                imageRes = ThemeManager.currentTheme.joystick,
-                label = "Play",
-                imageSize = imageSize,
-                onClick = { navController.navigate(NavigatorScreen.Game.route) }
-            )
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Game.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.joystick),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
 
-            FooterButton(
-                imageRes = ThemeManager.currentTheme.settings,
-                label = "Settings",
-                imageSize = imageSize,
-                onClick = { navController.navigate(NavigatorScreen.Settings.route) }
-            )
+            Button(
+                onClick = { navController.navigate(NavigatorScreen.Settings.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = ThemeManager.currentTheme.settings),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(imageSize),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
         }
     }
 }
 
-@Composable
-fun FooterButton(
-    imageRes: Int,
-    label: String,
-    imageSize: Dp,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .clickable(onClick = onClick).background(color = Color.Transparent),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = label,
-            modifier = Modifier
-                .size(imageSize)
-                .align(Alignment.CenterHorizontally),
-            contentScale = ContentScale.Fit
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            color = Color.Black,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontWeight = FontWeight.Bold,
-        )
-    }
-}
