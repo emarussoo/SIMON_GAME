@@ -151,7 +151,7 @@ class theme1 : theme() {
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
-    override val help: Int = R.drawable.arcade_help
+    override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
 
     override val Red: Color = Color(0xffe71e07)
@@ -186,7 +186,7 @@ class theme3 : theme() {
     override val cup: Int = R.drawable.cup_mario
     override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
-    override val help: Int = R.drawable.arcade_help
+    override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
 
     override val Red: Color = Color(0xffe71e07)

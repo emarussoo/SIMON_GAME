@@ -31,6 +31,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,9 +41,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -397,9 +403,7 @@ fun DifficultyAndStart(
         viewModel.setDifficulty(difficulty)
     }
 
-    BoxWithConstraints(modifier = Modifier
-        .background(Color.LightGray)
-        .border(1.dp, Color.Red)) {
+    BoxWithConstraints{
         val width = GetDeviceWidth()
         val padd = if (isLandscape) 1.dp else 0.dp
         val divider = if (isLandscape) 17f else 15f
@@ -416,6 +420,7 @@ fun DifficultyAndStart(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier.background(Color.Transparent).fillMaxHeight(if(isLandscape){0.5f}else{1f}).fillMaxWidth(if(isLandscape){1f}else{0.7f})
         ) {
             //Spacer(modifier = Modifier.size(10.dp))
@@ -457,6 +462,7 @@ fun DifficultyAndStart(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
+
                         AutoResizingText(
                             text = context.getString(difficulty.diffName),
                         )
@@ -513,13 +519,15 @@ fun DifficultyAndStart(
                     .fillMaxWidth(0.5f)
             ) {
 
-
              AutoResizingText(text = buttonText)
             }
         }
     }
 }
 
+
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun AutoResizingText(
     text: String,
@@ -528,21 +536,39 @@ fun AutoResizingText(
     modifier: Modifier = Modifier,
     step: Float = 0.9f
 ) {
+    val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
+    var measured by remember { mutableStateOf(false) }
 
-    Text(
-        text = text,
-        fontSize = currentSize,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        textAlign = TextAlign.Center,
-        modifier = modifier
-            .fillMaxWidth(),
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val availableWidth = constraints.maxWidth.toFloat()
 
-        onTextLayout = { layoutResult ->
-            if (layoutResult.hasVisualOverflow && currentSize > minTextSize) {
-                currentSize *= step
+        LaunchedEffect(availableWidth, text) {
+            var size = maxTextSize
+            while (size > minTextSize) {
+                val result = textMeasurer.measure(
+                    text = "extreme",
+                    style = TextStyle(fontSize = size),
+                    maxLines = 1
+                )
+                if (result.size.width <= availableWidth) {
+                    break
+                }
+                size *= step
             }
+            currentSize = size
+            measured = true
         }
-    )
+
+        if (measured) {
+            Text(
+                text = text,
+                fontSize = currentSize,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
 }

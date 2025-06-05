@@ -4,6 +4,7 @@ import android.app.GameState
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boxbox.simon.model.DB.DBAccess
@@ -12,6 +13,7 @@ import com.boxbox.simon.model.DB.ScoreEntity
 import com.boxbox.simon.model.Difficulty
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
+import com.boxbox.simon.views.EndPopUp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +35,8 @@ class SimonViewModel() : ViewModel(){
     private val _timerKey = MutableStateFlow(0)
     val timerKey: StateFlow<Int> = _timerKey
 
+    var oldGameState = SimonState()
+
     fun resetTimer() {
         _timerKey.value++ // Cambia chiave per resettare
     }
@@ -53,10 +57,9 @@ class SimonViewModel() : ViewModel(){
         _gameState.value = SimonState(state = GamePhase.Idle)
     }
 
-    fun EndGame(context: Context): SimonState {
+    fun EndGame(context: Context) {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
-        val oldGameState = _gameState.value
 
         val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = context.getString(gameState.value.difficulty.diffName))
         viewModelScope.launch {
@@ -69,13 +72,14 @@ class SimonViewModel() : ViewModel(){
            }
         }
 
+        oldGameState = gameState.value
 
         _gameState.value = SimonState(
             state = GamePhase.GameOver,
             difficulty = this.gameState.value.difficulty,
             score = this.gameState.value.score
         )
-        return oldGameState
+
     }
 
     fun showSequence(){
