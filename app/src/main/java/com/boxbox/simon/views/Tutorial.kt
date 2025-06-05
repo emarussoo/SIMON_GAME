@@ -36,7 +36,7 @@ fun howToPlayInterface(){
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .background(Color.White),
+            .background(Color.Transparent),
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -53,7 +53,7 @@ fun howToPlayInterface(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .background(Color.White)
+                .background(Color.Transparent)
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
