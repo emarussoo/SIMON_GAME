@@ -141,7 +141,7 @@ fun GameTopperLandscape(navController: NavController) {
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveGameFooter(navController: NavController){
-    BoxWithConstraints (modifier = Modifier.border(1.dp, Color.Red)){
+    BoxWithConstraints (){
         val width = maxWidth
         val imageSize = when {
             width < 360.dp -> 35.dp
