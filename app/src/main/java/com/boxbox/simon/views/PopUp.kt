@@ -1,7 +1,6 @@
 package com.boxbox.simon.views
 
 import android.app.Activity
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding

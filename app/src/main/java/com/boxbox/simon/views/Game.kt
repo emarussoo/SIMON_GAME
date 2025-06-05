@@ -1,6 +1,5 @@
 package com.boxbox.simon.views
 
-import android.R.style
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -22,11 +21,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -51,7 +47,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
-import androidx.core.widget.AutoSizeableTextView
 import com.boxbox.simon.R
 import com.boxbox.simon.model.Difficulty
 import com.boxbox.simon.model.GamePhase
@@ -63,7 +58,6 @@ import com.boxbox.simon.utils.darker
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
-import java.time.format.TextStyle
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -250,6 +244,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
             }
         }
     }
+}
 }
 
 
