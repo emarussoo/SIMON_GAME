@@ -227,10 +227,10 @@ fun NeonHeaderRow(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HeaderText("Score", Modifier.weight(1f))
-            HeaderText("Date", Modifier.weight(1f))
-            HeaderText("Time", Modifier.weight(1f))
-            HeaderText("Level", Modifier.weight(1f))
+            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.dataDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.oraDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.diffDB), Modifier.weight(1f))
         }
     }
 }
@@ -243,7 +243,7 @@ fun HeaderText(text: String, modifier: Modifier) {
         Text(
             text = text,
             color = Color.Black,
-            fontSize = 16.sp,
+            fontSize = 14.4.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = theme.chosenFont,
             modifier = Modifier.padding(horizontal = 4.dp)

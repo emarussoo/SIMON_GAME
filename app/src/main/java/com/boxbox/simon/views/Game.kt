@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -69,6 +70,8 @@ import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
 
 import androidx.compose.ui.text.font.FontFamily
+import com.boxbox.simon.ui.theme.SIMONTheme
+import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 
 @Composable
@@ -545,6 +548,7 @@ fun AutoResizingText(
     val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
     var measured by remember { mutableStateOf(false) }
+    val fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val availableWidth = constraints.maxWidth.toFloat()
@@ -554,7 +558,7 @@ fun AutoResizingText(
             while (size > minTextSize) {
                 val result = textMeasurer.measure(
                     text = "extreme",
-                    style = TextStyle(fontSize = size),
+                    style = TextStyle(fontSize = size, fontFamily = fontFamily),
                     maxLines = 1
                 )
                 if (result.size.width <= availableWidth) {
@@ -568,18 +572,15 @@ fun AutoResizingText(
 
         if (measured) {
             Text(
-                /*fontFamily = when(ThemeManager.currentTheme) {
-                    is com.boxbox.simon.ui.theme.neon -> FontFamily(Font(R.font.neon))
-                    is com.boxbox.simon.ui.theme.mario -> FontFamily(Font(R.font.supermario))
-                    else -> FontFamily.Default
-                },*/
+                    fontFamily = fontFamily,
                     text = text,
                     fontSize = currentSize,
                     maxLines = 1,
+                    softWrap = false,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
-                        )
-                }
+            )
         }
     }
+}

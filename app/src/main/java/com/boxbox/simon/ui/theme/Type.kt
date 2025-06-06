@@ -29,12 +29,6 @@ val MarioTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    ),
-    bodySmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.supermario)),
-        fontWeight = FontWeight.Normal,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
     )
     )
 
@@ -46,9 +40,6 @@ val NeonTypography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ))
-
-
-
 
     /* Other default text styles to override
     titleLarge = TextStyle(
