@@ -17,7 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import com.boxbox.simon.R
+import com.boxbox.simon.model.Difficulty
 import com.boxbox.simon.ui.theme.Typography
 
 private val DarkColorScheme = darkColorScheme(
@@ -128,7 +130,22 @@ open class theme {
     open val popupEndIcon: Int = R.drawable.mariostrar
     open val popupExitIcon: Int = R.drawable.fungo
 
-    open val themeTypo: Typography = Typography()
+    //Colori bottone difficoltà
+    val difficultyColors = mapOf(
+        Difficulty.EASY to Color(0xFF009BD9),
+        Difficulty.MEDIUM to Color(0xFF44AF35),
+        Difficulty.HARD to Color(0xFFFCCF00),
+        Difficulty.EXTREME to Color(0xFFE62310)
+    )
+
+    //Spessore testo difficoltà però servirebbe importare tutte le varianti dei font che utilizziamo
+    val difficultyFontWeight = mapOf(
+        Difficulty.EASY to FontWeight.Normal,
+        Difficulty.MEDIUM to FontWeight.SemiBold,
+        Difficulty.HARD to FontWeight.Bold,
+        Difficulty.EXTREME to FontWeight.ExtraBold
+    )
+    //Intanto l'ho implementato poi valutiamo
 }
 
 class neon : theme() {

@@ -39,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -393,6 +394,7 @@ fun DifficultyAndStart(
     onStartClick: () -> Unit,
     onEndClick: () -> Unit
 ) {
+    val theme = ThemeManager.currentTheme
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     val configuration = LocalConfiguration.current
@@ -442,8 +444,21 @@ fun DifficultyAndStart(
 
                 AutoResizingText(text = stringResource(R.string.level), modifier = Modifier.weight(0.5f))
 
-
-                Button(
+                DifficultyThemeButton(
+                    text = difficulty.name,
+                    difficulty = difficulty,
+                    onDifficultyChange = { newDifficulty ->
+                        difficulty = newDifficulty
+                        sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
+                        viewModel.setDifficulty(newDifficulty)
+                    },
+                    modifier = Modifier
+                        .padding(padd)
+                        .weight(0.5f)
+                        .fillMaxHeight(1f)
+                        .fillMaxWidth(0.8f)
+                )
+                /*Button(
                     onClick = {
                         if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
                             val newDifficulty = Difficulty.values()[(difficulty.index + 1) % 4]
@@ -454,8 +469,10 @@ fun DifficultyAndStart(
                     },
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.DarkGray,
-                        contentColor = Color.White,
+                        /*containerColor = Color.DarkGray,
+                        contentColor = Color.White,*/
+                        containerColor = theme.difficultyColors[difficulty] ?: Color.DarkGray,
+                        contentColor = Color.White
                     ),
                     elevation = ButtonDefaults.buttonElevation(
                         defaultElevation = 4.dp,
@@ -474,9 +491,10 @@ fun DifficultyAndStart(
 
                         AutoResizingText(
                             text = context.getString(difficulty.diffName),
+                            fontWeight = theme.difficultyFontWeight[difficulty] ?: FontWeight.Normal
                         )
                     }
-                }
+                }*/
 
 
             }
@@ -534,6 +552,59 @@ fun DifficultyAndStart(
     }
 }
 
+@Composable
+fun DifficultyThemeButton(
+    text: String,
+    difficulty: Difficulty,
+    onDifficultyChange: (Difficulty) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val theme = ThemeManager.currentTheme
+    val backColor = theme.difficultyColors[difficulty] ?: Color.DarkGray
+    val onClick = {
+        val newDifficulty = Difficulty.values()[(difficulty.index + 1) % Difficulty.values().size]
+        onDifficultyChange(newDifficulty)
+    }
+
+    when (theme) {
+        is mario -> MarioButton(
+            onClick = onClick,
+            text = text,
+            modifier = modifier,
+            baseColor = backColor,
+            baseShape = RoundedCornerShape(30.dp),
+            textContent = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AutoResizingText(
+                        text = context.getString(difficulty.diffName),
+                        fontWeight = theme.difficultyFontWeight[difficulty] ?: FontWeight.Normal
+                    )
+                }
+            }
+        )
+
+        is neon -> NeonButton(
+            onClick = onClick,
+            text = text,
+            modifier = modifier,
+            textContent = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AutoResizingText(
+                        text = context.getString(difficulty.diffName),
+                        fontWeight = theme.difficultyFontWeight[difficulty] ?: FontWeight.Normal
+                    )
+                }
+            }
+        )
+    }
+}
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -544,6 +615,7 @@ fun AutoResizingText(
     minTextSize: TextUnit = 1.sp,
     modifier: Modifier = Modifier,
     step: Float = 0.9f,
+    fontWeight: FontWeight = FontWeight.Normal
 ) {
     val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
@@ -572,6 +644,7 @@ fun AutoResizingText(
 
         if (measured) {
             Text(
+                    fontWeight = fontWeight,
                     fontFamily = fontFamily,
                     text = text,
                     fontSize = currentSize,

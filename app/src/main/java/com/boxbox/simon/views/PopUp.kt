@@ -103,29 +103,6 @@ fun EndPopUp(
     }
 }
 
-/*@Composable
-fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?){
-    AlertDialog(
-        onDismissRequest = { showPopUp.value = false },
-        title = { Text(stringResource(R.string.uscita))},
-        text = { Text(stringResource(R.string.vuoi_uscire_dal_gioco)) },
-        confirmButton = {
-            TextButton(onClick = {
-                showPopUp.value = false
-                activity?.finishAffinity()
-            }){
-                Text(stringResource(R.string.s))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = {
-                showPopUp.value = false
-            }) {
-                Text(stringResource(R.string.no))
-            }
-        }
-    )
-}*/
 @Composable
 fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?) {
     val theme = ThemeManager.currentTheme

@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,6 +49,8 @@ import com.boxbox.simon.ui.theme.ThemeManager
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Shape
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.theme
@@ -154,12 +157,25 @@ fun leaderboardInterface() {
                 when (ThemeManager.currentTheme) {
                     is mario -> MarioButton(
                         onClick = { viewModel.resetLeaderboard(context) },
-                        text = clear
+                        text = clear,
+                        modifier = Modifier
+                            .fillMaxWidth(0.6f)
+                            .height(50.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    listOf(
+                                        Color(0xFF33BFFF),
+                                        Color(0xFF1A7EBF)
+                                    )
+                                ),
+                                shape = shape
+                            )
                     )
 
                     is neon -> NeonButton(
                         onClick = { viewModel.resetLeaderboard(context) },
-                        text = clear
+                        text = clear,
+                        modifier = Modifier
                     )
                 }
             }
@@ -251,15 +267,16 @@ fun HeaderText(text: String, modifier: Modifier) {
     }
 }
 
-@Composable
-fun MarioButton(onClick: () -> Unit, text: String) {
+/*@Composable
+fun MarioButton(onClick: () -> Unit, text: String, modifier: Modifier) {
     val theme = ThemeManager.currentTheme
 
     Button(
         onClick = onClick,
-        modifier = Modifier
+        modifier
+        /*modifier = Modifier
             .fillMaxWidth(0.6f)
-            .height(50.dp)
+            .height(50.dp)*/ //Modificare questa cosa anche nel tema Neon se funziona in questo
             .shadow(6.dp, RoundedCornerShape(12.dp))
             .background(
                 brush = Brush.verticalGradient(
@@ -283,11 +300,77 @@ fun MarioButton(onClick: () -> Unit, text: String) {
             fontFamily = theme.chosenFont
         )
     }
+}*/
+
+@Composable
+fun MarioButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    baseShape: Shape? = null,
+    baseColor: Color? = null, // colore dinamico, se non fornito usa il colore classico
+    textContent: @Composable () -> Unit = {
+        val theme = ThemeManager.currentTheme
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = theme.chosenFont
+        )
+    }
+) {
+    val shape = if(baseShape == null){
+        RoundedCornerShape(12.dp)
+    }else{
+        baseShape
+    }
+
+    // Se non è stato fornito un colore base, usiamo quelli statici
+    val brush = if (baseColor == null) {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF33BFFF),
+                Color(0xFF1A7EBF)
+            )
+        )
+    } else {
+        Brush.verticalGradient(
+            listOf(
+                baseColor,
+                baseColor.lighten(0.25f)
+            )
+        )
+    }
+
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .shadow(6.dp, shape)
+            .background(brush = brush, shape = shape)
+            .border(3.dp, Color(0xFF442F00), shape),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.Black
+        ),
+        shape = shape
+    ) {
+        textContent()
+    }
 }
 
 
-@Composable
-fun NeonButton(onClick: () -> Unit, text: String) {
+fun Color.lighten(factor: Float): Color {
+    return Color(
+        red = red + (1 - red) * factor,
+        green = green + (1 - green) * factor,
+        blue = blue + (1 - blue) * factor,
+        alpha = alpha
+    )
+}
+
+
+/*@Composable
+fun NeonButton(onClick: () -> Unit, text: String, modifier: Modifier) {
     val theme = ThemeManager.currentTheme
 
     Button(
@@ -318,4 +401,46 @@ fun NeonButton(onClick: () -> Unit, text: String) {
             fontFamily = theme.chosenFont
         )
     }
+}*/
+
+@Composable
+fun NeonButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    textContent: @Composable () -> Unit = {
+        val theme = ThemeManager.currentTheme
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = theme.chosenFont
+        )
+    }
+) {
+    val shape = RoundedCornerShape(16.dp)
+
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .shadow(10.dp, shape)
+            .background(
+                brush = Brush.horizontalGradient(
+                    listOf(
+                        Color(0xFFFFB3E6),   // rosa più chiaro e luminoso
+                        Color(0xFFFE7FD4)    // colore base (rosa acceso)
+                    )
+                ),
+                shape = shape
+            )
+            .border(3.dp, Color(0xFF7A00CC), shape),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.Black
+        ),
+        shape = shape
+    ) {
+        textContent()
+    }
 }
+
