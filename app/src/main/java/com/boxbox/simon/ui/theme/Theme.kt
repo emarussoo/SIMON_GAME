@@ -122,13 +122,13 @@ open class theme {
     //Decorazione PopUp
     open val backgroundPopup: Color = Color.DarkGray
     open val borderPopup: Color = Color.Yellow
-    open val titleColor: Color = Color.White
     open val scoreColor: Color = Color.White
     open val difficultyColor: Color = Color.White
     open val buttonBackground: Color = Color.Yellow
     open val buttonTextColor: Color = Color.Black
     open val popupEndIcon: Int = R.drawable.mariostrar
     open val popupExitIcon: Int = R.drawable.fungo
+    open val popUpTextColor: Color = Color.White
 
     //Colori bottone difficoltà
     val difficultyColors = mapOf(
@@ -137,20 +137,12 @@ open class theme {
         Difficulty.HARD to Color(0xFFFCCF00),
         Difficulty.EXTREME to Color(0xFFE62310)
     )
-
-    //Spessore testo difficoltà però servirebbe importare tutte le varianti dei font che utilizziamo
-    val difficultyFontWeight = mapOf(
-        Difficulty.EASY to FontWeight.Normal,
-        Difficulty.MEDIUM to FontWeight.SemiBold,
-        Difficulty.HARD to FontWeight.Bold,
-        Difficulty.EXTREME to FontWeight.ExtraBold
-    )
-    //Intanto l'ho implementato poi valutiamo
 }
 
 class neon : theme() {
     override val forceLightTheme = true
 
+    override val scoreColor = Color(0xFF7A00CC)
     override val title: Int = R.drawable.title1
     override val landTitle: Int = R.drawable.neon_title_land
     override val cup: Int = R.drawable.neon_cup
@@ -162,7 +154,13 @@ class neon : theme() {
 
     override val chosenFont: FontFamily = FontFamily(Font(R.font.neon))
 
+    override val buttonBackground = Color(0xFF7A00CC)
+    override val buttonTextColor = Color.White
     override val popupEndIcon: Int = R.drawable.neon_end_popup
+    override val popupExitIcon: Int = R.drawable.exit_neon
+    override val backgroundPopup: Color = Color(0xFFFE7FD4)
+    override val borderPopup: Color = Color(0xFF7A00CC)
+    override val popUpTextColor: Color = Color.Black
 
     override val Red: Color = Color(0xFF6420AA)
     override val Blue: Color = Color(0xFF80B3FF)
@@ -201,7 +199,8 @@ class mario : theme() {
 
     override val backgroundPopup = Color(0xFFdb4b3f)
     override val borderPopup = Color(0xFFffd966)
-    override val titleColor = Color.White
+    override val popUpTextColor = Color.Black
+
     override val scoreColor = Color(0xFFffd966)
     override val difficultyColor = Color.White
     override val buttonBackground = Color(0xFFffd966)
@@ -239,7 +238,6 @@ class theme3 : theme() {
 
     override val backgroundPopup = Color(0xFFdb4b3f)
     override val borderPopup = Color(0xFFffd966)
-    override val titleColor = Color.White
     override val scoreColor = Color(0xFFffd966)
     override val difficultyColor = Color.White
     override val buttonBackground = Color(0xFFffd966)

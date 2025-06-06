@@ -25,8 +25,10 @@ import com.boxbox.simon.viewmodel.SimonViewModel
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import com.boxbox.simon.ui.theme.ThemeManager
 
 @Composable
@@ -55,7 +57,7 @@ fun EndPopUp(
                     text = "GAME OVER",
                     fontSize = 26.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = theme.titleColor,
+                    color = theme.popUpTextColor,
                     fontFamily = theme.chosenFont
                 )
 
@@ -65,7 +67,7 @@ fun EndPopUp(
                 ) {
                     Icon(
                         painter = painterResource(id = theme.popupEndIcon),
-                        contentDescription = "Icona Mario",
+                        contentDescription = "End Icon",
                         modifier = Modifier.size(72.dp),
                         tint = Color.Unspecified
                     )
@@ -81,7 +83,7 @@ fun EndPopUp(
                     Text(
                         text = stringResource(R.string.difficulty) + "${state.difficulty}",
                         fontSize = 18.sp,
-                        color = theme.difficultyColor,
+                        color = theme.popUpTextColor,
                         fontFamily = theme.chosenFont
                     )
                 }
@@ -125,7 +127,7 @@ fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?) {
                         text = stringResource(R.string.uscita),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = theme.titleColor,
+                        color = theme.popUpTextColor,
                         fontFamily = theme.chosenFont
                     )
                     Icon(
@@ -140,8 +142,9 @@ fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?) {
                     Text(
                         text = stringResource(R.string.vuoi_uscire_dal_gioco),
                         fontSize = 18.sp,
-                        color = theme.scoreColor,
-                        fontFamily = theme.chosenFont
+                        color = theme.popUpTextColor,
+                        fontFamily = theme.chosenFont,
+                        textAlign = TextAlign.Center
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
