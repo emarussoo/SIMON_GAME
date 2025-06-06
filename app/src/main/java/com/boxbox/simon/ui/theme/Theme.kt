@@ -135,7 +135,7 @@ class neon : theme() {
     override val forceLightTheme = true
 
     override val title: Int = R.drawable.title1
-    override val landTitle: Int = R.drawable.title_land
+    override val landTitle: Int = R.drawable.neon_title_land
     override val cup: Int = R.drawable.neon_cup
     override val joystick: Int = R.drawable.neon_joys
     override val settings: Int = R.drawable.neon_settings
@@ -147,11 +147,11 @@ class neon : theme() {
 
     override val popupEndIcon: Int = R.drawable.neon_end_popup
 
-    override val Red: Color = Color(0xFFFF5E78)
-    override val Blue: Color = Color(0xFF8FFFE0)
-    override val Green: Color = Color(0xFFC084FC)
-    override val Yellow: Color = Color(0xFF0A043C)
-    override val settingsColor: Color = Color(0xFFFF6EC7)
+    override val Red: Color = Color(0xFF6420AA)
+    override val Blue: Color = Color(0xFF80B3FF)
+    override val Green: Color = Color(0xFFFF7ED4)
+    override val Yellow: Color = Color(0xFFFFB5DA)
+    override val settingsColor: Color = Color(0xFFC562AF)
 
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2

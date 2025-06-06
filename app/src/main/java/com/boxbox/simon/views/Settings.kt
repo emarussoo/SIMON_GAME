@@ -148,7 +148,7 @@ fun settingInterface(){
 
             Text(stringResource(R.string.themes))
             Row {
-                listOf("mario", "neon", "ScottMcTominay").forEach { option ->
+                listOf("mario", "neon", "tema3").forEach { option ->
                     Button(
                         onClick = {
                             theme = option

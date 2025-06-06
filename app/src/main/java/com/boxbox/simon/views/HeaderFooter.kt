@@ -95,13 +95,13 @@ fun GameTopperLandscape(navController: NavController) {
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 5.dp, bottom = 15.dp, top = 30.dp),
+        .padding(start = 25.dp, bottom = 15.dp, top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp))
     {
 
         Image(
-            painter = painterResource(id = R.drawable.title_land),
+            painter = painterResource(ThemeManager.currentTheme.landTitle),
             contentDescription = "",
             modifier = Modifier
                 .weight(0.9f)
