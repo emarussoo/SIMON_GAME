@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.widget.Button
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -80,11 +81,13 @@ import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.TransformedText
 import com.boxbox.simon.ui.theme.GreenForest
 import com.boxbox.simon.ui.theme.Orange
 import com.boxbox.simon.ui.theme.SIMONTheme
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
+import com.boxbox.simon.ui.theme.theme
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -557,8 +560,8 @@ fun DifficultyAndStart(
                 GamePhase.ShowingSequence, GamePhase.WaitingInput -> Color.Red
             }
 
-
-            Button(
+            ThemedStartStopButton(onClick, state, "play/start", theme)
+            /*Button(
                     onClick = onClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.DarkGray,
@@ -577,52 +580,46 @@ fun DifficultyAndStart(
                             .fillMaxSize()
                             .padding(12.dp)
                     )
-                }
+                }*/
         }
     }
 }
 
 @Composable
 fun ThemedStartStopButton(
-    text: String,
-    baseColor: Color,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val theme = ThemeManager.currentTheme
-
-    val buttonContent: @Composable () -> Unit = {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            AutoResizingText(
-                text = text,
-                fontWeight = FontWeight.Bold
-            )
-        }
+    state: SimonState,
+    buttonText: String,
+    theme: theme
+){
+    val (containerColor, contentColor) = when(theme){
+        is mario -> Color.Black to Color.White
+        is neon -> Color(0xFF7A00CC) to Color.White
+        else -> Color.DarkGray to Color.White
     }
 
-    when (theme) {
-        is mario -> MarioButton(
-            onClick = onClick,
-            text = text,
-            baseColor = baseColor,
-            modifier = modifier.height(70.dp),
-            baseShape = RoundedCornerShape(10.dp),
-            textContent = buttonContent
-        )
-
-        is neon -> NeonButton(
-            onClick = onClick,
-            text = text,
-            //baseColor = baseColor, da aggiungere eventualmente
-            modifier = modifier.height(70.dp),
-            textContent = buttonContent
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        shape = CircleShape,
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier.size(80.dp)
+    ) {
+        Icon(
+            imageVector = if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver)
+                Icons.Default.PlayArrow
+            else
+                Icons.Default.Close,
+            contentDescription = buttonText,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
         )
     }
 }
-
 
 @Composable
 fun DifficultyThemeButton(
