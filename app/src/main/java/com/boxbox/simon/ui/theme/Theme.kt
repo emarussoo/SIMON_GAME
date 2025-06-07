@@ -179,7 +179,7 @@ class mario : theme() {
     override val title: Int = R.drawable.title2
     override val landTitle: Int = R.drawable.title_land
     override val cup: Int = R.drawable.cup_mario
-    override val joystick: Int = R.drawable.play_marioo
+    override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
@@ -218,7 +218,7 @@ class theme3 : theme() {
 
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
-    override val joystick: Int = R.drawable.play_marioo
+    override val joystick: Int = R.drawable.play_mario
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron

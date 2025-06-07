@@ -303,14 +303,14 @@ fun TimerProgressBar(
     val barColor = when(ThemeManager.currentTheme) {
         is mario -> when {
             animatedProgress > 0.5f -> lerp(
-                ThemeManager.currentTheme.Green,
-                ThemeManager.currentTheme.Yellow,
+                Orange,
+                GreenForest,
                 (animatedProgress - 0.5f) * 2
             )
 
             else -> lerp(
-                ThemeManager.currentTheme.Red,
-                ThemeManager.currentTheme.Blue,
+                Color.Red,
+                Orange,
                 animatedProgress * 2
             )
         }
@@ -492,10 +492,13 @@ fun DifficultyAndStart(
                 DifficultyThemeButton(
                     text = difficulty.name,
                     difficulty = difficulty,
-                    onDifficultyChange = { newDifficulty ->
-                        difficulty = newDifficulty
-                        sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
-                        viewModel.setDifficulty(newDifficulty)
+                    onDifficultyChange = {
+                        newDifficulty ->
+                        if(state.state == GamePhase.Idle || state.state == GamePhase.GameOver){
+                            difficulty = newDifficulty
+                            sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
+                            viewModel.setDifficulty(newDifficulty)
+                        }
                     },
                     modifier = Modifier
                         .padding(padd)
