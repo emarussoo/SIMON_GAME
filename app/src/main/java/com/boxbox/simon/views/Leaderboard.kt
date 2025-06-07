@@ -113,7 +113,10 @@ fun leaderboardInterface() {
                 ) {
                     items(leaderboard) { score ->
                         val date = score.gameDate.split(" ")
-                        val day = date.getOrNull(0) ?: ""
+                        //mette il . al posto del - e inverte in giorno/mese/anno
+                        val dayFormatted = score.gameDate.split(" ").firstOrNull()
+                            ?.split("-")?.let { "${it[2]}.${it[1]}.${it[0]}" } ?: ""
+
                         val time = date.getOrNull(1) ?: ""
                         val diff = score.difficulty
 
@@ -121,7 +124,7 @@ fun leaderboardInterface() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(
                                 Modifier.weight(columnWeight),
@@ -133,7 +136,7 @@ fun leaderboardInterface() {
                                 Modifier.weight(columnWeight),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(day)
+                                Text(dayFormatted)
                             }
                             Box(
                                 Modifier.weight(columnWeight),
