@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -17,10 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import com.boxbox.simon.R
 import com.boxbox.simon.model.Difficulty
-import com.boxbox.simon.ui.theme.Typography
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -182,7 +179,7 @@ class mario : theme() {
     override val title: Int = R.drawable.title2
     override val landTitle: Int = R.drawable.title_land
     override val cup: Int = R.drawable.cup_mario
-    override val joystick: Int = R.drawable.play_mario
+    override val joystick: Int = R.drawable.play_marioo
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron
@@ -221,7 +218,7 @@ class theme3 : theme() {
 
     override val title: Int = R.drawable.title2
     override val cup: Int = R.drawable.cup_mario
-    override val joystick: Int = R.drawable.play_mario
+    override val joystick: Int = R.drawable.play_marioo
     override val settings: Int = R.drawable.mario_settings
     override val help: Int = R.drawable.mario_help
     override val quit: Int = R.drawable.mario_poweron

@@ -148,7 +148,13 @@ fun leaderboardInterface() {
                                 Modifier.weight(columnWeight),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(diff)
+                                Text(when(diff){
+                                    0 -> stringResource(R.string.easy)
+                                    1-> stringResource(R.string.medium)
+                                    2-> stringResource(R.string.hard)
+                                    3-> stringResource(R.string.extreme)
+                                    else -> "null"
+                                })
                             }
                         }
                         Divider()

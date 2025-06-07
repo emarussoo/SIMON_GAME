@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -69,8 +70,10 @@ import com.boxbox.simon.utils.darker
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
-
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontFamily
+import com.boxbox.simon.ui.theme.GreenForest
+import com.boxbox.simon.ui.theme.Orange
 import com.boxbox.simon.ui.theme.SIMONTheme
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
@@ -280,7 +283,7 @@ fun TimerProgressBar(
             progress.snapTo(1f)
             progress.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(durationMillis)
+                animationSpec = tween(durationMillis, easing = LinearEasing)
             )
             onTimeout()
         } else {
@@ -289,20 +292,54 @@ fun TimerProgressBar(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Transparent)
-    ) {
-        Box(
-            modifier = Modifier
-                .height(20.dp)
-                .fillMaxWidth(animatedProgress)
-                .align(Alignment.CenterStart)
-                .background(Color.Black)
-        )
+    val barColor = when(ThemeManager.currentTheme) {
+        is mario -> when {
+            animatedProgress > 0.5f -> lerp(
+                ThemeManager.currentTheme.Green,
+                ThemeManager.currentTheme.Yellow,
+                (animatedProgress - 0.5f) * 2
+            )
+
+            else -> lerp(
+                ThemeManager.currentTheme.Red,
+                ThemeManager.currentTheme.Blue,
+                animatedProgress * 2
+            )
+        }
+
+        is neon -> when {
+            animatedProgress > 0.5f -> lerp(
+                ThemeManager.currentTheme.Yellow,
+                ThemeManager.currentTheme.Blue,
+                (animatedProgress - 0.5f) * 2
+            )
+
+            else -> lerp(
+                ThemeManager.currentTheme.Red,
+                ThemeManager.currentTheme.Green,
+                animatedProgress * 2
+            )
+        }
+
+        else -> Color.Black
     }
-}
+
+                Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
+                    .border(3.dp, Color.Black)
+                    .padding(2.dp)
+                ) {
+            Box(
+                modifier = Modifier
+                    .height(20.dp)
+                    .fillMaxWidth(animatedProgress)
+                    .align(Alignment.CenterStart)
+                    .background(barColor)
+            )
+        }
+    }
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")

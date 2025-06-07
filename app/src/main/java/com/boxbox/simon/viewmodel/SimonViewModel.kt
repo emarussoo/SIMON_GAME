@@ -61,7 +61,7 @@ class SimonViewModel() : ViewModel(){
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
 
-        val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = context.getString(gameState.value.difficulty.diffName))
+        val newScore = ScoreEntity(score = gameState.value.score ,gameDate = currentDateTime, difficulty = gameState.value.difficulty.index)
         viewModelScope.launch {
             val db = DBAccess.getDB(context)
             db.scoreDAO().insertScore(newScore)

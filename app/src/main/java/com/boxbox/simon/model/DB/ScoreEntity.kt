@@ -9,5 +9,5 @@ data class ScoreEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val score:Int,
     val gameDate: String,
-    val difficulty: String
+    val difficulty: Int
 )
