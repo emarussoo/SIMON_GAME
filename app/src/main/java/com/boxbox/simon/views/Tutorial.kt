@@ -41,7 +41,7 @@ fun howToPlayInterface(){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "How to Play?",
+            text = stringResource(R.string.how_to_play),
             fontSize = 50.sp,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center,
