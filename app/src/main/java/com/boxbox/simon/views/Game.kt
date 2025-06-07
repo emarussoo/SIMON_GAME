@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,9 +24,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -505,6 +513,7 @@ fun DifficultyAndStart(
                     }
                 )
             )
+            /*
             val (buttonText, buttonColor, onClick) = when (state.state) {
                 GamePhase.Idle, GamePhase.GameOver -> Triple(
                     stringResource(R.string.start),
@@ -519,6 +528,7 @@ fun DifficultyAndStart(
                 )
             }
 
+
             ThemedStartStopButton(
                 text = buttonText,
                 baseColor = buttonColor,
@@ -528,47 +538,43 @@ fun DifficultyAndStart(
                     .fillMaxWidth(0.5f)
             )
 
-
-            /*val (buttonText, buttonColor, onClick) = when (state.state) {
-                GamePhase.Idle -> Triple(
-                    stringResource(R.string.start),
-                    Color.Green.darker(),
-                    onStartClick
-                )
-
-                GamePhase.GameOver -> Triple(
-                    stringResource(R.string.start),
-                    Color.Green.darker(),
-                    onStartClick
-                )
-
-                GamePhase.ShowingSequence -> Triple(
-                    stringResource(R.string.end),
-                    Color.Red,
-                    onEndClick
-                )
-
-                GamePhase.WaitingInput -> Triple(
-                    stringResource(R.string.end),
-                    Color.Red,
-                    onEndClick
-                )
+             */
+            val onClick = when (state.state) {
+                GamePhase.Idle, GamePhase.GameOver -> onStartClick
+                GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick
             }
 
-            Button(
-                onClick = onClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = buttonColor,
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(0.dp),
-                modifier = Modifier
-                    .padding(start = padd)
-                    .fillMaxWidth(0.5f)
-            ) {
+            val buttonText = when (state.state) {
+                GamePhase.Idle, GamePhase.GameOver -> stringResource(R.string.start)
+                GamePhase.ShowingSequence, GamePhase.WaitingInput -> stringResource(R.string.end)
+            }
 
-             AutoResizingText(text = buttonText)
-            }*/
+            val buttonColor = when (state.state) {
+                GamePhase.Idle, GamePhase.GameOver -> Color.Green.darker()
+                GamePhase.ShowingSequence, GamePhase.WaitingInput -> Color.Red
+            }
+
+
+            Button(
+                    onClick = onClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.White
+                    ),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier
+                        .size(80.dp)
+                ) {
+                    Icon(
+                        imageVector = if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) Icons.Default.PlayArrow
+                                        else Icons.Default.Close,
+                        contentDescription = buttonText,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(12.dp)
+                    )
+                }
         }
     }
 }
