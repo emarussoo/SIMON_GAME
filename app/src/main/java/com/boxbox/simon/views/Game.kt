@@ -652,7 +652,7 @@ fun DifficultyThemeButton(
         is simpson -> SimpsonsButton(
             onClick = onClick,
             text = text,
-            modifier = modifier.height(50.dp),
+            modifier = modifier,
             textContent = {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -676,7 +676,8 @@ fun AutoResizingText(
     minTextSize: TextUnit = 1.sp,
     modifier: Modifier = Modifier,
     step: Float = 0.9f,
-    fontWeight: FontWeight = FontWeight.Normal
+    fontWeight: FontWeight = FontWeight.Normal,
+
 ) {
     val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
@@ -713,7 +714,7 @@ fun AutoResizingText(
                     softWrap = false,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
             )
         }
     }

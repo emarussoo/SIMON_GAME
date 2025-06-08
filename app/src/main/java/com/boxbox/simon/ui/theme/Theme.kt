@@ -30,15 +30,6 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
 @Composable
@@ -69,6 +60,7 @@ fun SIMONTheme(
         "simpson" -> SimpsonTypography
         else -> Typography
     }
+
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -200,6 +192,7 @@ class neon : theme() {
 
         override val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
+
         override val backgroundPopup = Color(0xFFdb4b3f)
         override val borderPopup = Color(0xFFffd966)
         override val popUpTextColor = Color.Black
@@ -230,7 +223,7 @@ class neon : theme() {
         override val joystick: Int = R.drawable.simpson_joys
         override val settings: Int = R.drawable.simpson_settings
         override val help: Int = R.drawable.simpson_question
-        override val quit: Int = R.drawable.mario_poweron
+        override val quit: Int = R.drawable.simpson_exit
         override val play: Int = R.drawable.play_button
 
 

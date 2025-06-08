@@ -166,6 +166,7 @@ fun settingInterface(){
                             .weight(1f)
                     ) {
                         Text(style = MaterialTheme.typography.bodyLarge, text = option, color = selTheme.settBttnText)
+
                     }
                 }
             }

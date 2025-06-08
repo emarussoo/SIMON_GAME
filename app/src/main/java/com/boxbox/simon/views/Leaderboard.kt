@@ -489,19 +489,23 @@ fun SimpsonsButton(
         shape = shape,
         color = Color.Transparent
     ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFF87CEEB), // blu Simpson
-                            Color(0xFFFFB6C1)  // rosa Simpson
-                        )
-                    ),
-                    shape = shape
-                )
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            contentAlignment = Alignment.Center
+
+        Button(
+            onClick = onClick,
+            modifier = modifier
+                .shadow(6.dp, shape)
+                .background(brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(0xFF87CEEB),
+                        Color(0xFFFFB6C1)
+                    )
+                ), shape = shape)
+                .border(3.dp, Color(0xFF442F00), shape),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Black
+            ),
+            shape = shape
         ) {
             textContent()
         }
