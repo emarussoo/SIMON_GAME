@@ -572,6 +572,7 @@ fun ThemedStartStopButton(
     val (containerColor, contentColor) = when(theme){
         is mario -> Color.Black to Color.White
         is neon -> Color(0xFF7A00CC) to Color.White
+        is simpson -> Color(0xff65C03E) to Color.White
         else -> Color.Black to Color.White
     }
 
@@ -648,12 +649,10 @@ fun DifficultyThemeButton(
             }
         )
 
-        is simpson -> MarioButton(
+        is simpson -> SimpsonsButton(
             onClick = onClick,
             text = text,
             modifier = modifier.height(50.dp),
-            baseColor = backColor,
-            baseShape = RoundedCornerShape(30.dp),
             textContent = {
                 Box(
                     modifier = Modifier.fillMaxSize(),

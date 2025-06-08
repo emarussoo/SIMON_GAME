@@ -41,6 +41,15 @@ val NeonTypography = Typography(
         letterSpacing = 0.5.sp
     ))
 
+val SimpsonTypography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily =  FontFamily(Font(R.font.simpsonfont)),
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ))
+
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,

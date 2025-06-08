@@ -2,6 +2,7 @@ package com.boxbox.simon.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -82,20 +84,6 @@ fun leaderboardInterface() {
             .fillMaxSize()
             .padding(14.dp)
     ) {
-
-        if (showEmptyMessage) {
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.nessun_punteggio_disponibile),
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-
         if (isVisible) {
             Column(
                 modifier = Modifier.weight(1f),
@@ -105,6 +93,7 @@ fun leaderboardInterface() {
                 when (ThemeManager.currentTheme) {
                     is mario -> MarioHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
                     is neon -> NeonHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
+                    is simpson -> SimpsonsHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -186,9 +175,28 @@ fun leaderboardInterface() {
                         text = clear,
                         modifier = Modifier
                     )
+
+                    is simpson -> SimpsonsButton(
+                        onClick = { viewModel.resetLeaderboard(context) },
+                        text = clear,
+                        modifier = Modifier
+                    )
                 }
             }
         }
+        if (showEmptyMessage) {
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.nessun_punteggio_disponibile),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
     }
 }
 
@@ -214,7 +222,7 @@ fun MarioHeaderRow(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 8.dp),
+                .padding(vertical = 12.dp, horizontal = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             HeaderText(stringResource(R.string.scoreDB), Modifier.weight(columnWeight))
@@ -248,7 +256,7 @@ fun NeonHeaderRow(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 14.dp),
+                .padding(vertical = 12.dp, horizontal = 6.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -259,6 +267,49 @@ fun NeonHeaderRow(modifier: Modifier = Modifier) {
         }
     }
 }
+
+@Composable
+fun SimpsonsHeaderRow(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(12.dp),
+                ambientColor = Color.Black,
+                spotColor = Color.Black
+            )
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(0xFFFFEB3B), // Giallo Simpson
+                        Color(0xFFFFC107)  // Giallo scuro Simpson
+                    )
+                ),
+                shape = RoundedCornerShape(12.dp)
+            )
+            .border(
+                width = 4.dp,
+                color = Color.Black, // Bordo nero in stile cartoon
+                shape = RoundedCornerShape(12.dp)
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp, horizontal = 6.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.dataDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.oraDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.diffDB), Modifier.weight(1f))
+        }
+    }
+}
+
 
 @Composable
 fun HeaderText(text: String, modifier: Modifier) {
@@ -411,6 +462,52 @@ fun NeonButton(onClick: () -> Unit, text: String, modifier: Modifier) {
         )
     }
 }*/
+
+@Composable
+fun SimpsonsButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    textContent: @Composable () -> Unit = {
+        val theme = ThemeManager.currentTheme
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = theme.chosenFont,
+            color = Color.Black
+        )
+    }
+) {
+    val shape = RoundedCornerShape(12.dp)
+
+    Surface(
+        modifier = modifier
+            .shadow(elevation = 8.dp, shape = shape)
+            .border(width = 3.dp, color = Color.Black, shape = shape)
+            .clickable(onClick = onClick),
+        shape = shape,
+        color = Color.Transparent
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            Color(0xFF87CEEB), // blu Simpson
+                            Color(0xFFFFB6C1)  // rosa Simpson
+                        )
+                    ),
+                    shape = shape
+                )
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            textContent()
+        }
+    }
+}
+
 
 @Composable
 fun NeonButton(
