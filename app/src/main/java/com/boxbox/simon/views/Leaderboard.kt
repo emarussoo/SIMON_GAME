@@ -54,7 +54,7 @@ import androidx.compose.ui.graphics.Shape
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.theme
-import com.boxbox.simon.ui.theme.theme3
+import com.boxbox.simon.ui.theme.simpson
 val columnWeight = 1f
 
 @Composable

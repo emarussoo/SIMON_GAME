@@ -87,6 +87,7 @@ import com.boxbox.simon.ui.theme.Orange
 import com.boxbox.simon.ui.theme.SIMONTheme
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
+import com.boxbox.simon.ui.theme.simpson
 import com.boxbox.simon.ui.theme.theme
 
 @Composable
@@ -571,7 +572,7 @@ fun ThemedStartStopButton(
     val (containerColor, contentColor) = when(theme){
         is mario -> Color.Black to Color.White
         is neon -> Color(0xFF7A00CC) to Color.White
-        else -> Color.DarkGray to Color.White
+        else -> Color.Black to Color.White
     }
 
     Button(
@@ -635,6 +636,24 @@ fun DifficultyThemeButton(
             onClick = onClick,
             text = text,
             modifier = modifier,
+            textContent = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AutoResizingText(
+                        text = context.getString(difficulty.diffName),
+                    )
+                }
+            }
+        )
+
+        is simpson -> MarioButton(
+            onClick = onClick,
+            text = text,
+            modifier = modifier.height(50.dp),
+            baseColor = backColor,
+            baseShape = RoundedCornerShape(30.dp),
             textContent = {
                 Box(
                     modifier = Modifier.fillMaxSize(),
