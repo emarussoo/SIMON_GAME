@@ -30,6 +30,8 @@ import androidx.compose.material3.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.boxbox.simon.ui.theme.ThemeManager
+import com.boxbox.simon.ui.theme.simpson
+import com.boxbox.simon.ui.theme.theme
 
 @Composable
 fun EndPopUp(
@@ -68,7 +70,9 @@ fun EndPopUp(
                     Icon(
                         painter = painterResource(id = theme.popupEndIcon),
                         contentDescription = "End Icon",
-                        modifier = Modifier.size(72.dp),
+                        modifier = when(theme) {
+                            is simpson -> Modifier.size(150.dp)
+                            else -> Modifier.size(72.dp)},
                         tint = Color.Unspecified
                     )
 
@@ -133,8 +137,10 @@ fun ExitPopUp(showPopUp: MutableState<Boolean>, activity: Activity?) {
                     Icon(
                         painter = painterResource(id = theme.popupExitIcon),
                         contentDescription = "Icona Mario",
-                        modifier = Modifier.size(72.dp),
-                        tint = Color.Unspecified
+                        modifier = when(theme) {
+                            is simpson -> Modifier.size(150.dp)
+                            else -> Modifier.size(72.dp)},
+                        tint = Color.Unspecified,
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))

@@ -66,6 +66,7 @@ fun SIMONTheme(
     val typography = when (savedTheme){
         "mario" -> MarioTypography
         "neon" -> NeonTypography
+        "simpson" -> SimpsonTypography
         else -> Typography
     }
 
@@ -104,6 +105,8 @@ open class theme {
     open val Green: Color = Color(0xff019dda)
     open val Yellow: Color = Color(0xfffcd000)
     open val settingsColor = Color(0xfffcd000)
+    open val settBttnBackColor = Color.DarkGray
+    open val settBttnText = Color.White
 
 
     //suoni
@@ -235,20 +238,21 @@ class neon : theme() {
         override val Blue: Color = Color(0xff0B7CC0)
         override val Green: Color = Color(0xff65C03E)
         override val Yellow: Color = Color(0xffFFDE00)
-        override val settingsColor: Color = Color(0xFF1E88E5)
+        override val settingsColor: Color = Color(0xffFFDE00)
+        override val settBttnBackColor: Color = Color.LightGray
+        override val settBttnText: Color = Color.DarkGray
 
-        override val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
+        override val chosenFont: FontFamily = FontFamily(Font(R.font.simpsonfont))
 
-        override val backgroundPopup = Color(0xFFdb4b3f)
-        override val borderPopup = Color(0xFFffd966)
-        override val popUpTextColor = Color.Black
-
-        override val scoreColor = Color(0xFFffd966)
+        override val backgroundPopup = Color(0xFFFFFACD)      // Light Yellow
+        override val borderPopup = Color(0xFFFF69B4)          // Donut Pink
+        override val popUpTextColor = Color(0xFF000080)       // Navy Blue
+        override val buttonBackground = Color(0xFF87CEEB)      // Sky Blue
+        override val scoreColor = Color(0xFF800080)           // Purple
         override val difficultyColor = Color.White
-        override val buttonBackground = Color(0xFFffd966)
         override val buttonTextColor = Color.Black
-        override val popupEndIcon: Int = R.drawable.mariostrar
-        override val popupExitIcon: Int = R.drawable.fungo
+        override val popupEndIcon: Int = R.drawable.homerscreaming
+        override val popupExitIcon: Int = R.drawable.bart_exit
 
         override val click1Sound: Int = R.raw.mario_click1
         override val click2Sound: Int = R.raw.mario_click2

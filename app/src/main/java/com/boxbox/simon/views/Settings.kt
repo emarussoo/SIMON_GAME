@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -44,7 +45,7 @@ fun settingInterface(){
     // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
     var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
     var theme by remember { mutableStateOf(sharedPref.getString("theme", "mario") ?: "mario") }
-
+    val selTheme = ThemeManager.currentTheme
     val scrollState = rememberScrollState()
 
 
@@ -58,7 +59,7 @@ fun settingInterface(){
         Spacer(Modifier.height(16.dp))
 
         Column(
-            modifier = Modifier.verticalScroll(scrollState)
+            modifier = Modifier.verticalScroll(scrollState),
         ) {
             Text(stringResource(R.string.language))
             Row {
@@ -84,13 +85,13 @@ fun settingInterface(){
                             (context as? Activity)?.recreate()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (language == langCode) ThemeManager.currentTheme.settingsColor else Color.DarkGray
+                            containerColor = if (language == langCode) ThemeManager.currentTheme.settingsColor else selTheme.settBttnBackColor
                         ),
                         modifier = Modifier
                             .padding(4.dp)
                             .weight(1f)
                     ) {
-                        Text(style = MaterialTheme.typography.bodyLarge, text = label)
+                        Text(style = MaterialTheme.typography.bodyLarge, text = label, color = selTheme.settBttnText)
                     }
                 }
             }
@@ -107,13 +108,13 @@ fun settingInterface(){
                             sharedPref.edit().putBoolean("soundsOn", value).apply()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (sounds == value) ThemeManager.currentTheme.settingsColor else Color.DarkGray
+                            containerColor = if (sounds == value) selTheme.settingsColor else selTheme.settBttnBackColor
                         ),
                         modifier = Modifier
                             .padding(4.dp)
                             .weight(1f)
                     ) {
-                        Text(style = MaterialTheme.typography.bodyLarge, text = label)
+                        Text(style = MaterialTheme.typography.bodyLarge, text = label, color = selTheme.settBttnText)
                     }
                 }
             }
@@ -133,13 +134,13 @@ fun settingInterface(){
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (bttnStyle == option) ThemeManager.currentTheme.settingsColor else Color.DarkGray
+                            containerColor = if (bttnStyle == option) selTheme.settingsColor else selTheme.settBttnBackColor
                         ),
                         modifier = Modifier
                             .padding(4.dp)
                             .weight(1f)
                     ) {
-                        Text(style = MaterialTheme.typography.bodyLarge, text = option)
+                        Text(style = MaterialTheme.typography.bodyLarge, text = option, color = selTheme.settBttnText)
                     }
                 }
             }
@@ -158,13 +159,13 @@ fun settingInterface(){
                             else ThemeManager.switchTo3()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (theme == option) ThemeManager.currentTheme.settingsColor else Color.DarkGray
+                            containerColor = if (theme == option) selTheme.settingsColor else selTheme.settBttnBackColor
                         ),
                         modifier = Modifier
                             .padding(4.dp)
                             .weight(1f)
                     ) {
-                        Text(style = MaterialTheme.typography.bodyLarge, text = option)
+                        Text(style = MaterialTheme.typography.bodyLarge, text = option, color = selTheme.settBttnText)
                     }
                 }
             }
