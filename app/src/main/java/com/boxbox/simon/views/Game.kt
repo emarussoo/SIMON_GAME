@@ -519,32 +519,8 @@ fun DifficultyAndStart(
                     }
                 )
             )
-            /*
-            val (buttonText, buttonColor, onClick) = when (state.state) {
-                GamePhase.Idle, GamePhase.GameOver -> Triple(
-                    stringResource(R.string.start),
-                    Color.Green.darker(),
-                    onStartClick
-                )
-
-                GamePhase.ShowingSequence, GamePhase.WaitingInput -> Triple(
-                    stringResource(R.string.end),
-                    Color.Red,
-                    onEndClick
-                )
-            }
 
 
-            ThemedStartStopButton(
-                text = buttonText,
-                baseColor = buttonColor,
-                onClick = onClick,
-                modifier = Modifier
-                    .padding(start = padd)
-                    .fillMaxWidth(0.5f)
-            )
-
-             */
             val onClick = when (state.state) {
                 GamePhase.Idle, GamePhase.GameOver -> onStartClick
                 GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick

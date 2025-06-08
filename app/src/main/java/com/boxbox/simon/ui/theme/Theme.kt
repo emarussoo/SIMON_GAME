@@ -113,6 +113,7 @@ open class theme {
     open val click4Sound: Int = 0
     open val loseSound: Int = 0
     open val winSound: Int = 0
+    open val introSound: Int = 0
 
     open val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
@@ -171,6 +172,7 @@ class neon : theme() {
     override val click4Sound: Int = R.raw.mario_click4
     override val loseSound: Int = R.raw.neon_lose
     override val winSound: Int = R.raw.neon_win
+    override val introSound: Int = R.raw.bho
 }
 
 class mario : theme() {
@@ -211,6 +213,7 @@ class mario : theme() {
     override val click4Sound: Int = R.raw.mario_click4
     override val loseSound: Int = R.raw.mario_lose
     override val winSound: Int = R.raw.mario_win
+    override val introSound: Int = R.raw.mario_intro
 
 }
 
@@ -242,12 +245,14 @@ class theme3 : theme() {
     override val buttonTextColor = Color.Black
     override val popupEndIcon: Int = R.drawable.mariostrar
     override val popupExitIcon: Int = R.drawable.fungo
+
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2
     override val click3Sound: Int = R.raw.mario_click3
     override val click4Sound: Int = R.raw.mario_click4
     override val loseSound: Int = R.raw.mario_lose
     override val winSound: Int = R.raw.mario_win
+    override val introSound: Int = R.raw.bho
 }
 
 

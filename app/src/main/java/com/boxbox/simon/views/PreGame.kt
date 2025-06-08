@@ -36,12 +36,11 @@ fun preGameInterface(navController : NavController){
         Image(
             painter = painterResource(id = ThemeManager.currentTheme.title),
             contentDescription = "",
-            //modifier = Modifier.fillMaxSize()
         )
         Spacer(modifier = Modifier.height(15.dp))
         Button(
             onClick = { navController.navigate(NavigatorScreen.Game.route)
-                playSound(R.raw.start,context)},
+                playSound(ThemeManager.currentTheme.introSound,context)},
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             shape = RoundedCornerShape(8.dp),
         ) {
