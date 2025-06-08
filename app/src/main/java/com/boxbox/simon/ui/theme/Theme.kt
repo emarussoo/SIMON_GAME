@@ -170,7 +170,7 @@ class neon : theme() {
     override val click3Sound: Int = R.raw.mario_click3
     override val click4Sound: Int = R.raw.mario_click4
     override val loseSound: Int = R.raw.neon_lose
-    override val winSound: Int = R.raw.mario_win
+    override val winSound: Int = R.raw.neon_win
 }
 
 class mario : theme() {
@@ -204,6 +204,7 @@ class mario : theme() {
     override val buttonTextColor = Color.Black
     override val popupEndIcon: Int = R.drawable.mariostrar
     override val popupExitIcon: Int = R.drawable.fungo
+
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2
     override val click3Sound: Int = R.raw.mario_click3
