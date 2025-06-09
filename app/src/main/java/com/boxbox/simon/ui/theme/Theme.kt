@@ -57,7 +57,7 @@ fun SIMONTheme(
     val typography = when (savedTheme){
         "mario" -> MarioTypography
         "neon" -> NeonTypography
-        "simpson" -> SimpsonTypography
+        "bart" -> SimpsonTypography
         else -> Typography
     }
 
