@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.widget.Button
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -38,6 +39,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -89,6 +93,7 @@ import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.simpson
 import com.boxbox.simon.ui.theme.theme
+import com.boxbox.simon.utils.lighter
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -214,11 +219,6 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    if (state.state == GamePhase.GameOver){
-        EndPopUp(context, viewModel){
-            viewModel.resetGamePhase()
-        }
-    }
 
     BoxWithConstraints(modifier = Modifier.background(Color.Transparent)) {
         val width = GetDeviceWidth()
@@ -354,6 +354,7 @@ fun TimerProgressBar(
     }
 
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveColorGrid(viewModel: SimonViewModel){
@@ -361,6 +362,9 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
+    val configuration = LocalConfiguration.current
+    val screenHeightDp = configuration.screenHeightDp.dp
+    val screenWidthDp = configuration.screenWidthDp.dp
 
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
@@ -379,7 +383,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
     BoxWithConstraints(
         modifier = Modifier
             //.fillMaxWidth()
-            .padding(16.dp) // margine esterno del layout
+            .padding(16.dp)
     ) {
         val width= GetDeviceWidth()
 
@@ -387,9 +391,9 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
         val spacing = 30.dp
         val totalSpacing = spacing * 3 // 3 spazi in una griglia 2x2
         val buttonSize = when {
-            width < 360 -> 60.dp
-            width < 380 -> 70.dp
-            else -> (min(maxWidth, maxHeight) - totalSpacing) / 2
+            /*width < 360 -> 60.dp
+            width < 380 -> 70.dp*/
+            else -> (min(maxWidth, maxHeight) - 40.dp - totalSpacing) / 2
         }
 
         Column(
@@ -467,13 +471,6 @@ fun DifficultyAndStart(
         val width = GetDeviceWidth()
         val padd = if (isLandscape) 1.dp else 0.dp
         val divider = if (isLandscape) 17f else 15f
-        //val fontSize = (width.value / divider).sp
-        //val fontSize = 10.sp
-        val fontSize = when {
-            width < 360 -> 6.sp
-            width < 400 -> 15.sp
-            else -> (width / divider).sp
-        }
 
 
 
@@ -488,7 +485,7 @@ fun DifficultyAndStart(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight(if(isLandscape){0.35f}else{0.35f}).border(1.dp, Color.Transparent)
+                modifier = Modifier.fillMaxHeight(if(isLandscape){0.33f}else{0.33f}).border(1.dp, Color.Transparent)
             ) {
 
                 AutoResizingText(text = stringResource(R.string.level), modifier = Modifier.weight(0.5f))
@@ -505,7 +502,7 @@ fun DifficultyAndStart(
                         }
                     },
                     modifier = Modifier
-                        .padding(padd)
+                        .padding(0.dp)
                         .weight(0.5f)
                         .fillMaxHeight(1f)
                         .fillMaxWidth(0.8f)
@@ -594,7 +591,7 @@ fun ThemedStartStopButton(
             contentDescription = buttonText,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp)
+                .padding(10.dp)
         )
     }
 }
@@ -675,29 +672,38 @@ fun AutoResizingText(
     maxTextSize: TextUnit = 100.sp,
     minTextSize: TextUnit = 1.sp,
     modifier: Modifier = Modifier,
-    step: Float = 0.6f,
+    step: Float = 0.9f,
     fontWeight: FontWeight = FontWeight.Normal,
-
 ) {
     val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
     var measured by remember { mutableStateOf(false) }
     val fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
 
+    // Lista fissa di stringhe da confrontare
+    val fixedTexts = listOf(
+        stringResource(R.string.easy),
+        stringResource(R.string.extreme),
+        stringResource(R.string.hard),
+        stringResource(R.string.medium),
+    )
+
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val availableWidth = constraints.maxWidth.toFloat()
 
-        LaunchedEffect(availableWidth, text) {
+        LaunchedEffect(availableWidth) {
             var size = maxTextSize
             while (size > minTextSize) {
-                val result = textMeasurer.measure(
-                    text = "simpson",
-                    style = TextStyle(fontSize = size, fontFamily = fontFamily),
-                    maxLines = 1
-                )
-                if (result.size.width <= availableWidth) {
-                    break
+                val allFit = fixedTexts.all { text ->
+                    val result = textMeasurer.measure(
+                        text = text,
+                        style = TextStyle(fontSize = size, fontFamily = fontFamily),
+                        maxLines = 1
+                    )
+                    result.size.width <= availableWidth
                 }
+
+                if (allFit) break
                 size *= step
             }
             currentSize = size
@@ -706,15 +712,15 @@ fun AutoResizingText(
 
         if (measured) {
             Text(
-                    fontWeight = fontWeight,
-                    fontFamily = fontFamily,
-                    text = text,
-                    fontSize = currentSize,
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
+                text = text,
+                fontSize = currentSize,
+                fontWeight = fontWeight,
+                fontFamily = fontFamily,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

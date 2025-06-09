@@ -93,6 +93,12 @@ fun GameTopper(navController: NavController) {
 fun GameTopperLandscape(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
 
+    var showExitPopUp = remember { mutableStateOf(false) }
+
+    if (showExitPopUp.value){
+        ExitPopUp(showPopUp = showExitPopUp, activity)
+    }
+
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(start = 25.dp, bottom = 15.dp, top = 30.dp),
@@ -130,7 +136,7 @@ fun GameTopperLandscape(navController: NavController) {
                 modifier = Modifier
                     .weight(0.5f)
                     .fillMaxWidth()
-                    .clickable(onClick = { activity?.finish() })
+                    .clickable(onClick = { showExitPopUp.value = true })
             )
 
         }

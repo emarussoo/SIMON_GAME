@@ -185,8 +185,13 @@ fun leaderboardInterface() {
             }
         }
         if (showEmptyMessage) {
+            when (ThemeManager.currentTheme) {
+                is mario -> MarioHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
+                is neon -> NeonHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
+                is simpson -> SimpsonsHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
+            }
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

@@ -47,6 +47,7 @@ dependencies {
 
     implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.animation.core.android)
+    implementation(libs.androidx.material3.window.size.class1.android)
     //usato per il navigator
     val nav_version = "2.9.0"
     implementation("androidx.navigation:navigation-compose:$nav_version")

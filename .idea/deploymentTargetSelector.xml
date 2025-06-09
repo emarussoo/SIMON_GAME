@@ -2,12 +2,12 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="SIMON.app">
+      <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-06-09T14:22:21.709324200Z">
+        <DropdownSelection timestamp="2025-06-09T17:50:29.740432600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=37250DLJH000TR" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CX20QBE4F" />
             </handle>
           </Target>
         </DropdownSelection>
