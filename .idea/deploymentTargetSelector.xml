@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="SIMON.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-06-09T14:22:21.709324200Z">
+        <DropdownSelection timestamp="2025-06-09T16:07:26.506469300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=37250DLJH000TR" />

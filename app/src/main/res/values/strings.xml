@@ -36,4 +36,7 @@
     <string name="_4_make_a_mistake">4. Make a Mistake?</string>
     <string name="difficulty">"Difficulty: "</string>
     <string name="how_to_play">How to Play?</string>
+    <string name="app_sviluppata_da_emanuele_russo_simone_marmor_marco_supino">App developed by:\\nEmanuele Russo\\nSimone Marmore\'\\nMarco Supino</string>
+    <string name="progetto_realizzato_per_il_corso_di_mobile_programming_del_prof_massimo_regoli">Project created for the Mobile Programming course by Prof. Massimo Regoli</string>
+    <string name="questa_applicazione_stata_creata_esclusivamente_a_scopo_didattico_e_non_destinata_alla_distribuzione_o_al_commercio">This application is created for educational purposes only and is not intended for distribution or trade</string>
 </resources>

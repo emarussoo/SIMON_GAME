@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.boxbox.simon.viewmodel.SimonViewModel
+import com.boxbox.simon.views.creditsInterface
 import com.boxbox.simon.views.GameScreen
 import com.boxbox.simon.views.howToPlayInterface
 import com.boxbox.simon.views.leaderboardInterface
@@ -17,7 +18,8 @@ enum class NavigatorScreen(val route: String) {
     Settings("settings"),
     Leaderboard("leaderboard"),
     HowToPlay("howToPlay"),
-    PreGame("preGame")
+    PreGame("preGame"),
+    Credits("credits")
 }
 
 @Composable
@@ -42,12 +44,17 @@ fun Nav(
 
         composable(NavigatorScreen.Settings.route){
             viewModel.setIdle()
-            settingInterface()
+            settingInterface(navController)
         }
 
         composable(NavigatorScreen.HowToPlay.route){
             viewModel.setIdle()
             howToPlayInterface()
+        }
+
+        composable(NavigatorScreen.Credits.route){
+            viewModel.setIdle()
+            creditsInterface()
         }
 
         composable(NavigatorScreen.PreGame.route){
