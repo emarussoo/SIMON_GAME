@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -30,12 +31,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.boxbox.simon.R
+import com.boxbox.simon.navigator.NavigatorScreen
 import com.boxbox.simon.ui.theme.ThemeManager
 import java.util.Locale
 
 @Composable
-fun settingInterface(){
+fun settingInterface(navController : NavController){
 
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -169,6 +172,26 @@ fun settingInterface(){
 
                     }
                 }
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Text("Credits")
+            Button(
+                onClick = {
+                    navController.navigate(NavigatorScreen.Credits.route)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = selTheme.settBttnBackColor
+                ),
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = "Credits",
+                    color = selTheme.settBttnText
+                )
             }
         }
     }
