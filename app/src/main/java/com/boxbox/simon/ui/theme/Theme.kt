@@ -224,7 +224,7 @@ class neon : theme() {
         override val settings: Int = R.drawable.simpson_settings
         override val help: Int = R.drawable.simpson_question
         override val quit: Int = R.drawable.simpson_exit
-        override val play: Int = R.drawable.play_button
+        override val play: Int = R.drawable.simpson_play
 
 
         override val Red: Color = Color(0xffFF81C1)
