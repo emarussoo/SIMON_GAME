@@ -57,7 +57,16 @@ import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.theme
 import com.boxbox.simon.ui.theme.simpson
-val columnWeight = 1f
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.Placeable
 
 @Composable
 fun leaderboardInterface() {
@@ -116,25 +125,25 @@ fun leaderboardInterface() {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(
-                                Modifier.weight(columnWeight),
+                                Modifier.weight(0.25f),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(score.score.toString())
                             }
                             Box(
-                                Modifier.weight(columnWeight),
+                                Modifier.weight(0.25f),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(dayFormatted)
                             }
                             Box(
-                                Modifier.weight(columnWeight),
+                                Modifier.weight(0.2f),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(time.take(5))
                             }
                             Box(
-                                Modifier.weight(columnWeight),
+                                Modifier.weight(0.3f),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(when(diff){
@@ -315,7 +324,6 @@ fun SimpsonsHeaderRow(modifier: Modifier = Modifier) {
 }
 
 
-
 @Composable
 fun HeaderText(text: String, modifier: Modifier) {
     val theme = ThemeManager.currentTheme
@@ -329,8 +337,11 @@ fun HeaderText(text: String, modifier: Modifier) {
             fontFamily = theme.chosenFont,
             modifier = Modifier.padding(horizontal = 4.dp)
         )
+
     }
 }
+
+
 
 
 @Composable

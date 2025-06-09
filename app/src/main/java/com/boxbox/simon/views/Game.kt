@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
-import android.widget.Button
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -26,8 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,35 +33,26 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -77,23 +63,18 @@ import com.boxbox.simon.model.Difficulty
 import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
+import com.boxbox.simon.ui.theme.GreenForest
+import com.boxbox.simon.ui.theme.Orange
 import com.boxbox.simon.ui.theme.ThemeManager
+import com.boxbox.simon.ui.theme.mario
+import com.boxbox.simon.ui.theme.neon
+import com.boxbox.simon.ui.theme.simpson
+import com.boxbox.simon.ui.theme.theme
 import com.boxbox.simon.utils.ThreeDButton
 import com.boxbox.simon.utils.darker
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.TransformedText
-import com.boxbox.simon.ui.theme.GreenForest
-import com.boxbox.simon.ui.theme.Orange
-import com.boxbox.simon.ui.theme.SIMONTheme
-import com.boxbox.simon.ui.theme.mario
-import com.boxbox.simon.ui.theme.neon
-import com.boxbox.simon.ui.theme.simpson
-import com.boxbox.simon.ui.theme.theme
-import com.boxbox.simon.utils.lighter
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -354,7 +335,7 @@ fun TimerProgressBar(
     }
 
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveColorGrid(viewModel: SimonViewModel){

@@ -36,9 +36,9 @@ val NeonTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily =  FontFamily(Font(R.font.neon)),
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 12.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.3.sp
     ))
 
 val SimpsonTypography = Typography(
