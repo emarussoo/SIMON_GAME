@@ -675,7 +675,7 @@ fun AutoResizingText(
     maxTextSize: TextUnit = 100.sp,
     minTextSize: TextUnit = 1.sp,
     modifier: Modifier = Modifier,
-    step: Float = 0.9f,
+    step: Float = 0.6f,
     fontWeight: FontWeight = FontWeight.Normal,
 
 ) {
@@ -691,7 +691,7 @@ fun AutoResizingText(
             var size = maxTextSize
             while (size > minTextSize) {
                 val result = textMeasurer.measure(
-                    text = "extreme",
+                    text = "simpson",
                     style = TextStyle(fontSize = size, fontFamily = fontFamily),
                     maxLines = 1
                 )

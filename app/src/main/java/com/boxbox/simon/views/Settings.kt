@@ -149,7 +149,7 @@ fun settingInterface(){
 
             Text(stringResource(R.string.themes))
             Row {
-                listOf("mario","simpson", "neon").forEach { option ->
+                listOf("mario","bart", "neon").forEach { option ->
                     Button(
                         onClick = {
                             theme = option
@@ -165,8 +165,7 @@ fun settingInterface(){
                             .padding(4.dp)
                             .weight(1f)
                     ) {
-                        //Text(style = MaterialTheme.typography.bodyLarge, text = option, color = selTheme.settBttnText)
-                        AutoResizingText(text = option);
+                        Text(style = MaterialTheme.typography.bodyLarge, text = option, color = selTheme.settBttnText)
 
                     }
                 }
