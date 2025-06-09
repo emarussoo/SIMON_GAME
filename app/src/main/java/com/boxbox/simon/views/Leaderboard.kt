@@ -225,10 +225,10 @@ fun MarioHeaderRow(modifier: Modifier = Modifier) {
                 .padding(vertical = 12.dp, horizontal = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(columnWeight))
-            HeaderText(stringResource(R.string.dataDB), Modifier.weight(columnWeight))
-            HeaderText(stringResource(R.string.oraDB), Modifier.weight(columnWeight))
-            HeaderText(stringResource(R.string.diffDB), Modifier.weight(columnWeight))
+            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(0.25f))
+            HeaderText(stringResource(R.string.dataDB), Modifier.weight(0.25f))
+            HeaderText(stringResource(R.string.oraDB), Modifier.weight(0.20f))
+            HeaderText(stringResource(R.string.diffDB), Modifier.weight(0.30f))
         }
     }
 }
@@ -260,10 +260,10 @@ fun NeonHeaderRow(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(1f))
-            HeaderText(stringResource(R.string.dataDB), Modifier.weight(1f))
-            HeaderText(stringResource(R.string.oraDB), Modifier.weight(1f))
-            HeaderText(stringResource(R.string.diffDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(0.25f))
+            HeaderText(stringResource(R.string.dataDB), Modifier.weight(0.25f))
+            HeaderText(stringResource(R.string.oraDB), Modifier.weight(0.20f))
+            HeaderText(stringResource(R.string.diffDB), Modifier.weight(0.30f))
         }
     }
 }
@@ -299,16 +299,16 @@ fun SimpsonsHeaderRow(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp, horizontal = 6.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(1f))
-            HeaderText(stringResource(R.string.dataDB), Modifier.weight(1f))
-            HeaderText(stringResource(R.string.oraDB), Modifier.weight(1f))
-            HeaderText(stringResource(R.string.diffDB), Modifier.weight(1f))
+            HeaderText(stringResource(R.string.scoreDB), Modifier.weight(0.25f))
+            HeaderText(stringResource(R.string.dataDB), Modifier.weight(0.25f))
+            HeaderText(stringResource(R.string.oraDB), Modifier.weight(0.20f))
+            HeaderText(stringResource(R.string.diffDB), Modifier.weight(0.30f))
         }
     }
 }
+
 
 
 @Composable
@@ -327,40 +327,6 @@ fun HeaderText(text: String, modifier: Modifier) {
     }
 }
 
-/*@Composable
-fun MarioButton(onClick: () -> Unit, text: String, modifier: Modifier) {
-    val theme = ThemeManager.currentTheme
-
-    Button(
-        onClick = onClick,
-        modifier
-        /*modifier = Modifier
-            .fillMaxWidth(0.6f)
-            .height(50.dp)*/ //Modificare questa cosa anche nel tema Neon se funziona in questo
-            .shadow(6.dp, RoundedCornerShape(12.dp))
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color(0xFF33BFFF),
-                        Color(0xFF1A7EBF)
-                    )
-                ),
-                shape = RoundedCornerShape(12.dp)
-            )
-            .border(3.dp, Color(0xFF442F00), RoundedCornerShape(12.dp)),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.Black
-        )
-    ) {
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = theme.chosenFont
-        )
-    }
-}*/
 
 @Composable
 fun MarioButton(
@@ -428,40 +394,6 @@ fun Color.lighten(factor: Float): Color {
     )
 }
 
-
-/*@Composable
-fun NeonButton(onClick: () -> Unit, text: String, modifier: Modifier) {
-    val theme = ThemeManager.currentTheme
-
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth(0.6f)
-            .height(50.dp)
-            .shadow(10.dp, RoundedCornerShape(16.dp))
-            .background(
-                brush = Brush.horizontalGradient(
-                    listOf(
-                        Color(0xFFFFB3E6),   // rosa più chiaro e luminoso
-                        Color(0xFFFE7FD4)  // colore base (rosa acceso)
-                    )
-                ),
-                shape = RoundedCornerShape(16.dp)
-            )
-            .border(3.dp, Color(0xFF7A00CC), RoundedCornerShape(16.dp)),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.Black
-        )
-    ) {
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = theme.chosenFont
-        )
-    }
-}*/
 
 @Composable
 fun SimpsonsButton(
