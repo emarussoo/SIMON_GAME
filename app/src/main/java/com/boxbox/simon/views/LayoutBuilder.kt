@@ -52,7 +52,6 @@ fun LandscapeLayout(currentRoute: String?, navController: NavHostController, vie
             .fillMaxHeight()) {
             if(currentRoute != "preGame") GameTopperLandscape(navController)
         }
-
         Box(Modifier
             .weight(0.7f)
             .fillMaxSize()) {

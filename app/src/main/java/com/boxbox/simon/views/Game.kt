@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -69,14 +70,12 @@ import com.boxbox.simon.utils.ThreeDButton
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.ui.graphics.lerp
 import com.boxbox.simon.ui.theme.GreenForest
 import com.boxbox.simon.ui.theme.Orange
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.simpson
 import com.boxbox.simon.ui.theme.theme
-
 
 
 @Composable

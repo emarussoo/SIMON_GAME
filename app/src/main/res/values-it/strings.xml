@@ -36,8 +36,9 @@
     <string name="_3_each_round_gets_harder">3. Ogni turno diventa sempre più difficile</string>
     <string name="_4_make_a_mistake">4. Fai un errore?</string>
     <string name="difficulty">Difficolta\':</string>
-    <string name="how_to_play">Come gicoare?</string>
+    <string name="how_to_play">Come giocare?</string>
     <string name="app_sviluppata_da_emanuele_russo_simone_marmor_marco_supino">App sviluppata da:\\nEmanuele Russo\\nSimone Marmore\'\\nMarco Supino</string>
     <string name="progetto_realizzato_per_il_corso_di_mobile_programming_del_prof_massimo_regoli">Progetto realizzato per il corso di Mobile Programming del Prof. Massimo Regoli</string>
     <string name="questa_applicazione_stata_creata_esclusivamente_a_scopo_didattico_e_non_destinata_alla_distribuzione_o_al_commercio">Questa applicazione e\' stata creata esclusivamente a scopo didattico e non e\' destinata alla distribuzione o al commercio</string>
+    <string name="credits">Crediti</string>
 </resources>
