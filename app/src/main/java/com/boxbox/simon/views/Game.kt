@@ -1,13 +1,11 @@
 package com.boxbox.simon.views
 
+
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
-import android.widget.Button
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -26,8 +24,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,39 +36,28 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.boxbox.simon.R
 import com.boxbox.simon.model.Difficulty
@@ -79,21 +66,18 @@ import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
 import com.boxbox.simon.ui.theme.ThemeManager
 import com.boxbox.simon.utils.ThreeDButton
-import com.boxbox.simon.utils.darker
 import com.boxbox.simon.utils.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.TransformedText
 import com.boxbox.simon.ui.theme.GreenForest
 import com.boxbox.simon.ui.theme.Orange
-import com.boxbox.simon.ui.theme.SIMONTheme
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.simpson
 import com.boxbox.simon.ui.theme.theme
-import com.boxbox.simon.utils.lighter
+
+
 
 @Composable
 fun GetDeviceWidth(): Int {
@@ -147,34 +131,48 @@ fun LandScapeGameLayout(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
-            .background(color = Color.Transparent),
-        contentAlignment = Alignment.Center
+
     ) {
         Row(modifier = Modifier,
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically)
+        {
+
             ResponsiveColorGrid(viewModel)
-            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                GameHeader(
-                    viewModel,
-                    state,
-                    timerKey,
-                    onStartClick = { viewModel.StartGame() },
-                    onEndClick = { /*changeShowEndPopupValue(true)*/ })
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+                    Spacer(modifier = Modifier.height(40.dp))
+                    GameHeader(
+                        viewModel,
+                        state,
+                        timerKey,
+                        onStartClick = { viewModel.StartGame() },
+                        onEndClick = { }
+                    )
 
-                DifficultyAndStart(
-                    viewModel,
-                    state,
-                    onStartClick = { viewModel.StartGame() },
-                    onEndClick = { viewModel.EndGame(context) })
 
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    DifficultyAndStart(
+                        viewModel,
+                        state,
+                        onStartClick = { viewModel.StartGame() },
+                        onEndClick = { viewModel.EndGame(context) }
+                    )
+
+
+                }
             }
+
         }
     }
-}
+
 
 @Composable
 fun VerticalGameLayout(
@@ -184,7 +182,7 @@ fun VerticalGameLayout(
 ) {
     val context = LocalContext.current
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().background(Color.Transparent)
     ) {
         Column(
             modifier = Modifier
@@ -198,10 +196,10 @@ fun VerticalGameLayout(
                 timerKey,
                 onStartClick = { viewModel.StartGame() },
                 onEndClick = { /*changeShowEndPopupValue(true)*/ })
+
             Spacer(modifier = Modifier.height(25.dp))
 
             ResponsiveColorGrid(viewModel)
-            //Spacer(modifier = Modifier.height(35.dp))
             DifficultyAndStart(
                 viewModel,
                 state,
@@ -215,7 +213,6 @@ fun VerticalGameLayout(
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
-    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -223,8 +220,8 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
     BoxWithConstraints(modifier = Modifier.background(Color.Transparent)) {
         val width = GetDeviceWidth()
         val padd = if (isLandscape) 3.dp else 35.dp
-        val divider = if (isLandscape) 10f else 7.5f // precedentemente 5f e 7.5f
-        //val fontSize = (width.value / divider).sp
+        val divider = if (isLandscape) 10f else 7.5f
+
 
         val fontSize = when {
             width < 360 -> 20.sp
@@ -257,7 +254,6 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 
                     )
 
-
                     Text(
                         text = "${state.score}",
                         fontSize = fontSize,
@@ -288,7 +284,7 @@ fun TimerProgressBar(
 ) {
     val progress = remember(key) { Animatable(1f) }
     val animatedProgress = progress.value
-    val segments = 80
+
 
     LaunchedEffect(key, running) {
         if (running) {
@@ -354,7 +350,6 @@ fun TimerProgressBar(
     }
 
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveColorGrid(viewModel: SimonViewModel){
@@ -363,8 +358,6 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
     val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp.dp
-    val screenWidthDp = configuration.screenWidthDp.dp
 
     val highlighted by viewModel.highlightedMove.collectAsState()
     val state by viewModel.gameState.collectAsState()
@@ -382,26 +375,23 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
 
     BoxWithConstraints(
         modifier = Modifier
-            //.fillMaxWidth()
-            .padding(16.dp)
+           .wrapContentSize()
+            .padding(16.dp).background(Color.Transparent)
     ) {
-        val width= GetDeviceWidth()
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         val spacing = 30.dp
-        val totalSpacing = spacing * 3 // 3 spazi in una griglia 2x2
-        val buttonSize = when {
-            /*width < 360 -> 60.dp
-            width < 380 -> 70.dp*/
-            else -> (min(maxWidth, maxHeight) - 40.dp - totalSpacing) / 2
-        }
+        val totalSpacing = spacing * 3
+
+        val buttonSize = if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) (maxWidth-totalSpacing)/3.5f
+        else (maxWidth-totalSpacing)/2
 
         Column(
             verticalArrangement = Arrangement.spacedBy(spacing),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding((if (height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp)
+                .padding((if (height != 0) (offsetInPx.dp) / 2 else 0.dp), 0.dp, 0.dp, 0.dp).wrapContentSize().background(Color.Transparent)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 SimonColorButton(SimonMove.RED, highlighted == SimonMove.RED , {viewModel.onUserInput(SimonMove.RED, context)}, height,ThemeManager.currentTheme.click1Sound, buttonSize, isEnabled)
@@ -467,104 +457,155 @@ fun DifficultyAndStart(
         viewModel.setDifficulty(difficulty)
     }
 
-    BoxWithConstraints{
-        val width = GetDeviceWidth()
-        val padd = if (isLandscape) 1.dp else 0.dp
-        val divider = if (isLandscape) 17f else 15f
+    //box usato per verificare quale layout di difficultyAndStart usare
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().border(width = 1.dp, color = Color.Transparent)){
 
+    //controllo per vedere se le proporzioni del box permettono di usare il layout in colonna
+    if((maxWidth/maxHeight) > 2.7f ){
 
+    //box per il layout in riga
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).border(width = 1.dp, color = Color.Transparent)){
 
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.background(Color.Transparent).fillMaxHeight(if(isLandscape){0.5f}else{1f}).fillMaxWidth(if(isLandscape){1f}else{0.7f})
-        ) {
-            //Spacer(modifier = Modifier.size(10.dp))
-
+        val boxWidth = maxWidth
+        val boxHeight = maxWidth * 0.2f
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight(if(isLandscape){0.33f}else{0.33f}).border(1.dp, Color.Transparent)
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxHeight(if (isLandscape) 0.33f else 1f)
+                    .fillMaxWidth()
             ) {
 
-                AutoResizingText(text = stringResource(R.string.level), modifier = Modifier.weight(0.5f))
-
-                DifficultyThemeButton(
-                    text = difficulty.name,
-                    difficulty = difficulty,
-                    onDifficultyChange = {
-                        newDifficulty ->
-                        if(state.state == GamePhase.Idle || state.state == GamePhase.GameOver){
-                            difficulty = newDifficulty
-                            sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
-                            viewModel.setDifficulty(newDifficulty)
-                        }
-                    },
+                Box(
                     modifier = Modifier
-                        .padding(0.dp)
-                        .weight(0.5f)
-                        .fillMaxHeight(1f)
-                        .fillMaxWidth(0.8f)
-                )
-            }
-
-            Spacer(
-                modifier = Modifier.size(
-                    when {
-                        width < 400 -> 10.dp
-                        else -> 25.dp
-                    }
-                )
-            )
-
-
-            val onClick = when (state.state) {
-                GamePhase.Idle, GamePhase.GameOver -> onStartClick
-                GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick
-            }
-
-            val buttonText = when (state.state) {
-                GamePhase.Idle, GamePhase.GameOver -> stringResource(R.string.start)
-                GamePhase.ShowingSequence, GamePhase.WaitingInput -> stringResource(R.string.end)
-            }
-
-            val buttonColor = when (state.state) {
-                GamePhase.Idle, GamePhase.GameOver -> Color.Green.darker()
-                GamePhase.ShowingSequence, GamePhase.WaitingInput -> Color.Red
-            }
-
-            ThemedStartStopButton(onClick, state, "play/start", theme)
-            /*Button(
-                    onClick = onClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.DarkGray,
-                        contentColor = Color.White
-                    ),
-                    shape = CircleShape,
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .size(80.dp)
+                        .width(boxWidth * 0.4f).fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) Icons.Default.PlayArrow
-                                        else Icons.Default.Close,
-                        contentDescription = buttonText,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(12.dp)
+                    AutoResizingText(
+                        text = stringResource(R.string.level),
+                        button = false
                     )
-                }*/
+                }
+
+                Box(modifier = Modifier
+                    .width(boxWidth * 0.4f).height(boxHeight).padding(end = 10.dp),
+                    contentAlignment = Alignment.Center) {
+                    DifficultyThemeButton(
+                        text = difficulty.name,
+                        difficulty = difficulty,
+                        onDifficultyChange = { newDifficulty ->
+                            if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
+                                difficulty = newDifficulty
+                                sharedPref.edit().putString("difficulty", newDifficulty.name).apply()
+                                viewModel.setDifficulty(newDifficulty)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxHeight()
+                    )
+
+                }
+                val onClick = when (state.state) {
+                    GamePhase.Idle, GamePhase.GameOver -> onStartClick
+                    GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick
+                }
+
+                //Spacer(modifier = Modifier.width(10.dp))
+                Box(modifier = Modifier
+                    .width(boxWidth * 0.2f).fillMaxSize(),
+                    contentAlignment = Alignment.Center) {
+                    ThemedStartStopButton(onClick, state, "play/start", theme, modifier = Modifier.size(boxHeight)
+                    )
+                }
+            }
+
+
+        }
+
+
+
+    }
+    else {
+        //box per il layout in colonna
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = if (isLandscape) 3.dp else 40.dp)
+                .border(width = 1.dp, color = Color.Transparent)
+        ) {
+
+            val boxHeight = maxWidth * 0.58f
+            val boxWidth = maxWidth
+
+            Column(
+                modifier = Modifier.fillMaxSize().background(Color.Transparent)
+                    .border(width = 1.dp, color = Color.Transparent),
+            ) {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(boxHeight * 0.5f)
+                        .border(1.dp, Color.Transparent),
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxHeight().width(boxWidth * 0.5f)
+                            .background(Color.Transparent)
+                    ) {
+                        AutoResizingText(
+                            text = stringResource(R.string.level),
+                            modifier = Modifier.background(Color.Transparent),
+                            button = false
+                        )
+                    }
+                    Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                        DifficultyThemeButton(
+                            text = difficulty.name,
+                            difficulty = difficulty,
+                            onDifficultyChange = { newDifficulty ->
+                                if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver) {
+                                    difficulty = newDifficulty
+                                    sharedPref.edit().putString("difficulty", newDifficulty.name)
+                                        .apply()
+                                    viewModel.setDifficulty(newDifficulty)
+                                }
+                            },
+                            modifier = Modifier.fillMaxHeight().width(boxWidth * 0.5f)
+                        )
+                    }
+                }
+
+
+                val onClick = when (state.state) {
+                    GamePhase.Idle, GamePhase.GameOver -> onStartClick
+                    GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(boxHeight * 0.5f)
+                        .background(Color.Transparent), contentAlignment = Alignment.Center
+                ) {
+                    ThemedStartStopButton(
+                        onClick,
+                        state,
+                        "play/start",
+                        theme,
+                        modifier = Modifier.size(boxHeight * 0.45f)
+                    )
+                }
+            }
         }
     }
-}
+    }
+    }
+
+
 
 @Composable
 fun ThemedStartStopButton(
     onClick: () -> Unit,
     state: SimonState,
     buttonText: String,
-    theme: theme
+    theme: theme,
+    modifier: Modifier
 ){
     val (containerColor, contentColor) = when(theme){
         is mario -> Color.Black to Color.White
@@ -581,7 +622,7 @@ fun ThemedStartStopButton(
         ),
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp),
-        modifier = Modifier.size(80.dp)
+        modifier = modifier
     ) {
         Icon(
             imageVector = if (state.state == GamePhase.Idle || state.state == GamePhase.GameOver)
@@ -589,12 +630,12 @@ fun ThemedStartStopButton(
             else
                 Icons.Default.Close,
             contentDescription = buttonText,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)
+            modifier = Modifier.fillMaxSize().padding(10.dp)
         )
     }
+
 }
+
 
 @Composable
 fun DifficultyThemeButton(
@@ -624,7 +665,7 @@ fun DifficultyThemeButton(
                     contentAlignment = Alignment.Center
                 ) {
                     AutoResizingText(
-                        text = context.getString(difficulty.diffName),
+                        text = context.getString(difficulty.diffName), button = true
                     )
                 }
             }
@@ -640,7 +681,7 @@ fun DifficultyThemeButton(
                     contentAlignment = Alignment.Center
                 ) {
                     AutoResizingText(
-                        text = context.getString(difficulty.diffName),
+                        text = context.getString(difficulty.diffName),button = true
                     )
                 }
             }
@@ -656,7 +697,7 @@ fun DifficultyThemeButton(
                     contentAlignment = Alignment.Center
                 ) {
                     AutoResizingText(
-                        text = context.getString(difficulty.diffName),
+                        text = context.getString(difficulty.diffName),button = true
                     )
                 }
             }
@@ -674,6 +715,7 @@ fun AutoResizingText(
     modifier: Modifier = Modifier,
     step: Float = 0.9f,
     fontWeight: FontWeight = FontWeight.Normal,
+    button: Boolean
 ) {
     val textMeasurer = rememberTextMeasurer()
     var currentSize by remember { mutableStateOf(maxTextSize) }
@@ -681,12 +723,16 @@ fun AutoResizingText(
     val fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
 
     // Lista fissa di stringhe da confrontare
-    val fixedTexts = listOf(
-        stringResource(R.string.easy),
-        stringResource(R.string.extreme),
-        stringResource(R.string.hard),
-        stringResource(R.string.medium),
-    )
+    val fixedTexts = if (button == true) {
+        listOf(
+            stringResource(R.string.easy),
+            stringResource(R.string.extreme),
+            stringResource(R.string.hard),
+            stringResource(R.string.medium),
+        )
+    } else {
+        listOf(stringResource(R.string.level))
+    }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val availableWidth = constraints.maxWidth.toFloat()
@@ -720,8 +766,9 @@ fun AutoResizingText(
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(0.dp),
             )
         }
     }
 }
+
