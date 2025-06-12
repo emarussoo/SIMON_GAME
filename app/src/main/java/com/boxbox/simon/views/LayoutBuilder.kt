@@ -25,7 +25,7 @@ import com.boxbox.simon.viewmodel.SimonViewModel
 @Composable
 fun Screen() {
 
-    // create a navigation controller and a shared ViewMode
+    // create a navigation controller and the ViewModel
     val navController = rememberNavController()
     val viewModel: SimonViewModel = viewModel()
 
