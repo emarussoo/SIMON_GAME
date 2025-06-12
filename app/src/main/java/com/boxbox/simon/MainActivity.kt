@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.boxbox.simon.ui.theme.SIMONTheme
-import com.boxbox.simon.views.screen
+import com.boxbox.simon.views.Screen
 import java.util.Locale
 
 
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SIMONTheme {
-                screen()
+                Screen()
             }
 
         }
