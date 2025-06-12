@@ -410,7 +410,7 @@ fun SimpsonsButton(
 
     Surface(
         modifier = modifier
-            .shadow(elevation = 8.dp, shape = shape)
+            .shadow(elevation = 0.dp, shape = shape)
             .border(width = 3.dp, color = Color.Black, shape = shape)
             .clickable(onClick = onClick),
         shape = shape,

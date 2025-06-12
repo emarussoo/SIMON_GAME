@@ -599,7 +599,7 @@ fun DifficultyAndStart(
                             modifier = Modifier
                                 .size(side)
                                 .shadow(
-                                    elevation = 8.dp,
+                                    elevation = 0.dp,
                                     shape = CircleShape,
                                     clip = false // clip = false per evitare che l’ombra venga tagliata
                                 )
