@@ -37,17 +37,21 @@ import java.util.Locale
 @Composable
 fun SettingInterface(navController : NavController){
 
+    // Access context and shared preferences
     val context = LocalContext.current
     val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
+    // Load stored settings with default values if not initialized
     var language by remember { mutableStateOf(sharedPref.getString("language", "it") ?: "it")  }
     var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
-    // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
     var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", true)) "3D" else "Flat") }
     var theme by remember { mutableStateOf(sharedPref.getString("theme", "mario") ?: "mario") }
-    val selTheme = ThemeManager.currentTheme
-    val scrollState = rememberScrollState()
 
+    //current selected theme
+    val selTheme = ThemeManager.currentTheme
+
+    // Scroll state for the settings list, used in case of small screens
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
@@ -55,12 +59,16 @@ fun SettingInterface(navController : NavController){
             .padding(20.dp).background(Color.Transparent)
     ) {
 
+        // Main title for settings screen
         Text(stringResource(R.string.settings), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
         Spacer(Modifier.height(16.dp))
 
         Column(
             modifier = Modifier.verticalScroll(scrollState),
         ) {
+
+            // Language selection buttons
             Text(stringResource(R.string.language))
             Row {
                 listOf(
@@ -69,23 +77,22 @@ fun SettingInterface(navController : NavController){
                 ).forEach { (label, langCode) ->
                     Button(
                         onClick = {
-                            language = langCode
 
+                            // Save new language and update locale
+                            language = langCode
                             sharedPref.edit().putString("language", langCode).apply()
 
                             val locale = Locale(langCode)
                             Locale.setDefault(locale)
                             val config = context.resources.configuration
                             config.setLocale(locale)
-                            context.resources.updateConfiguration(
-                                config,
-                                context.resources.displayMetrics
-                            )
+                            context.resources.updateConfiguration(config, context.resources.displayMetrics)
 
+                            // Restart the activity to apply language changes
                             (context as? Activity)?.recreate()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (language == langCode) ThemeManager.currentTheme.settingsColor else selTheme.settBttnBackColor
+                            containerColor = if (language == langCode) selTheme.settingsColor else selTheme.settBttnBackColor
                         ),
                         modifier = Modifier
                             .padding(4.dp)
@@ -98,12 +105,14 @@ fun SettingInterface(navController : NavController){
 
             Spacer(Modifier.height(16.dp))
 
-            // Music toggle
+            // Toggle for enabling/disabling game sounds
             Text(stringResource(R.string.sounds))
             Row {
                 listOf("On" to true, "Off" to false).forEach { (label, value) ->
                     Button(
                         onClick = {
+
+                            //Save audio settings and update locale, sound function automatically checks locale to start or not the sound
                             sounds = value
                             sharedPref.edit().putBoolean("soundsOn", value).apply()
                         },
@@ -121,17 +130,17 @@ fun SettingInterface(navController : NavController){
 
             Spacer(Modifier.height(16.dp))
 
+            // Button to choose the style of the button 3D/flat
             Text(stringResource(R.string.button_style))
             Row {
                 listOf("3D", "Flat").forEach { option ->
                     Button(
                         onClick = {
+
+                            // No need to manually restart the activity, it will refresh automatically when navigating to game screen
                             bttnStyle = option
-                            if (option == "3D") {
-                                sharedPref.edit().putBoolean("is3D", true).apply()
-                            } else {
-                                sharedPref.edit().putBoolean("is3D", false).apply()
-                            }
+                            if (option == "3D") sharedPref.edit().putBoolean("is3D", true).apply()
+                            else sharedPref.edit().putBoolean("is3D", false).apply()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (bttnStyle == option) selTheme.settingsColor else selTheme.settBttnBackColor
@@ -147,6 +156,7 @@ fun SettingInterface(navController : NavController){
 
             Spacer(Modifier.height(16.dp))
 
+            // Button to choose the theme
             Text(stringResource(R.string.themes))
             Row {
                 listOf("mario","bart", "neon").forEach { option ->
@@ -154,9 +164,11 @@ fun SettingInterface(navController : NavController){
                         onClick = {
                             theme = option
                             sharedPref.edit().putString("theme", option).apply()
-                            if (option.equals("mario")) ThemeManager.switchTo1()
-                            else if (option.equals("neon")) ThemeManager.switchTo2()
-                            else ThemeManager.switchTo3()
+                            when (option) {
+                                "mario" -> ThemeManager.switchTo1()
+                                "neon" -> ThemeManager.switchTo2()
+                                else -> ThemeManager.switchTo3()
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (theme == option) selTheme.settingsColor else selTheme.settBttnBackColor
@@ -172,6 +184,8 @@ fun SettingInterface(navController : NavController){
             }
 
             Spacer(Modifier.height(16.dp))
+
+            // Extra section for the credits screen
             Text("Extra")
             Button(
                 onClick = {

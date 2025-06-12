@@ -27,29 +27,38 @@ import com.boxbox.simon.utils.playSound
 @Composable
 fun PreGameInterface(navController : NavController){
     val context = LocalContext.current
+    val theme = ThemeManager.currentTheme
+
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(start = 15.dp, end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center){
+
+        //image title
         Image(
-            painter = painterResource(id = ThemeManager.currentTheme.title),
+            painter = painterResource(id = theme.title),
             contentDescription = "",
         )
+
         Spacer(modifier = Modifier.height(15.dp))
+
+        //button to start the game
         Button(
             onClick = { navController.navigate(NavigatorScreen.Game.route)
-                playSound(ThemeManager.currentTheme.introSound,context)},
+                playSound(theme.introSound,context)},
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             shape = RoundedCornerShape(8.dp),
         ) {
+
             Image(
-                painter = painterResource(ThemeManager.currentTheme.play),
+                painter = painterResource(theme.play),
                 contentDescription = "",
                 modifier = Modifier
                     .size(130.dp),
                 contentScale = ContentScale.FillWidth
             )
+
         }
     }
 

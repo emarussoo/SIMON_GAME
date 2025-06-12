@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.boxbox.simon.viewmodel.SimonViewModel
 import com.boxbox.simon.views.CreditsInterface
 import com.boxbox.simon.views.GameScreen
-import com.boxbox.simon.views.howToPlayInterface
+import com.boxbox.simon.views.HowToPlayInterface
 import com.boxbox.simon.views.LeaderboardInterface
 import com.boxbox.simon.views.PreGameInterface
 import com.boxbox.simon.views.SettingInterface
@@ -49,7 +49,7 @@ fun Nav(
 
         composable(NavigatorScreen.HowToPlay.route){
             viewModel.setIdle()
-            howToPlayInterface()
+            HowToPlayInterface()
         }
 
         composable(NavigatorScreen.Credits.route){
