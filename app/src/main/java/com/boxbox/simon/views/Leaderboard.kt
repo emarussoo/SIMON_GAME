@@ -366,7 +366,7 @@ fun MarioButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .shadow(6.dp, shape)
+            .shadow(0.dp, shape)
             .background(brush = brush, shape = shape)
             .border(3.dp, Color(0xFF442F00), shape),
         colors = ButtonDefaults.buttonColors(
@@ -460,7 +460,7 @@ fun NeonButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .shadow(10.dp, shape)
+            .shadow(0.dp, shape)
             .background(
                 brush = Brush.horizontalGradient(
                     listOf(
