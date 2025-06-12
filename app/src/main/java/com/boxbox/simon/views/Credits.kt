@@ -19,14 +19,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boxbox.simon.R
 
-//Pays tribute to the brilliant creators of this app
 @Composable
-fun creditsInterface() {
+fun CreditsInterface() {
 
     val primaryColor = Color(0xFF000000)
     val textColor = Color(0xFF212121)
-
     val scrollState = rememberScrollState()
+
+    // List of credits paragraph texts
+    val credits = listOf(
+        stringResource(R.string.credits_line_1).replace("\\n", "\n"),
+        stringResource(R.string.credits_line_2),
+        stringResource(R.string.credits_line_3)
+    )
 
     Column(
         modifier = Modifier
@@ -36,8 +41,10 @@ fun creditsInterface() {
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        //main title
         Text(
-            text = "Credits",
+            text = stringResource(R.string.credits),
             fontSize = 50.sp,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center,
@@ -54,12 +61,7 @@ fun creditsInterface() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            val credits = listOf(
-                stringResource(R.string.app_sviluppata_da_emanuele_russo_simone_marmor_marco_supino).replace("\\n", "\n"),
-                stringResource(R.string.progetto_realizzato_per_il_corso_di_mobile_programming_del_prof_massimo_regoli),
-                stringResource(R.string.questa_applicazione_stata_creata_esclusivamente_a_scopo_didattico_e_non_destinata_alla_distribuzione_o_al_commercio)
-            )
-
+            //cycle through paragraphs
             credits.forEach { line ->
                 Text(
                     text = line,

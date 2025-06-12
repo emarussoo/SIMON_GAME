@@ -2,6 +2,7 @@ package com.boxbox.simon.views
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -38,11 +39,15 @@ import com.boxbox.simon.ui.theme.ThemeManager
 
 @SuppressLint("ContextCastToActivity", "SuspiciousIndentation")
 @Composable
+//game topper in vertical layout
 fun GameTopper(navController: NavController) {
 
     val activity = (LocalContext.current as? Activity)
+
+    //show the popup when clicking on exit button
     var showExitPopUp = remember { mutableStateOf(false) }
     if (showExitPopUp.value) ExitPopUp(showPopUp = showExitPopUp, activity)
+
     val theme = ThemeManager.currentTheme
 
     Row(modifier = Modifier
@@ -54,6 +59,7 @@ fun GameTopper(navController: NavController) {
         horizontalArrangement = Arrangement.spacedBy(15.dp))
     {
 
+        //main SIMON title
         Image(
             painter = painterResource(id = theme.title),
             contentDescription = "",
@@ -62,6 +68,7 @@ fun GameTopper(navController: NavController) {
                 .fillMaxHeight()
         )
 
+        // column with exit and help button
         Column(
             modifier = Modifier
                 .weight(0.1f)
@@ -70,6 +77,7 @@ fun GameTopper(navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
 
+            //help button
             Image(
                 painter = painterResource(id = theme.help),
                 contentDescription = "",
@@ -79,6 +87,7 @@ fun GameTopper(navController: NavController) {
                     .clickable { navController.navigate(NavigatorScreen.HowToPlay.route) }
             )
 
+            //exit button
             Image(
                 painter = painterResource(id = theme.quit),
                 contentDescription = "",
@@ -90,14 +99,15 @@ fun GameTopper(navController: NavController) {
     }
 }
 
-
 @SuppressLint("ContextCastToActivity", "SuspiciousIndentation")
 @Composable
+//game topper in landscaper layout
 fun GameTopperLandscape(navController: NavController) {
     val activity = (LocalContext.current as? Activity)
     val theme = ThemeManager.currentTheme
-    var showExitPopUp = remember { mutableStateOf(false) }
 
+    // used for exit popup
+    var showExitPopUp = remember { mutableStateOf(false) }
     if (showExitPopUp.value){
         ExitPopUp(showPopUp = showExitPopUp, activity)
     }
@@ -109,6 +119,7 @@ fun GameTopperLandscape(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(10.dp))
     {
 
+        //main SIMON title
         Image(
             painter = painterResource(theme.landTitle),
             contentDescription = "",
@@ -123,6 +134,8 @@ fun GameTopperLandscape(navController: NavController) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ){
+
+            //how to play button
             Image(
                 painter = painterResource(id = theme.help),
                 contentDescription = "",
@@ -130,9 +143,9 @@ fun GameTopperLandscape(navController: NavController) {
                     .weight(0.5f)
                     .fillMaxWidth()
                     .clickable(onClick = { navController.navigate(NavigatorScreen.HowToPlay.route) })
-
             )
 
+            //exit button
             Image(
                 painter = painterResource(id = theme.quit),
                 contentDescription = "",
@@ -141,24 +154,22 @@ fun GameTopperLandscape(navController: NavController) {
                     .fillMaxWidth()
                     .clickable(onClick = { showExitPopUp.value = true })
             )
-
         }
     }
 }
 
-
-
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
+//game footer for vertical layout
 fun ResponsiveGameFooter(navController: NavController) {
     BoxWithConstraints {
-
         val theme = ThemeManager.currentTheme
+
+        //used for the navigation
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        // Stato di scala per ogni bottone
+        // used to make icons bigger when the respective interface is displayed
         val scaleLeaderboard by animateFloatAsState(
             targetValue = if (currentRoute == NavigatorScreen.Leaderboard.route) 1.3f else 1f,
             animationSpec = tween(durationMillis = 200),
@@ -186,68 +197,42 @@ fun ResponsiveGameFooter(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // Leaderboard Button
-            Button(
+            //leaderboard button
+            FooterButton(
                 onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .graphicsLayer(scaleX = scaleLeaderboard, scaleY = scaleLeaderboard)
-            ) {
-                Image(
-                    painter = painterResource(id = theme.cup),
-                    contentDescription = "",
-                    modifier = Modifier.scale(0.7f),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                imageResId = theme.cup,
+                scale = scaleLeaderboard
+            )
 
-            // Game Button
-            Button(
+            //game button
+            FooterButton(
                 onClick = { navController.navigate(NavigatorScreen.Game.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .graphicsLayer(scaleX = scaleGame, scaleY = scaleGame)
-            ) {
-                Image(
-                    painter = painterResource(id = theme.joystick),
-                    contentDescription = "",
-                    modifier = Modifier.scale(0.7f),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                imageResId = theme.joystick,
+                scale = scaleGame
+            )
 
-            // Settings Button
-            Button(
+            //settings button
+            FooterButton(
                 onClick = { navController.navigate(NavigatorScreen.Settings.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.graphicsLayer(scaleX = scaleSettings, scaleY = scaleSettings)
-            ) {
-                Image(
-                    painter = painterResource(id = theme.settings),
-                    contentDescription = "",
-                    modifier = Modifier.scale(0.7f),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                imageResId = theme.settings,
+                scale = scaleSettings
+            )
         }
     }
 }
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
+// game footer for landscape layout
 fun ResponsiveGameFooterLandscape(navController: NavController) {
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val theme = ThemeManager.currentTheme
+
+        //used for navigation
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        //It manages the scale for every app section
+        // used to make icons bigger when the respective interface is displayed
         val scaleLeaderboard by animateFloatAsState(
             targetValue = if (currentRoute == NavigatorScreen.Leaderboard.route) 1.3f else 1f,
             animationSpec = tween(durationMillis = 200),
@@ -271,45 +256,53 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
+
+            // leaderboard button
+            FooterButton(
                 onClick = { navController.navigate(NavigatorScreen.Leaderboard.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Image(
-                    painter = painterResource(id = theme.cup),
-                    contentDescription = "",
-                    modifier = Modifier.scale(0.7f).graphicsLayer(scaleX = scaleLeaderboard, scaleY = scaleLeaderboard),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                imageResId = theme.cup,
+                scale = scaleLeaderboard
+            )
 
-            Button(
+            // game button
+            FooterButton(
                 onClick = { navController.navigate(NavigatorScreen.Game.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Image(
-                    painter = painterResource(id = theme.joystick),
-                    contentDescription = "",
-                    modifier = Modifier.scale(0.7f).graphicsLayer(scaleX = scaleGame, scaleY = scaleGame),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                imageResId = theme.joystick,
+                scale = scaleGame
+            )
 
-            Button(
+            // settings button
+            FooterButton(
                 onClick = { navController.navigate(NavigatorScreen.Settings.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Image(
-                    painter = painterResource(id = theme.settings),
-                    contentDescription = "",
-                    modifier = Modifier.scale(0.7f).graphicsLayer(scaleX = scaleSettings, scaleY = scaleSettings),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                imageResId = theme.settings,
+                scale = scaleSettings
+            )
         }
     }
 }
+
+
+@Composable
+// generic button used for the game footer
+fun FooterButton(
+    onClick: () -> Unit, //function to change interface
+    @DrawableRes imageResId: Int, //icon image
+    scale: Float, //used to change dynamically the icon dimension
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        modifier = modifier.graphicsLayer(scaleX = scale, scaleY = scale)
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = "",
+            modifier = Modifier.scale(0.7f),
+            contentScale = ContentScale.Fit
+        )
+    }
+}
+
 

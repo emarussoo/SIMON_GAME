@@ -35,7 +35,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,8 +68,8 @@ import com.boxbox.simon.model.GamePhase
 import com.boxbox.simon.model.SimonMove
 import com.boxbox.simon.model.SimonState
 import com.boxbox.simon.ui.theme.ThemeManager
-import com.boxbox.simon.utils.ThreeDButton
-import com.boxbox.simon.utils.playSound
+import com.boxbox.simon.button.ThreeDButton
+import com.boxbox.simon.button.playSound
 import com.boxbox.simon.viewmodel.SimonViewModel
 import kotlinx.coroutines.delay
 import com.boxbox.simon.ui.theme.GreenForest
