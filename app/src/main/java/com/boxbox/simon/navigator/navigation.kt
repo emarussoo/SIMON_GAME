@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.boxbox.simon.viewmodel.SimonViewModel
-import com.boxbox.simon.views.creditsInterface
+import com.boxbox.simon.views.CreditsInterface
 import com.boxbox.simon.views.GameScreen
 import com.boxbox.simon.views.howToPlayInterface
 import com.boxbox.simon.views.LeaderboardInterface
@@ -54,7 +54,7 @@ fun Nav(
 
         composable(NavigatorScreen.Credits.route){
             viewModel.setIdle()
-            creditsInterface()
+            CreditsInterface()
         }
 
         composable(NavigatorScreen.PreGame.route){
