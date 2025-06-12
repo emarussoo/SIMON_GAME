@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,12 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,35 +44,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.boxbox.simon.R
 import com.boxbox.simon.ui.theme.ThemeManager
 import com.boxbox.simon.viewmodel.LeadBoardViewModel
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Shape
 import com.boxbox.simon.ui.theme.mario
 import com.boxbox.simon.ui.theme.neon
-import com.boxbox.simon.ui.theme.theme
 import com.boxbox.simon.ui.theme.simpson
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.layout.Placeable
 
 @Composable
-fun leaderboardInterface() {
+fun LeaderboardInterface() {
     val context = LocalContext.current
     val viewModel: LeadBoardViewModel = viewModel()
     val leaderboard by viewModel.leaderboard.collectAsState()
 
     var isVisible by remember { mutableStateOf(false) }
     var showEmptyMessage by remember { mutableStateOf(false) }
-
-    val theme = ThemeManager.currentTheme
 
     LaunchedEffect(Unit) {
         viewModel.loadLeaderboard(context)
@@ -111,7 +91,6 @@ fun leaderboardInterface() {
                 ) {
                     items(leaderboard) { score ->
                         val date = score.gameDate.split(" ")
-                        //mette il . al posto del - e inverte in giorno/mese/anno
                         val dayFormatted = score.gameDate.split(" ").firstOrNull()
                             ?.split("-")?.let { "${it[2]}.${it[1]}.${it[0]}" } ?: ""
 
@@ -297,15 +276,15 @@ fun SimpsonsHeaderRow(modifier: Modifier = Modifier) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        Color(0xFFFFEB3B), // Giallo Simpson
-                        Color(0xFFFFC107)  // Giallo scuro Simpson
+                        Color(0xFFFFEB3B), //Lighter yellow
+                        Color(0xFFFFC107)  //Darker yellow
                     )
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
             .border(
                 width = 4.dp,
-                color = Color.Black, // Bordo nero in stile cartoon
+                color = Color.Black,
                 shape = RoundedCornerShape(12.dp)
             )
     ) {
@@ -350,7 +329,7 @@ fun MarioButton(
     text: String,
     modifier: Modifier = Modifier,
     baseShape: Shape? = null,
-    baseColor: Color? = null, // colore dinamico, se non fornito usa il colore classico
+    baseColor: Color? = null,
     textContent: @Composable () -> Unit = {
         val theme = ThemeManager.currentTheme
         Text(
@@ -367,7 +346,7 @@ fun MarioButton(
         baseShape
     }
 
-    // Se non è stato fornito un colore base, usiamo quelli statici
+    // If a base color is not provided, static ones are used
     val brush = if (baseColor == null) {
         Brush.verticalGradient(
             listOf(
@@ -485,8 +464,8 @@ fun NeonButton(
             .background(
                 brush = Brush.horizontalGradient(
                     listOf(
-                        Color(0xFFFFB3E6),   // rosa più chiaro e luminoso
-                        Color(0xFFFE7FD4)    // colore base (rosa acceso)
+                        Color(0xFFFFB3E6),   //Lighter pink
+                        Color(0xFFFE7FD4)    //Darker pink
                     )
                 ),
                 shape = shape

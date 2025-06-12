@@ -9,9 +9,9 @@ import com.boxbox.simon.viewmodel.SimonViewModel
 import com.boxbox.simon.views.creditsInterface
 import com.boxbox.simon.views.GameScreen
 import com.boxbox.simon.views.howToPlayInterface
-import com.boxbox.simon.views.leaderboardInterface
-import com.boxbox.simon.views.preGameInterface
-import com.boxbox.simon.views.settingInterface
+import com.boxbox.simon.views.LeaderboardInterface
+import com.boxbox.simon.views.PreGameInterface
+import com.boxbox.simon.views.SettingInterface
 
 enum class NavigatorScreen(val route: String) {
     Game("game"),
@@ -39,12 +39,12 @@ fun Nav(
 
         composable(NavigatorScreen.Leaderboard.route){
             viewModel.setIdle()
-            leaderboardInterface()
+            LeaderboardInterface()
         }
 
         composable(NavigatorScreen.Settings.route){
             viewModel.setIdle()
-            settingInterface(navController)
+            SettingInterface(navController)
         }
 
         composable(NavigatorScreen.HowToPlay.route){
@@ -58,7 +58,7 @@ fun Nav(
         }
 
         composable(NavigatorScreen.PreGame.route){
-            preGameInterface(navController)
+            PreGameInterface(navController)
         }
 
     }

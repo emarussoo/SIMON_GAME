@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import android.media.MediaPlayer
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.SolidColor
@@ -38,7 +40,7 @@ import java.util.LinkedList
 import java.util.Queue
 
 
-//usata per il suono
+//Used for the sound
 private var currentMediaPlayer: MediaPlayer? = null
 
 fun playSound(soundResId: Int, context: Context) {
@@ -51,7 +53,7 @@ fun playSound(soundResId: Int, context: Context) {
         it.release()
     }
 
-    // Crea e avvia il nuovo suono
+    //Create and start the new sound
     currentMediaPlayer = MediaPlayer.create(context, soundResId).apply {
         setOnCompletionListener {
             release()
@@ -61,8 +63,7 @@ fun playSound(soundResId: Int, context: Context) {
     }
 }
 
-
-
+//It manages button appeareance
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ThreeDButton(
@@ -75,11 +76,7 @@ fun ThreeDButton(
     isEnabled: Boolean
 ) {
     val edgeOffset = height.dp
-
     val context = LocalContext.current
-
-    //val highlightedColor = Brush.linearGradient(listOf(topColor, bottomColor))
-    //val highlightedColor = Brush.linearGradient(listOf(ThemeManager.currentTheme.Red, ThemeManager.currentTheme.Blue,ThemeManager.currentTheme.Green))
     val highlightedColor = baseColor.lighter(0.5f)
 
 
@@ -148,7 +145,7 @@ fun ThreeDButton(
                     val strokeWidth = 1.dp.toPx()
                     val color = Color.Black
 
-                    // Bordo sotto
+                    //Bottom border
                     drawLine(
                         color = color,
                         start = Offset(0f, size.height),
@@ -156,7 +153,7 @@ fun ThreeDButton(
                         strokeWidth = strokeWidth
                     )
 
-                    // Bordo a destra
+                    //Right border
                     drawLine(
                         color = color,
                         start = Offset(size.width, 0f),
@@ -174,6 +171,7 @@ fun ThreeDButton(
     }
 
 
+//A function used to lighten the color
 fun Color.lighter(factor: Float = 0.4f): Color {
     return Color(
         red = (red + (1f - red) * factor).coerceIn(0f, 1f),
@@ -183,6 +181,7 @@ fun Color.lighter(factor: Float = 0.4f): Color {
     )
 }
 
+//Used to darken color
 fun Color.darker(factor: Float = 0.4f): Color {
     return Color(
         red = (red * (1f - factor)).coerceIn(0f, 1f),

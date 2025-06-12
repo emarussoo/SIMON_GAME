@@ -20,13 +20,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.boxbox.simon.R
 import com.boxbox.simon.navigator.NavigatorScreen
 import com.boxbox.simon.ui.theme.ThemeManager
 import com.boxbox.simon.utils.playSound
 
 @Composable
-fun preGameInterface(navController : NavController){
+fun PreGameInterface(navController : NavController){
     val context = LocalContext.current
     Column(modifier = Modifier
         .fillMaxSize()

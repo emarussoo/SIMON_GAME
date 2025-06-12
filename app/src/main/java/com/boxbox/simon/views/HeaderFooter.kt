@@ -247,7 +247,7 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        // Stato di scala per ogni bottone
+        //It manages the scale for every app section
         val scaleLeaderboard by animateFloatAsState(
             targetValue = if (currentRoute == NavigatorScreen.Leaderboard.route) 1.3f else 1f,
             animationSpec = tween(durationMillis = 200),

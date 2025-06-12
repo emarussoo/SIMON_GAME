@@ -88,6 +88,7 @@ fun GetDeviceWidth(): Int {
         return configuration.screenWidthDp
     }
 }
+
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun GameScreen(viewModel: SimonViewModel){

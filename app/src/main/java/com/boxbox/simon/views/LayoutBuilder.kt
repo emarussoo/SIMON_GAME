@@ -53,7 +53,7 @@ fun LandscapeLayout(currentRoute: String?, navController: NavHostController, vie
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars) // evita sovrapposizioni con barra
+            .windowInsetsPadding(WindowInsets.systemBars) //Avoids overlap with the bar
     ) {
         Box(Modifier.weight(0.15f).fillMaxHeight()) {
             if (currentRoute != "preGame") GameTopperLandscape(navController)
@@ -82,9 +82,9 @@ fun VerticalLayout(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.navigationBars) // gestisce status + nav bar
+            .windowInsetsPadding(WindowInsets.navigationBars) //Manages status + nav bar
     ) {
-        // Top Bar (solo se non siamo nella schermata "preGame")
+        //Top Bar (only if we're not in the "preGame" screen)
         if (currentRoute != "preGame") {
             GameTopper(navController)
         }
@@ -102,7 +102,7 @@ fun VerticalLayout(
             )
         }
 
-        // Bottom Bar (solo se non siamo nella schermata "preGame")
+        //Bottom Bar (only if we're not in the "preGame" screen)
         if (currentRoute != "preGame") {
             ResponsiveGameFooter(navController)
         }

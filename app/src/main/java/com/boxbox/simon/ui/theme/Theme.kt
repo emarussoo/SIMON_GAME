@@ -48,9 +48,9 @@ fun SIMONTheme(
     }
 
     val darkTheme = if (ThemeManager.currentTheme.forceLightTheme) {
-        false // forza il tema chiaro
+        false // light theme forced
     } else {
-        isSystemInDarkTheme() // lascia al sistema
+        isSystemInDarkTheme() // leave it to the system
     }
 
 
@@ -78,10 +78,10 @@ fun SIMONTheme(
 }
 
 open class theme {
-    //tema chiaro/scuro true = tema chiaro, false = tema scuro
+    //true = light theme, false = dark theme
     open val forceLightTheme: Boolean = false
 
-    //immagini
+    //Game Footer and Game Topper customization
     open val title: Int = 0
     open val landTitle: Int = 0
     open val cup: Int = 0
@@ -91,7 +91,7 @@ open class theme {
     open val quit: Int = 0
     open val play:Int = 0
 
-    //colori
+    //Theme colors
     open val Red: Color = Color(0xffe71e07)
     open val Blue: Color = Color(0xff42b033)
     open val Green: Color = Color(0xff019dda)
@@ -101,7 +101,7 @@ open class theme {
     open val settBttnText = Color.White
 
 
-    //suoni
+    //Theme sounds
     open val click1Sound: Int = 0
     open val click2Sound: Int = 0
     open val click3Sound: Int = 0
@@ -110,20 +110,21 @@ open class theme {
     open val winSound: Int = 0
     open val introSound: Int = 0
 
+    //Theme font
     open val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
-    //Decorazione PopUp
+    //PopUp decoration
     open val backgroundPopup: Color = Color.DarkGray
     open val borderPopup: Color = Color.Yellow
     open val scoreColor: Color = Color.White
     open val difficultyColor: Color = Color.White
     open val buttonBackground: Color = Color.Yellow
     open val buttonTextColor: Color = Color.Black
-    open val popupEndIcon: Int = R.drawable.mariostrar
-    open val popupExitIcon: Int = R.drawable.fungo
+    open val popupEndIcon: Int = R.drawable.mario_gameover
+    open val popupExitIcon: Int = R.drawable.mario_exit
     open val popUpTextColor: Color = Color.White
 
-    //Colori bottone difficoltà
+    //Only one out of three themes uses this map (mario theme)
     val difficultyColors = mapOf(
         Difficulty.EASY to Color(0xFF009BD9),
         Difficulty.MEDIUM to Color(0xFF44AF35),
@@ -135,32 +136,37 @@ open class theme {
 class neon : theme() {
     override val forceLightTheme = true
 
-    override val scoreColor = Color(0xFF7A00CC)
-    override val title: Int = R.drawable.title1
-    override val landTitle: Int = R.drawable.neon_title_land
+    //Game Footer and Game Topper
+    override val title: Int = R.drawable.neon_title
+    override val landTitle: Int = R.drawable.neon_verticaltitle
     override val cup: Int = R.drawable.neon_cup
-    override val joystick: Int = R.drawable.neon_joys
+    override val joystick: Int = R.drawable.neon_game
     override val settings: Int = R.drawable.neon_settings
-    override val help: Int = R.drawable.question_neon
+    override val help: Int = R.drawable.neon_help
     override val quit: Int = R.drawable.neon_poweron
     override val play: Int = R.drawable.neon_play
 
+    //Font
     override val chosenFont: FontFamily = FontFamily(Font(R.font.neon))
 
+    //PopUp
     override val buttonBackground = Color(0xFF7A00CC)
     override val buttonTextColor = Color.White
-    override val popupEndIcon: Int = R.drawable.neon_end_popup
-    override val popupExitIcon: Int = R.drawable.exit_neon
+    override val popupEndIcon: Int = R.drawable.neon_gameover
+    override val popupExitIcon: Int = R.drawable.neon_exit
     override val backgroundPopup: Color = Color(0xFFFE7FD4)
     override val borderPopup: Color = Color(0xFF7A00CC)
     override val popUpTextColor: Color = Color.Black
+    override val scoreColor = Color(0xFF7A00CC)
 
+    //Colors
     override val Red: Color = Color(0xFF6420AA)
     override val Blue: Color = Color(0xFF80B3FF)
     override val Green: Color = Color(0xFFFF7ED4)
     override val Yellow: Color = Color(0xFFFFB5DA)
     override val settingsColor: Color = Color(0xFFC562AF)
 
+    //Sounds
     override val click1Sound: Int = R.raw.mario_click1
     override val click2Sound: Int = R.raw.mario_click2
     override val click3Sound: Int = R.raw.mario_click3
@@ -168,20 +174,19 @@ class neon : theme() {
     override val loseSound: Int = R.raw.neon_lose
     override val winSound: Int = R.raw.neon_win
     override val introSound: Int = R.raw.neon_intro
-
-
 }
+
     class mario : theme() {
         override val forceLightTheme = true
 
-        override val title: Int = R.drawable.title2
-        override val landTitle: Int = R.drawable.title_land
-        override val cup: Int = R.drawable.cup_mario
-        override val joystick: Int = R.drawable.play_mario
+        override val title: Int = R.drawable.mario_title
+        override val landTitle: Int = R.drawable.mario_verticaltitle
+        override val cup: Int = R.drawable.mario_cup
+        override val joystick: Int = R.drawable.mario_game
         override val settings: Int = R.drawable.mario_settings
         override val help: Int = R.drawable.mario_help
         override val quit: Int = R.drawable.mario_poweron
-        override val play: Int = R.drawable.play_button
+        override val play: Int = R.drawable.mario_play
 
 
         override val Red: Color = Color(0xffe71e07)
@@ -192,18 +197,15 @@ class neon : theme() {
 
         override val chosenFont: FontFamily = FontFamily(Font(R.font.supermario))
 
-
         override val backgroundPopup = Color(0xFFdb4b3f)
         override val borderPopup = Color(0xFFffd966)
         override val popUpTextColor = Color.Black
-
         override val scoreColor = Color(0xFFffd966)
         override val difficultyColor = Color.White
         override val buttonBackground = Color(0xFFffd966)
         override val buttonTextColor = Color.Black
-
-        override val popupEndIcon: Int = R.drawable.mariostrar
-        override val popupExitIcon: Int = R.drawable.fungo
+        override val popupEndIcon: Int = R.drawable.mario_gameover
+        override val popupExitIcon: Int = R.drawable.mario_exit
 
         override val click1Sound: Int = R.raw.mario_click1
         override val click2Sound: Int = R.raw.mario_click2
@@ -218,14 +220,14 @@ class neon : theme() {
     class simpson : theme() {
         override val forceLightTheme = true
 
-        override val title: Int = R.drawable.simpson_title
-        override val landTitle: Int = R.drawable.simpson_title_land
-        override val cup: Int = R.drawable.simpson_cup
-        override val joystick: Int = R.drawable.simpson_joys
-        override val settings: Int = R.drawable.simpson_settings
-        override val help: Int = R.drawable.simpson_question
-        override val quit: Int = R.drawable.simpson_exit
-        override val play: Int = R.drawable.simpson_play
+        override val title: Int = R.drawable.bart_title
+        override val landTitle: Int = R.drawable.bart_verticaltitle
+        override val cup: Int = R.drawable.bart_cup
+        override val joystick: Int = R.drawable.bart_game
+        override val settings: Int = R.drawable.bart_settings
+        override val help: Int = R.drawable.bart_help
+        override val quit: Int = R.drawable.bart_poweron
+        override val play: Int = R.drawable.bart_play
 
 
         override val Red: Color = Color(0xffFF81C1)
@@ -245,7 +247,7 @@ class neon : theme() {
         override val scoreColor = Color(0xFF800080)           // Purple
         override val difficultyColor = Color.White
         override val buttonTextColor = Color.Black
-        override val popupEndIcon: Int = R.drawable.homerscreaming
+        override val popupEndIcon: Int = R.drawable.bart_gameover
         override val popupExitIcon: Int = R.drawable.bart_exit
 
         override val click1Sound: Int = R.raw.mario_click1

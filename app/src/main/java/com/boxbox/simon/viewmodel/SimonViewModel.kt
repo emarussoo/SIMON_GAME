@@ -38,7 +38,7 @@ class SimonViewModel() : ViewModel(){
     var oldGameState = SimonState()
 
     fun resetTimer() {
-        _timerKey.value++ // Cambia chiave per resettare
+        _timerKey.value++ // Changes key for reset
     }
 
     fun StartGame(){
@@ -53,10 +53,13 @@ class SimonViewModel() : ViewModel(){
         showSequence()
     }
 
+    //Used to put the game phase in idle phase
     fun resetGamePhase(){
         _gameState.value = SimonState(state = GamePhase.Idle)
     }
 
+
+    //Called when the game is finished, due to timme elapsed or at the user's request
     fun EndGame(context: Context) {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
@@ -93,7 +96,7 @@ class SimonViewModel() : ViewModel(){
                 _highlightedMove.value = move
 
                 ////////////////
-                delay(gameState.value.difficulty.sequenceSpeed.toLong())  //difficoltà
+                delay(gameState.value.difficulty.sequenceSpeed.toLong())  //difficulty
                 ////////////////
 
                 _highlightedMove.value = null
