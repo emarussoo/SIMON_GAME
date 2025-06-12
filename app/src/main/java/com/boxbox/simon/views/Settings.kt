@@ -46,7 +46,7 @@ fun settingInterface(navController : NavController){
     var language by remember { mutableStateOf(sharedPref.getString("language", "it") ?: "it")  }
     var sounds by remember { mutableStateOf(sharedPref.getBoolean("soundsOn", true)) }
     // ,false è il parametro di default se ancora non è stato messo nelle shared pref is3D
-    var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", false)) "3D" else "Flat") }
+    var bttnStyle by remember { mutableStateOf(if (sharedPref.getBoolean("is3D", true)) "3D" else "Flat") }
     var theme by remember { mutableStateOf(sharedPref.getString("theme", "mario") ?: "mario") }
     val selTheme = ThemeManager.currentTheme
     val scrollState = rememberScrollState()
@@ -175,7 +175,7 @@ fun settingInterface(navController : NavController){
             }
 
             Spacer(Modifier.height(16.dp))
-            Text("Credits")
+            Text("Extra")
             Button(
                 onClick = {
                     navController.navigate(NavigatorScreen.Credits.route)
@@ -189,7 +189,7 @@ fun settingInterface(navController : NavController){
             ) {
                 Text(
                     style = MaterialTheme.typography.bodyLarge,
-                    text = "Credits",
+                    text = stringResource(R.string.credits),
                     color = selTheme.settBttnText
                 )
             }

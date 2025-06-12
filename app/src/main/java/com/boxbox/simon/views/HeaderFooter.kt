@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -56,7 +58,7 @@ fun GameTopper(navController: NavController) {
             painter = painterResource(id = ThemeManager.currentTheme.title),
             contentDescription = "",
             modifier = Modifier
-                .weight(0.9f)
+                .weight(1f)
                 .fillMaxHeight()
         )
 
@@ -159,7 +161,7 @@ fun ResponsiveGameFooter(navController: NavController){
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.12f)
-                .background(Color.Transparent),
+                .background(Color.Transparent).navigationBarsPadding(),
             horizontalArrangement = Arrangement.SpaceEvenly, // o SpaceBetween, Center, ecc.
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -174,7 +176,7 @@ fun ResponsiveGameFooter(navController: NavController){
                     contentDescription = "",
                     modifier = Modifier
                         .size(imageSize),
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -188,7 +190,7 @@ fun ResponsiveGameFooter(navController: NavController){
                     contentDescription = "",
                     modifier = Modifier
                         .size(imageSize),
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -202,7 +204,7 @@ fun ResponsiveGameFooter(navController: NavController){
                     contentDescription = "",
                     modifier = Modifier
                         .size(imageSize),
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.Fit
                 )
             }
         }
@@ -216,12 +218,6 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
-        val height = maxHeight
-        val imageSize = when {
-            height < 360.dp -> 35.dp
-            height < 480.dp -> 55.dp
-            else -> 75.dp
-        }
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -236,9 +232,8 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
                 Image(
                     painter = painterResource(id = ThemeManager.currentTheme.cup),
                     contentDescription = "",
-                    modifier = Modifier
-                        .size(imageSize),
-                    contentScale = ContentScale.FillBounds
+                    modifier = Modifier.scale(0.7f),
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -250,9 +245,8 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
                 Image(
                     painter = painterResource(id = ThemeManager.currentTheme.joystick),
                     contentDescription = "",
-                    modifier = Modifier
-                        .size(imageSize),
-                    contentScale = ContentScale.FillWidth
+                    modifier = Modifier.scale(0.7f),
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -264,9 +258,8 @@ fun ResponsiveGameFooterLandscape(navController: NavController) {
                 Image(
                     painter = painterResource(id = ThemeManager.currentTheme.settings),
                     contentDescription = "",
-                    modifier = Modifier
-                        .size(imageSize),
-                    contentScale = ContentScale.FillWidth
+                    modifier = Modifier.scale(0.7f),
+                    contentScale = ContentScale.Fit
                 )
             }
         }

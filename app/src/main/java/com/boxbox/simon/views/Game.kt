@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.boxbox.simon.R
 import com.boxbox.simon.model.Difficulty
@@ -578,18 +579,24 @@ fun DifficultyAndStart(
                         GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick
                     }
 
-                    Box(
-                        modifier = Modifier.fillMaxWidth().height(boxHeight * 0.5f)
-                            .background(Color.Transparent), contentAlignment = Alignment.Center
+                    BoxWithConstraints(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(boxHeight * 0.5f)
+                            .background(Color.Transparent),
+                        contentAlignment = Alignment.Center
                     ) {
+                        val side = min(maxWidth, maxHeight) * 0.9f
+
                         ThemedStartStopButton(
                             onClick,
                             state,
                             "play/start",
                             theme,
-                            modifier = Modifier.size(boxHeight * 0.45f)
+                            modifier = Modifier.size(side)
                         )
                     }
+
                 }
             }
         }
