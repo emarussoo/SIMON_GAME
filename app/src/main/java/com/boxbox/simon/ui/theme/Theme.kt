@@ -201,6 +201,7 @@ class neon : theme() {
         override val difficultyColor = Color.White
         override val buttonBackground = Color(0xFFffd966)
         override val buttonTextColor = Color.Black
+
         override val popupEndIcon: Int = R.drawable.mariostrar
         override val popupExitIcon: Int = R.drawable.fungo
 
