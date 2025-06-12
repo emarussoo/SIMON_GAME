@@ -37,10 +37,12 @@ class SimonViewModel() : ViewModel(){
 
     var oldGameState = SimonState()
 
+    //used to reset timer of the timerbar
     fun resetTimer() {
         _timerKey.value++ // Changes key for reset
     }
 
+    //used to start the game and initialize the state of the game
     fun StartGame(){
         val firstMove = SimonMove.values().random()
         _gameState.value = SimonState(
@@ -59,7 +61,8 @@ class SimonViewModel() : ViewModel(){
     }
 
 
-    //Called when the game is finished, due to timme elapsed or at the user's request
+    //Called when the game is finished, due to time elapsed or at the user's request
+    //it saves the result of the game that has just ended on the db
     fun EndGame(context: Context) {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = formatter.format(Date())
@@ -85,6 +88,7 @@ class SimonViewModel() : ViewModel(){
 
     }
 
+    //Used to show the highlighted sequence to the user
     fun showSequence(){
         viewModelScope.launch {
             _gameState.value = _gameState.value.copy(state = GamePhase.ShowingSequence)
@@ -109,6 +113,8 @@ class SimonViewModel() : ViewModel(){
         }
     }
 
+    //Used to handle the input of the user
+    //It manages the logic of the game
     fun onUserInput(move: SimonMove, context: Context){
         val current = _gameState.value
         if(current.state != GamePhase.WaitingInput) return
@@ -135,14 +141,17 @@ class SimonViewModel() : ViewModel(){
     }
 
 
+    //Used to change the gamephase after the sequence is shown
     fun onSequenceShown(){
         _gameState.value = _gameState.value.copy(state = GamePhase.WaitingInput)
     }
 
+    //Used to set state to Idle
     fun setIdle(){
         _gameState.value = _gameState.value.copy(state = GamePhase.Idle)
     }
 
+    //Used to change the value of the difficulty
     fun setDifficulty(diff: Difficulty){
         setIdle()
         _gameState.value = _gameState.value.copy(difficulty = diff)
