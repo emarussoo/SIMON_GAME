@@ -42,6 +42,7 @@ fun Screen() {
     else VerticalLayout(currentRoute, navController, viewModel)
 }
 
+
 @Composable
 fun LandscapeLayout(currentRoute: String?, navController: NavHostController, viewModel: SimonViewModel) {
     Row(
