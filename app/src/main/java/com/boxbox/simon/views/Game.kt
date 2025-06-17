@@ -98,9 +98,11 @@ fun GameScreen(viewModel: SimonViewModel){
     val state by viewModel.gameState.collectAsState()
     val timerKey by viewModel.timerKey.collectAsState()
 
+    //get the current phone orientation
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    //used for showing the popup
     var showExitPopUp = remember { mutableStateOf(false) }
     val activity = (LocalContext.current as? Activity)
 
@@ -148,9 +150,9 @@ fun LandScapeGameLayout(
             verticalAlignment = Alignment.CenterVertically)
         {
 
+            //4 game buttons on the left
             ResponsiveColorGrid(viewModel)
 
-            //timer bar, difficulty changer, start/stop button column
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -158,6 +160,8 @@ fun LandScapeGameLayout(
                 verticalArrangement = Arrangement.Center
             ){
                 Spacer(modifier = Modifier.height(40.dp))
+
+                // game header with score and timebar
                 GameHeader(
                     viewModel,
                     state,
@@ -166,10 +170,9 @@ fun LandScapeGameLayout(
                     onEndClick = { }
                 )
 
-
-
                 Spacer(modifier = Modifier.height(10.dp))
 
+                //difficulty and start buttons
                 DifficultyAndStart(
                     viewModel,
                     state,
@@ -207,11 +210,12 @@ fun VerticalGameLayout(
                 state,
                 timerKey,
                 onStartClick = { viewModel.StartGame() },
-                onEndClick = { /*changeShowEndPopupValue(true)*/ })
+                onEndClick = { })
 
             Spacer(modifier = Modifier.height(25.dp))
 
             ResponsiveColorGrid(viewModel)
+
             DifficultyAndStart(
                 viewModel,
                 state,
@@ -259,7 +263,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                     horizontalArrangement = Arrangement.Start
                 ) {
 
-
+                    //SCORE text
                     Text(
                         text = stringResource(R.string.score),
                         fontSize = fontSize,
@@ -267,6 +271,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 
                         )
 
+                    //score value text
                     Text(
                         text = "${state.score}",
                         fontSize = fontSize,
@@ -276,6 +281,7 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
                 }
             }
 
+            //progress bar
             Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
                 val context = LocalContext.current
                 val timerDuration = state.difficulty.timeDuration
@@ -395,11 +401,9 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
 
 
     //used to determine the activation of the buttons
-    if(state.state != GamePhase.ShowingSequence){
-        isEnabled = true
-    }else{
-        isEnabled = false
-    }
+    if(state.state != GamePhase.ShowingSequence) isEnabled = true
+    else isEnabled = false
+
 
     BoxWithConstraints(
         modifier = Modifier
