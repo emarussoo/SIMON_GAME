@@ -79,7 +79,7 @@ import com.boxbox.simon.ui.theme.neon
 import com.boxbox.simon.ui.theme.simpson
 import com.boxbox.simon.ui.theme.theme
 
-
+//Returns the device width
 @Composable
 fun GetDeviceWidth(): Int {
     val configuration = LocalConfiguration.current
@@ -90,6 +90,7 @@ fun GetDeviceWidth(): Int {
     }
 }
 
+//It manages the game page
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun GameScreen(viewModel: SimonViewModel){
@@ -103,25 +104,32 @@ fun GameScreen(viewModel: SimonViewModel){
     var showExitPopUp = remember { mutableStateOf(false) }
     val activity = (LocalContext.current as? Activity)
 
+    //handler back gesture, it is managed only here
+    //elsewhere back gestures brings user back to previous screen
     BackHandler {
         showExitPopUp.value = true
     }
 
+    //endgame popup starter, it only starts in a certain state
     if (state.state == GamePhase.GameOver){
         EndPopUp(context, viewModel){
             viewModel.resetGamePhase()
         }
     }
 
+    //a different layout will be loaded based on device orientation
     if (isLandscape) LandScapeGameLayout(viewModel, state, timerKey, /*changeShowEndPopupValue = { viewModel.EndGame(context) }*/)
     else VerticalGameLayout(viewModel, state, timerKey, /*changeShowEndPopupValue = { viewModel.EndGame(context) }*/)
 
+
+    //exit popup starter
     if(showExitPopUp.value){
         ExitPopUp(showExitPopUp, activity)
     }
 }
 
 
+//This function will be used only if device orientation is landscape
 @Composable
 fun LandScapeGameLayout(
     viewModel: SimonViewModel,
@@ -142,6 +150,7 @@ fun LandScapeGameLayout(
 
             ResponsiveColorGrid(viewModel)
 
+            //timer bar, difficulty changer, start/stop button column
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -176,6 +185,7 @@ fun LandScapeGameLayout(
 }
 
 
+//This function will be used only if device orientation is vertical
 @Composable
 fun VerticalGameLayout(
     viewModel: SimonViewModel,
@@ -212,6 +222,7 @@ fun VerticalGameLayout(
 }
 
 
+//Used to assemble display score and timer bar
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onStartClick: ()-> Unit, onEndClick:() -> Unit){
@@ -277,10 +288,12 @@ fun GameHeader(viewModel: SimonViewModel, state: SimonState, timerKey: Int, onSt
 }
 
 
+//Used to display timer bar
+//The timer restarts every time the key changes
 @Composable
 fun TimerProgressBar(
-    key: Int, //cambiala e resetta
-    durationMillis: Int, // velocità
+    key: Int, //change to reset
+    durationMillis: Int, //used to choose the turn time
     running: Boolean,
     onTimeout: () -> Unit
 ) {
@@ -297,12 +310,16 @@ fun TimerProgressBar(
             )
             onTimeout()
         } else {
-            // Quando non è in esecuzione, tieni la barra piena
+            //When is not in execution, keep the bar full
             progress.snapTo(1f)
         }
     }
 
+    //the color changes based on the current theme of the app
+    //the "lerp" function manages the fades of the colors
     val barColor = when(ThemeManager.currentTheme) {
+
+        //mario theme colors
         is mario -> when {
             animatedProgress > 0.5f -> lerp(
                 Orange,
@@ -317,6 +334,7 @@ fun TimerProgressBar(
             )
         }
 
+        //neon theme colors
         is neon -> when {
             animatedProgress > 0.5f -> lerp(
                 ThemeManager.currentTheme.Yellow,
@@ -331,9 +349,12 @@ fun TimerProgressBar(
             )
         }
 
+        //standard option
+        //used also for bart theme
         else -> Color.Black
     }
 
+    //timer bar itself
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -352,6 +373,8 @@ fun TimerProgressBar(
 }
 
 
+//Used to display game buttons in a certain layout
+//it is responsive, so this function is used in every layout(landscape/vertical) and adapts the buttons' size with the phone size
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ResponsiveColorGrid(viewModel: SimonViewModel){
@@ -367,8 +390,11 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
     var isEnabled = false
     val height: Int
 
+    //used to determine the style of the buttons (3d or not)
     if(sharedPref.getBoolean("is3D",true) == true) height = 14 else height = 0
 
+
+    //used to determine the activation of the buttons
     if(state.state != GamePhase.ShowingSequence){
         isEnabled = true
     }else{
@@ -417,6 +443,7 @@ fun ResponsiveColorGrid(viewModel: SimonViewModel){
     }
 }
 
+//Used to display the buttons
 @Composable
 fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit, height: Int, sound: Int, buttonSize: Dp, isEnabled: Boolean){
     val color = when(move){
@@ -430,7 +457,7 @@ fun SimonColorButton(move: SimonMove, highlighted: Boolean, onClick: () -> Unit,
 
 }
 
-
+//Used to manage the difficulty changer and the start/end button
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun DifficultyAndStart(
@@ -445,7 +472,7 @@ fun DifficultyAndStart(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    // Recupera la difficoltà salvata una volta
+    // Retrieve the difficulty from sharedpref
     var difficulty by remember {
         mutableStateOf(
             Difficulty.valueOf(
@@ -454,18 +481,18 @@ fun DifficultyAndStart(
         )
     }
 
-    // Applica al ViewModel solo se non è già quella giusta
+    //apply the changes at viewmodel when difficulty is changed
     if (state.difficulty != difficulty && (state.state == GamePhase.Idle || state.state == GamePhase.GameOver)) {
         viewModel.setDifficulty(difficulty)
     }
 
-    //box usato per verificare quale layout di difficultyAndStart usare
+    //This box is used to decide which layout will be used
     BoxWithConstraints(modifier = Modifier.border(width = 1.dp, color = Color.Transparent)){
 
-        //controllo per vedere se le proporzioni del box permettono di usare il layout in colonna
+        //this checks the box ratio, in order to use different layouts
         if((maxWidth/maxHeight) > 2.7f ){
 
-            //box per il layout in riga
+            //row layout box
             BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).border(width = 1.dp, color = Color.Transparent)){
 
                 val boxWidth = maxWidth
@@ -512,7 +539,7 @@ fun DifficultyAndStart(
                         GamePhase.ShowingSequence, GamePhase.WaitingInput -> onEndClick
                     }
 
-                    //Spacer(modifier = Modifier.width(10.dp))
+
                     Box(modifier = Modifier
                         .width(boxWidth * 0.2f).fillMaxSize(),
                         contentAlignment = Alignment.Center) {
@@ -528,7 +555,7 @@ fun DifficultyAndStart(
 
         }
         else {
-            //box per il layout in colonna
+            //column layout box
             BoxWithConstraints(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = if (isLandscape) 3.dp else 40.dp)
@@ -600,7 +627,7 @@ fun DifficultyAndStart(
                                 .shadow(
                                     elevation = 0.dp,
                                     shape = CircleShape,
-                                    clip = false // clip = false per evitare che l’ombra venga tagliata
+                                    clip = false
                                 )
                         )
                     }
@@ -613,6 +640,8 @@ fun DifficultyAndStart(
 
 
 
+//start/stop button
+//it changes its style based on current theme
 @Composable
 fun ThemedStartStopButton(
     onClick: () -> Unit,
@@ -651,6 +680,8 @@ fun ThemedStartStopButton(
 }
 
 
+//button used to change the difficulty of the game
+//it changes its style based on current theme
 @Composable
 fun DifficultyThemeButton(
     text: String,
@@ -667,6 +698,7 @@ fun DifficultyThemeButton(
     }
 
     when (theme) {
+        //mario theme
         is mario -> MarioButton(
             onClick = onClick,
             text = text,
@@ -685,6 +717,8 @@ fun DifficultyThemeButton(
             }
         )
 
+
+        //neon theme
         is neon -> NeonButton(
             onClick = onClick,
             text = text,
@@ -701,6 +735,8 @@ fun DifficultyThemeButton(
             }
         )
 
+
+        //bart theme
         is simpson -> SimpsonsButton(
             onClick = onClick,
             text = text,

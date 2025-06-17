@@ -13,7 +13,7 @@ object DBAccess {
                 SimonDB::class.java,
                 "Simon_DB"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration() //Recreate DB in case of version change
                 .build()
         }
         return instance!!
