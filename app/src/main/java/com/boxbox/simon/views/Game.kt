@@ -772,7 +772,7 @@ fun AutoResizingText(
     var measured by remember { mutableStateOf(false) }
     val fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
 
-    // Lista fissa di stringhe da confrontare
+    // Reference list of strings used to determine max fitting font size
     val fixedTexts = if (button == true) {
         listOf(
             stringResource(R.string.easy),
@@ -784,9 +784,11 @@ fun AutoResizingText(
         listOf(stringResource(R.string.level))
     }
 
+    // Measure available width for the text
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val availableWidth = constraints.maxWidth.toFloat()
 
+        // Dynamically adjust text size to fit the widest fixed string
         LaunchedEffect(availableWidth) {
             var size = maxTextSize
             while (size > minTextSize) {
@@ -806,6 +808,7 @@ fun AutoResizingText(
             measured = true
         }
 
+        // Draw the text once size is determined
         if (measured) {
             Text(
                 text = text,
