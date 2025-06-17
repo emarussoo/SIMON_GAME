@@ -59,10 +59,12 @@ fun LeaderboardInterface() {
     var isVisible by remember { mutableStateOf(false) }
     var showEmptyMessage by remember { mutableStateOf(false) }
 
+    // Load leaderboard data from the DB when the Composable is launched for the first time
     LaunchedEffect(Unit) {
         viewModel.loadLeaderboard(context)
     }
 
+    //Tell if any scores are available from the DB, otherwise shows an empty message
     LaunchedEffect(leaderboard) {
         isVisible = leaderboard.isNotEmpty()
         showEmptyMessage = leaderboard.isEmpty()
@@ -79,11 +81,14 @@ fun LeaderboardInterface() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                // Show themed header based on current theme
                 when (ThemeManager.currentTheme) {
                     is mario -> MarioHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
                     is neon -> NeonHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
                     is simpson -> SimpsonsHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
                 }
+
+                // Display leaderboard entries in a scrollable list
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -103,35 +108,29 @@ fun LeaderboardInterface() {
                                 .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Box(
-                                Modifier.weight(0.25f),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            // Score
+                            Box(Modifier.weight(0.25f), contentAlignment = Alignment.Center) {
                                 Text(score.score.toString())
                             }
-                            Box(
-                                Modifier.weight(0.25f),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            // Date
+                            Box(Modifier.weight(0.25f), contentAlignment = Alignment.Center) {
                                 Text(dayFormatted)
                             }
-                            Box(
-                                Modifier.weight(0.2f),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            // Time
+                            Box(Modifier.weight(0.2f), contentAlignment = Alignment.Center) {
                                 Text(time.take(5))
                             }
-                            Box(
-                                Modifier.weight(0.3f),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(when(diff){
-                                    0 -> stringResource(R.string.easy)
-                                    1-> stringResource(R.string.medium)
-                                    2-> stringResource(R.string.hard)
-                                    3-> stringResource(R.string.extreme)
-                                    else -> "null"
-                                })
+                            // Difficulty label
+                            Box(Modifier.weight(0.3f), contentAlignment = Alignment.Center) {
+                                Text(
+                                    when (diff) {
+                                        0 -> stringResource(R.string.easy)
+                                        1 -> stringResource(R.string.medium)
+                                        2 -> stringResource(R.string.hard)
+                                        3 -> stringResource(R.string.extreme)
+                                        else -> "null"
+                                    }
+                                )
                             }
                         }
                         Divider()
@@ -139,6 +138,8 @@ fun LeaderboardInterface() {
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
+
+                // Clear leaderboard button
                 val clear = stringResource(R.string.clear_leaderboard)
                 when (ThemeManager.currentTheme) {
                     is mario -> MarioButton(
@@ -149,21 +150,16 @@ fun LeaderboardInterface() {
                             .height(50.dp)
                             .background(
                                 brush = Brush.verticalGradient(
-                                    listOf(
-                                        Color(0xFF33BFFF),
-                                        Color(0xFF1A7EBF)
-                                    )
+                                    listOf(Color(0xFF33BFFF), Color(0xFF1A7EBF))
                                 ),
                                 shape = shape
                             )
                     )
-
                     is neon -> NeonButton(
                         onClick = { viewModel.resetLeaderboard(context) },
                         text = clear,
                         modifier = Modifier
                     )
-
                     is simpson -> SimpsonsButton(
                         onClick = { viewModel.resetLeaderboard(context) },
                         text = clear,
@@ -172,6 +168,8 @@ fun LeaderboardInterface() {
                 }
             }
         }
+
+        // Message shown when there are no scores saved in DB
         if (showEmptyMessage) {
             when (ThemeManager.currentTheme) {
                 is mario -> MarioHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
@@ -179,7 +177,9 @@ fun LeaderboardInterface() {
                 is simpson -> SimpsonsHeaderRow(modifier = Modifier.padding(bottom = 8.dp))
             }
             Box(
-                modifier = Modifier.weight(1f).fillMaxSize(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -189,10 +189,10 @@ fun LeaderboardInterface() {
                 )
             }
         }
-
     }
 }
 
+//Mario themed header personalization
 @Composable
 fun MarioHeaderRow(modifier: Modifier = Modifier) {
     Box(
@@ -227,7 +227,7 @@ fun MarioHeaderRow(modifier: Modifier = Modifier) {
 }
 
 
-
+//Neon themed header personalization
 @Composable
 fun NeonHeaderRow(modifier: Modifier = Modifier) {
     Box(
@@ -261,6 +261,7 @@ fun NeonHeaderRow(modifier: Modifier = Modifier) {
     }
 }
 
+//Simpson themed header personalization
 @Composable
 fun SimpsonsHeaderRow(modifier: Modifier = Modifier) {
     Box(
@@ -302,7 +303,7 @@ fun SimpsonsHeaderRow(modifier: Modifier = Modifier) {
     }
 }
 
-
+//Format of header row text
 @Composable
 fun HeaderText(text: String, modifier: Modifier) {
     val theme = ThemeManager.currentTheme
@@ -464,8 +465,8 @@ fun NeonButton(
             .background(
                 brush = Brush.horizontalGradient(
                     listOf(
-                        Color(0xFFFFB3E6),   //Lighter pink
-                        Color(0xFFFE7FD4)    //Darker pink
+                        Color(0xFFFFB3E6),
+                        Color(0xFFFE7FD4)
                     )
                 ),
                 shape = shape
